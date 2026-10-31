@@ -14,8 +14,8 @@ reasoned but not confirmed. **Not sure** = unknown. Research date 2026-10-31.
 | 4 | M5Stack **Mini Button Unit** (no LED) | 1 | on hand | ASSUMPTION: electrically the "Unit Button" (U027) design, see below |
 | 5 | **Anker Nano Power Bank 5000 mAh** (A1653, 22.5 W name, built-in USB-C plug) | 1 | on hand | USB-C out 5V⎓3A / 9V⎓2.22A / 10V⎓2.25A, total 18 W max; input 5V⎓3A / 9V⎓2A |
 | 6 | power switch | 1 | on hand | must be ≥ 5 A DC; in +5 V only |
-| 7 | 2200 µF electrolytic capacitor | ≥1 | on hand | low-ESR expected; **check rating ≥ 10 V** |
-| 8 | USB-C breakout with inline capacitors | 5 (1 used) | on hand | only one used (bank input); CC resistors and cap position **unknown** → bring-up step 1 |
+| 7 | 2200 µF electrolytic capacitor | ≥1 | on hand | **rated 15 V** (owner, 2026-10-31): OK, ≥ 10 V needed; low-ESR expected |
+| 8 | USB-C breakout with inline capacitors | 5 (1 used) | on hand | only one used (bank input); **CC resistors present** (owner, 2026-10-31) → C-to-C from the bank works; inline capacitor value/side still unknown → bring-up step 1 |
 | 9 | Wago **2273-208** (8-port push-in) | several | on hand | **solid conductors only** per Wago data, 0.5–2.5 mm² (≈ 20–14 AWG); two per net |
 | 10 | 20 AWG stranded wire | bunch | on hand | 0.52 mm², ≈ 33 mΩ/m |
 | 11 | Dupont cables | various | on hand | fit the M5-Bus header (2.54 mm) |
@@ -163,9 +163,9 @@ Low-current auto-off threshold: **Not sure** (not documented by Anker); measure 
 
 | item | value | how |
 |---|---|---|
-| USB-C breakout CC resistors | ☐ present ("512" / 5.1 kΩ) ☐ absent | look / measure CC1, CC2 to GND |
+| USB-C breakout CC resistors | **present** (owner) — measure ≈ 5.1 kΩ CC1/CC2→GND once anyway | look / measure CC1, CC2 to GND |
 | breakout inline capacitor | value: ___ V rating: ___ input/output side: ___ | read marking |
-| 2200 µF voltage rating | ___ V (must be ≥ 10 V) | read the can |
+| 2200 µF voltage rating | **15 V** (owner) | read the can |
 | power switch rating | ___ A DC | read the marking |
 | CamS3 hardware revision (0x0200) | cam1 ___ cam2 ___ cam3 ___ cam4 ___ | boot log `evt=hw_rev` |
 | CamS3 MACs | cam1 ___ cam2 ___ cam3 ___ cam4 ___ | boot log `evt=chip` |

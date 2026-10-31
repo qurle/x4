@@ -2,8 +2,8 @@
 # Converts ui/fonts/*.ttf into LVGL C fonts in core/src/ui/fonts/ with lv_font_conv.
 #   npm i -g lv_font_conv@1.5.2    (or: npx lv_font_conv@1.5.2 ...)
 #   bash tools/gen_fonts.sh
-# Glyphs: printable ASCII + a few typographic symbols. Cyrillic is NOT included yet
-# (docs/OPEN_QUESTIONS.md): add 0x400-0x4FF to RANGE and re-run if the UI needs it.
+# Glyphs: printable ASCII + a few typographic symbols. No Cyrillic (owner decision 2026-10-31);
+# add 0x400-0x4FF to RANGE and re-run if that ever changes.
 # 4 bpp = 16 levels of anti-aliasing (the LVGL default for good small-text quality).
 set -euo pipefail
 cd "$(dirname "$0")/.."

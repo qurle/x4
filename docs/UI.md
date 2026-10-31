@@ -51,9 +51,9 @@ backdrop blur on this MCU (see compromises).
 OFL allows embedding in firmware; keep the licence files with the fonts (done).
 
 Conversion: `tools/gen_fonts.sh` (lv_font_conv 1.5.2), **4 bpp** anti-aliasing, no compression
-(faster rendering), glyphs **printable ASCII + ° · × – — … •** only. **Cyrillic is not included**
-(ASSUMPTION, [OPEN_QUESTIONS Q4](OPEN_QUESTIONS.md)); adding `0x400-0x4FF` costs roughly +70 % per
-font. Flash cost now ≈ 700 KB of C source → ≈ 300 KB in flash (serif 64 is the largest).
+(faster rendering), glyphs **printable ASCII + ° · × – — … •** only. **No Cyrillic** (owner decision
+2026-10-31). If that ever changes, add `0x400-0x4FF` to `RANGE` in `tools/gen_fonts.sh` (roughly
++70 % flash per font). Flash cost now ≈ 700 KB of C source → ≈ 300 KB in flash (serif 64 is the largest).
 
 Legibility on 320×240: Instrument Serif is a display face with thin hairlines; below ~20 px those
 hairlines fall under one pixel and the text shimmers. v1 therefore uses the serif only at 24, 40
