@@ -165,10 +165,10 @@ uint32_t Button::update(uint32_t now, bool rawPressed) {
       stable_ = true;
       pressedAt_ = now;
       longFired_ = false;
-      out |= bit(Gesture::Press);
+      out |= gestureBit(Gesture::Press);
       if (pendingClick_ && t_.doubleMs && (uint32_t)(now - pendingSince_) <= t_.doubleMs) {
         pendingClick_ = false;
-        out |= bit(Gesture::DoubleClick);
+        out |= gestureBit(Gesture::DoubleClick);
         longFired_ = true;  // this press already produced a gesture: no click on release
       }
     }
@@ -177,24 +177,24 @@ uint32_t Button::update(uint32_t now, bool rawPressed) {
     stable_ = false;
     released_ = true;
     releasedAt_ = now;
-    out |= bit(Gesture::Release);
+    out |= gestureBit(Gesture::Release);
     if (!longFired_) {
       if (t_.doubleMs) {
         pendingClick_ = true;
         pendingSince_ = now;
       } else {
-        out |= bit(Gesture::Click);
+        out |= gestureBit(Gesture::Click);
       }
     }
   }
   if (stable_ && !longFired_ && (uint32_t)(now - pressedAt_) >= t_.longMs) {
     longFired_ = true;
     pendingClick_ = false;
-    out |= bit(Gesture::LongPress);
+    out |= gestureBit(Gesture::LongPress);
   }
   if (pendingClick_ && !stable_ && (uint32_t)(now - pendingSince_) > t_.doubleMs) {
     pendingClick_ = false;
-    out |= bit(Gesture::Click);
+    out |= gestureBit(Gesture::Click);
   }
   return out;
 }

@@ -9,6 +9,11 @@ FlashGuard::FlashGuard(uint32_t pulseCapMs, uint32_t cooldownMs)
   if (cap_ == 0) cap_ = 1;
 }
 
+void FlashGuard::setLimits(uint32_t pulseCapMs, uint32_t cooldownMs) {
+  cap_ = pulseCapMs > kFlashPulseAbsMaxMs ? kFlashPulseAbsMaxMs : (pulseCapMs ? pulseCapMs : 1);
+  cooldown_ = cooldownMs < kFlashCooldownAbsMinMs ? kFlashCooldownAbsMinMs : cooldownMs;
+}
+
 uint32_t FlashGuard::readyInMs(uint32_t nowMs) const {
   if (!everFired_) return 0;
   // Cooldown counts from the end of the previous pulse (heat is generated while it is on).

@@ -106,7 +106,7 @@ class Button {
   Button() = default;
   explicit Button(const Timing& t) : t_(t) {}
   void setTiming(const Timing& t) { t_ = t; }
-  // Returns a bitmask of gestures that happened in this update (bit = 1 << Gesture).
+  // Returns a bitmask of gestures that happened in this update (gestureBit(g) = 1 << g).
   uint32_t update(uint32_t nowMs, bool rawPressed);
   bool pressed() const { return stable_; }
 
@@ -123,7 +123,7 @@ class Button {
   uint32_t pendingSince_ = 0;
 };
 
-inline uint32_t bit(Gesture g) { return 1u << (uint8_t)g; }
+inline uint32_t gestureBit(Gesture g) { return 1u << (uint8_t)g; }
 
 // Turns touch samples into swipes/taps. Thresholds in pixels.
 class SwipeDetector {

@@ -42,6 +42,8 @@ class FlashGuard {
   // pulseCapMs and cooldownMs are clamped to the absolute limits above.
   FlashGuard(uint32_t pulseCapMs, uint32_t cooldownMs);
 
+  // Changes limits WITHOUT resetting timing state (a config change must not skip a cooldown).
+  void setLimits(uint32_t pulseCapMs, uint32_t cooldownMs);
   void setEnabled(bool en) { enabled_ = en; }
   bool enabled() const { return enabled_; }
   void setTooHot(bool hot) { tooHot_ = hot; }

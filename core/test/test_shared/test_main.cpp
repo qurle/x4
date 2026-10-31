@@ -203,6 +203,15 @@ void test_flash_guard() {
   TEST_ASSERT_EQUAL((int)safety::FlashGuard::Verdict::Cooldown, (int)g.request(1000, 50, &granted, &wait));
   TEST_ASSERT_EQUAL(8000 - 750, wait);
   TEST_ASSERT_EQUAL((int)safety::FlashGuard::Verdict::Ok, (int)g.request(8250, 50, &granted, &wait));
+  // changing limits must not reset a running cooldown
+  g.fired(8250, 50);
+  g.ended(8300);
+  g.setLimits(100, 9000);
+  TEST_ASSERT_EQUAL((int)safety::FlashGuard::Verdict::Cooldown, (int)g.request(8400, 50, &granted, &wait));
+  TEST_ASSERT_EQUAL(100, g.cap());
+  g.setLimits(1000, 100);  // clamped again
+  TEST_ASSERT_EQUAL(safety::kFlashPulseAbsMaxMs, g.cap());
+  TEST_ASSERT_EQUAL(safety::kFlashCooldownAbsMinMs, g.cooldown());
   g.setTooHot(true);
   TEST_ASSERT_EQUAL((int)safety::FlashGuard::Verdict::TooHot, (int)g.request(9000, 50, &granted, &wait));
 }
@@ -299,52 +308,52 @@ void test_input_defaults_and_parse() {
 
 void test_button_press_is_instant_and_debounced() {
   input::Button b({25, 600, 0});
-  using input::bit;
+  using input::gestureBit;
   using input::Gesture;
   TEST_ASSERT_EQUAL(0, b.update(0, false));
-  TEST_ASSERT_EQUAL(bit(Gesture::Press), b.update(10, true));  // first edge
+  TEST_ASSERT_EQUAL(gestureBit(Gesture::Press), b.update(10, true));  // first edge
   TEST_ASSERT_EQUAL(0, b.update(12, false));                   // bounce
   TEST_ASSERT_EQUAL(0, b.update(13, true));
   TEST_ASSERT_EQUAL(0, b.update(100, false));
   uint32_t r = b.update(130, false);  // open for 30 ms -> release + click
-  TEST_ASSERT_TRUE(r & bit(Gesture::Release));
-  TEST_ASSERT_TRUE(r & bit(Gesture::Click));
+  TEST_ASSERT_TRUE(r & gestureBit(Gesture::Release));
+  TEST_ASSERT_TRUE(r & gestureBit(Gesture::Click));
   TEST_ASSERT_EQUAL(0, b.update(140, true));  // bounce right after release: ignored
   TEST_ASSERT_EQUAL(0, b.update(145, false));
 }
 
 void test_button_long_press() {
   input::Button b({25, 600, 0});
-  using input::bit;
+  using input::gestureBit;
   using input::Gesture;
   b.update(0, true);
   TEST_ASSERT_EQUAL(0, b.update(300, true));
-  TEST_ASSERT_EQUAL(bit(Gesture::LongPress), b.update(600, true));
+  TEST_ASSERT_EQUAL(gestureBit(Gesture::LongPress), b.update(600, true));
   TEST_ASSERT_EQUAL(0, b.update(900, true));
   uint32_t r = b.update(930, false);
   r |= b.update(960, false);
-  TEST_ASSERT_TRUE(r & bit(Gesture::Release));
-  TEST_ASSERT_FALSE(r & bit(Gesture::Click));
+  TEST_ASSERT_TRUE(r & gestureBit(Gesture::Release));
+  TEST_ASSERT_FALSE(r & gestureBit(Gesture::Click));
 }
 
 void test_button_double_click() {
   input::Button b({20, 600, 300});
-  using input::bit;
+  using input::gestureBit;
   using input::Gesture;
   b.update(0, true);
   b.update(50, false);
   b.update(80, false);  // release, click pending
   uint32_t r = b.update(150, true);
-  TEST_ASSERT_TRUE(r & bit(Gesture::DoubleClick));
+  TEST_ASSERT_TRUE(r & gestureBit(Gesture::DoubleClick));
   b.update(200, false);
   r = b.update(230, false);
-  TEST_ASSERT_FALSE(r & bit(Gesture::Click));
+  TEST_ASSERT_FALSE(r & gestureBit(Gesture::Click));
   // single click resolves after the window
   b.update(1000, true);
   b.update(1050, false);
   b.update(1080, false);
   r = b.update(1400, false);
-  TEST_ASSERT_TRUE(r & bit(Gesture::Click));
+  TEST_ASSERT_TRUE(r & gestureBit(Gesture::Click));
 }
 
 void test_swipe_detector() {
