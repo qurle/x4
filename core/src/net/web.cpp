@@ -158,9 +158,9 @@ void hConfigGet() {
   JsonArray arr = d["options"].to<JsonArray>();
   for (size_t i = 0; i < x4::cfg::optionCount(); i++) {
     const auto& o = x4::cfg::option(i);
-    if (!(o.scope & x4::cfg::CORE)) continue;
     JsonObject j = arr.add<JsonObject>();
     j["name"] = o.name;
+    j["scope"] = o.scope == x4::cfg::BOTH ? "both" : (o.scope & x4::cfg::CAM) ? "cam" : "core";
     j["value"] = x4::cfg::get(c, o);
     j["default"] = x4::cfg::get(b, o);
     j["min"] = o.min;

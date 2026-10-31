@@ -141,7 +141,7 @@ void startShot() {
   X4_LOGI("shoot", "start", "shot=%lu at_us=%lld lead_ms=%ld cams=%d flash=%d", (unsigned long)s.id,
           (long long)s.atUs, (long)conf::get().trig_lead_ms, s.expected(), s.flash);
   if (eff & sh::kSendTrigger) {
-    x4::proto::ShootCmd cmd{s.id, s.atUs, (uint8_t)s.flash, 5};
+    x4::proto::ShootCmd cmd{s.id, s.atUs, (uint8_t)s.flash, (uint8_t)conf::get().cam_res};
     net::sendShoot(cmd, (uint8_t)conf::get().trig_repeat);
   }
   if (eff & sh::kFireFlash) {
@@ -158,7 +158,8 @@ void writeSidecar() {
   const auto& s = g_ctl.session();
   char* buf = (char*)heap_caps_malloc(2048, MALLOC_CAP_SPIRAM);
   if (!buf) return;
-  x4::storage::SidecarInfo info{&s, X4_FW_VERSION, X4_GIT_HASH, "", 5, 1, s.flash, (int32_t)g_temp};
+  const auto& c = conf::get();
+  x4::storage::SidecarInfo info{&s, X4_FW_VERSION, X4_GIT_HASH, "", c.cam_res, c.cam_quality, s.flash, (int32_t)g_temp};
   size_t n = x4::storage::sidecarJson(buf, 2048, info);
   char path[48];
   x4::storage::sidecarFile(path, sizeof(path), s.id);

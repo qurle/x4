@@ -18,19 +18,21 @@ constexpr uint32_t kFlashCooldownAbsMinMs = 8000;
 constexpr uint32_t kFlashTestPulseMs = 50;  // Stage 0 bring-up test pulse.
 
 // ---- Thermal (ESP32-S3 internal sensor, die temperature, not ambient) -----------------------
-// ESP32-S3-WROOM-1-N16R8 (octal PSRAM) is rated to 65 C *ambient* (Espressif module datasheet,
-// ordering table). The die runs hotter than ambient; these die thresholds are ASSUMPTIONS to be
-// replaced with measurements (docs/MEASUREMENTS.md).
+// VERIFIED: ESP32-S3-WROOM-1-N16R8 (the cameras' module, octal PSRAM) is the 65 C *ambient*
+// version (Espressif module datasheet, ordering table). The die runs hotter than ambient; these
+// die thresholds are ASSUMPTIONS to be replaced with measurements (docs/MEASUREMENTS.md).
 constexpr int32_t kThermalWarnAbsMaxC = 75;      // config may only lower it
 constexpr int32_t kThermalThrottleAbsMaxC = 85;  // config may only lower it
 
 // ---- SoftAP ----------------------------------------------------------------------------------
-// 4 cameras + 1 phone + 1 spare. ESP-IDF caps SoftAP stations at ESP_WIFI_MAX_CONN_NUM (10 here).
+// 4 cameras + 1 phone + 1 spare. VERIFIED: ESP-IDF 5.5.5 (this build) allows ESP_WIFI_MAX_CONN_NUM = 15
+// stations on the ESP32-S3 SoftAP (esp_wifi_ap_get_sta_list.h). x4 caps at 10: every extra
+// station costs airtime that the photo transfer needs.
 constexpr uint8_t kApMinClients = 6;
-constexpr uint8_t kApMaxClients = 10;
+constexpr uint8_t kApMaxClients = 10;  // x4 hard cap (IDF allows 15): config may only stay at or below
 
 // ---- Bursts ----------------------------------------------------------------------------------
-constexpr uint8_t kBurstAbsMaxFrames = 5;
+constexpr uint8_t kBurstAbsMaxFrames = 5;  // frames per shutter press; 5 x 2.5 MB would already overflow PSRAM holding
 
 // Pure flash guard: decides whether a flash pulse may fire now and for how long.
 // Hardware code calls request() before driving the pin and fired() right after; the watchdog

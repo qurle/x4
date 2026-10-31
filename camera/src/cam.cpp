@@ -144,7 +144,7 @@ bool begin(const x4::cfg::Config& c) {
     return false;
   }
   if (g_id.hwRev == 0xFF)
-    X4_LOG_ERR(Warn, "cam", "hw_rev", x4::Err::CAM_OLD_HW, "rev=0x%02x see=docs/TROUBLESHOOTING.md#old-camsS3-hardware", g_id.hwRev);
+    X4_LOG_ERR(Warn, "cam", "hw_rev", x4::Err::CAM_OLD_HW, "rev=0x%02x see=docs/TROUBLESHOOTING.md#old-cams3-hardware", g_id.hwRev);
   applyConfig(c);
   g_state = x4::proto::CamState::Idle;
   return true;

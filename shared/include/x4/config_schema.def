@@ -32,7 +32,7 @@ X4_CFG(trig_repeat,     3,     1,     5,     count, CORE, 0,        "UDP shoot p
 X4_CFG(trig_ack_ms,     1500,  200,   5000,  ms,    CORE, 0,        "How long the Core waits for every camera's capture ACK before marking it missing.")
 X4_CFG(shot_budget_ms,  5000,  1000,  30000, ms,    CORE, 0,        "Target time from shutter to all photos stored. Exceeding it logs err=407.")
 X4_CFG(shoot_min_cams,  1,     1,     4,     count, CORE, 0,        "Cameras that must be online before the shutter is armed. 4 = refuse to shoot with a camera missing.")
-X4_CFG(burst_frames,    1,     1,     5,     count, CORE, SAFE_MAX, "Frames per shutter press (1 = single shot). Hard max 5.")
+X4_CFG(burst_frames,    1,     1,     5,     count, CORE, SAFE_MAX, "RESERVED: frames per shutter press. v1 firmware always shoots 1 frame (bursts need multi-frame holding on the cameras). Hard max 5.")
 
 // ---- transfer --------------------------------------------------------------------------------
 X4_CFG(xfer_parallel,   2,     1,     4,     count, CORE, 0,        "How many cameras upload at the same time. 1 = strictly staggered.")

@@ -30,8 +30,8 @@ void begin() {
   // Load overrides that exist in NVS.
   int loaded = 0;
   for (size_t i = 0; i < optionCount(); i++) {
+    // All scopes: the Core also owns the camera options and pushes them at registration.
     const OptionInfo& o = option(i);
-    if (!(o.scope & CORE)) continue;
     if (g_nvs.isKey(o.name)) {
       put(g_cfg, o, g_nvs.getInt(o.name, o.def));
       loaded++;
@@ -83,8 +83,8 @@ void resetToDefaults() {
 }
 
 void logSummary() {
-  char buf[1400];
-  summary(g_cfg, CORE, buf, sizeof(buf));
+  char buf[2000];
+  summary(g_cfg, BOTH, buf, sizeof(buf));
   // Split into lines that fit one log record.
   const char* p = buf;
   int part = 0;

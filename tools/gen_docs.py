@@ -50,9 +50,19 @@ def config_table():
 
 def safety_table():
     out = ["| constant | value | meaning |", "|---|---|---|"]
-    text = SAFETY.read_text()
-    for m in re.finditer(r"constexpr \w+ (k\w+) = (\d+);(?:\s*//\s*(.*))?", text):
-        out.append(f"| `{m.group(1)}` | {m.group(2)} | {m.group(3) or ''} |")
+    lines = SAFETY.read_text().splitlines()
+    for i, line in enumerate(lines):
+        m = re.match(r"\s*constexpr \w+ (k\w+) = (\d+);[ \t]*(?://[ \t]*(.*))?$", line)
+        if not m:
+            continue
+        doc = m.group(3) or ""
+        if not doc:  # use the comment block directly above
+            j, block = i - 1, []
+            while j >= 0 and lines[j].strip().startswith("//") and "----" not in lines[j]:
+                block.insert(0, lines[j].strip()[2:].strip())
+                j -= 1
+            doc = " ".join(block)
+        out.append(f"| `{m.group(1)}` | {m.group(2)} | {doc.replace('|', '/')} |")
     return "\n".join(out) + "\n"
 
 
