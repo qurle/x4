@@ -68,6 +68,7 @@ void expireHeld(uint32_t nowMs, uint32_t holdMs);
 void bench();
 
 x4::proto::CamState state();
+uint16_t switchMs();  // slowest resolution switch measured so far (ms)
 void setState(x4::proto::CamState s);
 
 }  // namespace cam

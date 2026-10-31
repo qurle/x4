@@ -23,7 +23,7 @@ Grammar: `X4/1 <TYPE> key=value key=value …` on one line, ASCII, ≤ 196 bytes
 
 ```
 X4/1 SHOOT shot=42 at=123456789 fl=1 res=5 dl=0
-X4/1 HB cam=2 seq=118 t1=98765432 heap=180000 psram=2800000 temp=51 st=1 rssi=-48 held=0
+X4/1 HB cam=2 seq=118 t1=98765432 heap=180000 psram=2800000 temp=51 st=1 rssi=-48 held=0 sw=0
 X4/1 HBA seq=118 t1=98765432 t2=123400000
 X4/1 ACK cam=2 shot=42 ok=1 rx=123335000 cap=123458800 bytes=1534221 cap_ms=211 err=0
 X4/1 LOG cam=2 t=5512 lvl=WARN dev=cam2 mod=therm evt=warn temp_c=71.2
@@ -33,7 +33,7 @@ X4/1 CMD cmd=reboot
 | message | fields |
 |---|---|
 | `SHOOT` | `shot` (id, persistent counter on the Core), `at` = capture time in **Core** µs (`esp_timer`), 0 = now; `fl` 1 if the Core fires the flash; `res` = `cam_res` value; `dl` = per-camera delay in µs (camera N captures at `at + (N−1)·dl`; 0 = simultaneous; missing = 0) |
-| `HB` | `cam` 1–4, `seq`, `t1` camera µs at send, `heap`, `psram`, `temp` °C (die), `st` camera state (0 booting, 1 idle, 2 armed, 3 capturing, 4 holding, 5 streaming, 6 error), `rssi`, `held` shot id held (0 none) |
+| `HB` | `cam` 1–4, `seq`, `t1` camera µs at send, `heap`, `psram`, `temp` °C (die), `st` camera state (0 booting, 1 idle, 2 armed, 3 capturing, 4 holding, 5 streaming, 6 error), `rssi`, `held` shot id held (0 none), `sw` slowest sensor resolution switch in ms (0 = never switched; the Core uses it to stretch the trigger lead for the preview camera) |
 | `HBA` | echoes `seq`, `t1`; `t2` = Core µs when the HB arrived |
 | `ACK` | `cam`, `shot`, `ok`, `rx` / `cap` = receive and frame-start times **converted to Core µs**, `bytes`, `cap_ms` (grab duration), `err` (x4 error code if `ok=0`) |
 | `LOG` | `cam`, then one complete x4 log line |
@@ -74,7 +74,7 @@ Baseline from earlier work kept: `/capture` and `/settings` on :80, MJPEG `/stre
 | `GET /logs?since=<seq>` | log lines newer than `seq`; header `X-Log-Seq` = newest seq |
 | `GET /config` | options with value, default, min, max, unit, safety, reboot, doc |
 | `POST /config?key=value[&…]` | set options (tighten-only rules); JSON per key: ok, value, clamped |
-| `POST /api/action?a=…` | `shutter`, `flash_arm`, `flash_disarm`, `flash_test` (50 ms), `sd_bench`, `preview_on`, `preview_off`, `reboot` |
+| `POST /api/action?a=…` | `shutter`, `flash_arm`, `flash_disarm`, `flash_test` (50 ms), `sd_bench`, `preview_on`, `preview_off`, `bat_full` (bank charged → estimate 100 %), `reboot` |
 | `GET /api/shots` | newest 24 shots with their files and sizes |
 | `GET /file?path=/x4/…` | stream a file from the SD (only below `/x4/`) |
 

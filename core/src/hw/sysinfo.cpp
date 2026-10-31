@@ -70,5 +70,8 @@ uint32_t nextShotId() {
 }
 uint32_t lastShotId() { return g_shot; }
 
+float batteryUsedMwh() { return g_prefs.getUInt("bat_used10", 0) / 10.0f; }
+void saveBatteryUsedMwh(float mWh) { g_prefs.putUInt("bat_used10", (uint32_t)(mWh * 10.0f)); }
+
 }  // namespace sys
 }  // namespace x4core

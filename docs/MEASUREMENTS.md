@@ -20,6 +20,9 @@ optionally a cheap scope for the flash and rail sag.
 | Mini Button | *≈ 0.2* | – | – | – | |
 | Flashlight (pulse) | 0 | – | *≈ 1000 for ≈ 100 ms* | – | |
 
+Then copy the measured averages into the battery model (web page → Config): `pw_core_mw`,
+`pw_cam_idle_mw`, `pw_cam_strm_mw`, `pw_cam_busy_mw` (mA × rail V).
+
 ## Rig total
 
 | condition | average mA / W | peak mA | min rail V | notes |

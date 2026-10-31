@@ -92,6 +92,7 @@ struct Heartbeat {
   uint8_t state;  // cam_state_t
   int8_t rssi;
   uint32_t heldShot;  // shot id held in PSRAM (0 = none)
+  uint16_t switchMs;  // slowest sensor resolution switch seen recently (0 = never switched)
 };
 size_t buildHeartbeat(char* buf, size_t cap, const Heartbeat& h);
 bool parseHeartbeat(const KvLine& kv, Heartbeat* out);

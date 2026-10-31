@@ -234,6 +234,8 @@ void buildSplash() {
 }
 
 // ---------------------------------------------------------------- main (viewfinder)
+void onBatteryLongPress(lv_event_t*);  // defined with the confirm overlay below
+
 void hideMenu() { fadeTo(g.menu, false, kMsFast); }
 
 void onViewfinderTap(lv_event_t*) {
@@ -250,8 +252,6 @@ void onMenu(lv_event_t* e) {
   intptr_t which = (intptr_t)lv_event_get_user_data(e);
   hideMenu();
   if (which == 1) show(Screen::Settings);
-  else if (which == 0) toast("video comes later", kOnPhoto);
-  else toast("photos: 192.168.4.1 on your phone", kOnPhoto);
 }
 
 void buildMain() {
@@ -295,6 +295,13 @@ void buildMain() {
   lv_obj_align(gr, LV_ALIGN_BOTTOM_RIGHT, 0, 0);
   g.footL = label(g.footer, fontFooter(), kOnPhoto, "");
   lv_obj_align(g.footL, LV_ALIGN_BOTTOM_LEFT, kFooterPadX, -kFooterPadB);
+  // Long-press the battery estimate to mark the bank as charged (not in Figma; no other place to
+  // do it without a phone).
+  lv_obj_t* batHit = plain(g.footer);
+  lv_obj_set_size(batHit, 80, kFooterH);
+  lv_obj_align(batHit, LV_ALIGN_BOTTOM_LEFT, 0, 0);
+  lv_obj_add_flag(batHit, LV_OBJ_FLAG_CLICKABLE);
+  lv_obj_add_event_cb(batHit, onBatteryLongPress, LV_EVENT_LONG_PRESSED, nullptr);
   g.footR = label(g.footer, fontFooter(), kOnPhoto, "");
   lv_obj_align(g.footR, LV_ALIGN_BOTTOM_RIGHT, -kFooterPadX, -kFooterPadB);
 
@@ -313,8 +320,10 @@ void buildMain() {
   lv_obj_set_style_bg_opa(g.menu, LV_OPA_COVER, 0);
   lv_obj_set_style_bg_main_opa(g.menu, LV_OPA_80, 0);
   lv_obj_set_style_bg_grad_opa(g.menu, LV_OPA_TRANSP, 0);
+  // video and media are hidden in v1 (owner, 2026-11-01); their cells keep the Figma positions.
   static const char* kItems[] = {"video", "settings", "media"};
   for (int i = 0; i < 3; i++) {
+    if (i != 1) continue;
     lv_obj_t* cell = plain(g.menu);
     lv_obj_set_size(cell, kScreenW / 3 + (i == 1 ? 1 : 0), kMenuH);
     lv_obj_set_pos(cell, i * kScreenW / 3, 0);
@@ -417,9 +426,8 @@ void updateMain(const Status& s, uint32_t now) {
   g.effect = s.uiEffect;
   setHidden(g.footer, s.uiMode != 1 || saving || err);
   if (s.uiMode == 1) {
-    // Left slot: the design shows a battery %, which the SE cannot read (no battery, bank level not
-    // exposed). Shows eyes online instead (docs/OPEN_QUESTIONS.md Q17).
-    snprintf(buf, sizeof(buf), "%d/4", s.camsOnline);
+    // Left slot: battery % ESTIMATED by energy counting (x4/energy.h); "~" marks it as an estimate.
+    snprintf(buf, sizeof(buf), "~%d%%", s.batteryPct);
     setText(g.footL, buf);
     if (!s.sdMounted) snprintf(buf, sizeof(buf), "NO SD");
     else if (s.sdFreeMb >= 10240) snprintf(buf, sizeof(buf), "%.1f GB", s.sdFreeMb / 1024.0f);
@@ -599,30 +607,41 @@ void closeConfirm() {
     g.confirm = nullptr;
   }
 }
-void onConfirmYes(lv_event_t*) {
+void onConfirmYes(lv_event_t* e) {
+  auto r = (app::Request)(intptr_t)lv_event_get_user_data(e);
   closeConfirm();
-  app::request(app::Request::FlashTest);
+  app::request(r);
 }
 void onConfirmNo(lv_event_t*) { closeConfirm(); }
 
-// On-screen confirmation for the flash test (requirement: "on-screen confirm").
-void onFlashTest(lv_event_t*) {
+// On-screen confirmation (flash test: requirement "on-screen confirm"; battery reset).
+void showConfirm(const char* title, const char* detail, const char* yes, app::Request r) {
   closeConfirm();
   g.confirm = lv_obj_create(lv_layer_top());
   lv_obj_set_size(g.confirm, kScreenW, kScreenH);
   lv_obj_set_style_bg_color(g.confirm, c(kBg), 0);
   lv_obj_set_style_bg_opa(g.confirm, LV_OPA_80, 0);
   lv_obj_set_style_border_width(g.confirm, 0, 0);
-  lv_obj_t* t = label(g.confirm, fontSub(), kOnPhoto, "Fire one 50 ms flash?");
+  lv_obj_t* t = label(g.confirm, fontSub(), kOnPhoto, title);
   lv_obj_align(t, LV_ALIGN_CENTER, 0, -40);
-  lv_obj_t* d = label(g.confirm, fontCaption(), kWarn, "Flashlight Unit on G2 (Port A yellow).\nDon't look into it.");
+  lv_obj_t* d = label(g.confirm, fontCaption(), kWarn, detail);
   lv_obj_set_style_text_align(d, LV_TEXT_ALIGN_CENTER, 0);
   lv_obj_align(d, LV_ALIGN_CENTER, 0, -6);
-  lv_obj_t* y = pillButton(g.confirm, "Fire", true, onConfirmYes, nullptr);
+  lv_obj_t* y = pillButton(g.confirm, yes, true, onConfirmYes, (void*)(intptr_t)r);
   lv_obj_align(y, LV_ALIGN_CENTER, 50, 44);
   lv_obj_t* n = pillButton(g.confirm, "Cancel", false, onConfirmNo, nullptr);
   lv_obj_align(n, LV_ALIGN_CENTER, -50, 44);
   reveal(t, 0);
+}
+
+void onFlashTest(lv_event_t*) {
+  showConfirm("Fire one 50 ms flash?", "Flashlight Unit on G2 (Port A yellow).\nDon't look into it.", "Fire",
+              app::Request::FlashTest);
+}
+
+void onBatteryLongPress(lv_event_t*) {
+  showConfirm("Bank charged?", "Sets the battery estimate to 100 %.\nIt counts down from there.", "Yes",
+              app::Request::BatteryFull);
 }
 
 void onTouchTest(lv_event_t*) {
@@ -684,7 +703,8 @@ void updateDiag(const Status& s, uint32_t now) {
            "temp %.1f°C%s · heap %luk (min %luk) · psram %luk\n"
            "reset %s · boots %lu · brown-outs %lu\n"
            "SD %s %lu/%lu MB · w %.0f r %.0f kB/s\n"
-           "button %s · flash %s%s · pulses %lu",
+           "button %s · flash %s%s · pulses %lu\n"
+           "battery ~%d%% · %.1f h left at %lu mW (estimate)",
            X4_FW_VERSION, X4_GIT_HASH, (unsigned long)(s.uptimeMs / 1000), s.fps, s.frameMaxUs / 1000.0f,
            s.busOutEn ? "ON!" : "off", s.usbOtgEn ? "ON!" : "off", (long)s.vbusMv, s.powerSafe ? "safe" : "UNSAFE",
            s.tempC, s.overheat ? " HOT" : s.hot ? " warm" : "", (unsigned long)(s.heap / 1024),
@@ -692,7 +712,8 @@ void updateDiag(const Status& s, uint32_t now) {
            (unsigned long)s.bootCount, (unsigned long)s.brownouts, s.sdMounted ? "ok" : "MISSING",
            (unsigned long)s.sdFreeMb, (unsigned long)s.sdTotalMb, s.sdWriteKBps, s.sdReadKBps,
            s.buttonDown ? "DOWN" : "up", s.flashEnabled ? "armed" : "disarmed",
-           s.flashEnabled ? (s.flashReady ? " ready" : " cooling") : "", (unsigned long)s.flashPulses);
+           s.flashEnabled ? (s.flashReady ? " ready" : " cooling") : "", (unsigned long)s.flashPulses, s.batteryPct,
+           s.batteryHours, (unsigned long)s.powerMw);
   setText(g.diagSys, b);
   lv_obj_set_style_text_color(g.diagSys, c(s.powerSafe ? kFg : kError), 0);
   size_t w = 0;
@@ -801,7 +822,7 @@ void toast(const char* text, uint32_t colorHex, uint32_t ms) {
   anim(g.toast, animOpa, LV_OPA_COVER, LV_OPA_TRANSP, kMsBase, pathBase(), ms);
 }
 
-void setPreviewJpeg(const uint8_t* jpg, uint32_t len) {
+void setPreviewJpeg(const uint8_t* jpg, uint32_t len, float scale) {
   if (!g.canvas) {
     g.canvas = new M5Canvas(&M5.Display);
     g.canvas->setPsram(true);
@@ -821,7 +842,7 @@ void setPreviewJpeg(const uint8_t* jpg, uint32_t len) {
     g.previewDsc.data = (const uint8_t*)g.canvas->getBuffer();
   }
   uint32_t t0 = micros();
-  g.canvas->drawJpg(jpg, len, 0, 0, kScreenW, kScreenH);
+  g.canvas->drawJpg(jpg, len, 0, 0, kScreenW, kScreenH, 0, 0, scale, scale);
   if (g.effect == 1) ditherBE565((uint16_t*)g.canvas->getBuffer(), kScreenW, kScreenH);
   uint32_t us = micros() - t0;
   lv_image_set_src(g.preview, &g.previewDsc);

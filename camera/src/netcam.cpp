@@ -149,7 +149,7 @@ void hbTask(void*) {
     const auto& c = conf::get();
     if (WiFi.isConnected() && !kHello) {
       Heartbeat h{sys::camId(), ++g_hbSeq, esp_timer_get_time(), (uint32_t)ESP.getFreeHeap(), (uint32_t)ESP.getFreePsram(),
-                  (int16_t)sys::tempC(), (uint8_t)cam::state(), (int8_t)WiFi.RSSI(), cam::heldShot()};
+                  (int16_t)sys::tempC(), (uint8_t)cam::state(), (int8_t)WiFi.RSSI(), cam::heldShot(), cam::switchMs()};
       size_t len = buildHeartbeat(out, sizeof(out), h);
       sendCore(out, len);
       while (sys::popForward(line, sizeof(line))) {

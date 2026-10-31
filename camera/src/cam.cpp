@@ -16,6 +16,7 @@ namespace {
 SemaphoreHandle_t g_mu = nullptr;  // sensor + frame buffers
 Identity g_id;
 int32_t g_curRes = -1;
+volatile uint16_t g_switchMs = 0;  // slowest switch in the current window (decays on reboot only)
 volatile x4::proto::CamState g_state = x4::proto::CamState::Booting;
 
 // Held shot
@@ -49,7 +50,9 @@ bool setResLocked(int32_t res) {
   camera_fb_t* fb = esp_camera_fb_get();
   if (fb) esp_camera_fb_return(fb);
   if (ok) g_curRes = res;
-  X4_LOGI("cam", "res", "res=%s ok=%d switch_ms=%lu", resName(res), ok, (unsigned long)(millis() - t0));
+  uint32_t ms = millis() - t0;
+  if (ms > g_switchMs) g_switchMs = (uint16_t)(ms > 65535 ? 65535 : ms);
+  X4_LOGI("cam", "res", "res=%s ok=%d switch_ms=%lu", resName(res), ok, (unsigned long)ms);
   return ok;
 }
 
@@ -329,6 +332,7 @@ void bench() {
 }
 
 x4::proto::CamState state() { return g_state; }
+uint16_t switchMs() { return g_switchMs; }
 void setState(x4::proto::CamState s) { g_state = s; }
 
 }  // namespace cam

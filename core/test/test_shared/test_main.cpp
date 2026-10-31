@@ -8,6 +8,7 @@
 
 #include "x4/config.h"
 #include "x4/dither.h"
+#include "x4/energy.h"
 #include "x4/input.h"
 #include "x4/log.h"
 #include "x4/protocol.h"
@@ -245,7 +246,7 @@ void test_proto_shoot_roundtrip() {
 
 void test_proto_heartbeat_ack_roundtrip() {
   char buf[200];
-  proto::Heartbeat h{3, 7, -5, 120000, 4000000, 55, 1, -61, 9};
+  proto::Heartbeat h{3, 7, -5, 120000, 4000000, 55, 1, -61, 9, 180};
   size_t n = proto::buildHeartbeat(buf, sizeof(buf), h);
   proto::KvLine kv;
   TEST_ASSERT_TRUE(kv.parse(buf, n));
@@ -254,6 +255,7 @@ void test_proto_heartbeat_ack_roundtrip() {
   TEST_ASSERT_EQUAL(3, g.cam);
   TEST_ASSERT_EQUAL(-61, g.rssi);
   TEST_ASSERT_EQUAL(9, g.heldShot);
+  TEST_ASSERT_EQUAL(180, g.switchMs);
 
   proto::ShotAck a{2, 42, 1, 1000, 2000, 1500000, 180, 0};
   n = proto::buildShotAck(buf, sizeof(buf), a);
@@ -550,6 +552,26 @@ void test_dither() {
   TEST_ASSERT_EQUAL(4, dither::bmpMonoRowBytes(16));
 }
 
+void test_energy_meter() {
+  energy::PowerModel m;  // defaults: core 900, idle 750, stream 1000, busy 1500
+  energy::Load l{3, 1, 0};
+  TEST_ASSERT_EQUAL(900 + 3 * 750 + 1000, energy::estimateMw(m, l));
+  energy::Meter b;
+  b.setCapacity(18500, 80);  // 14800 mWh usable
+  TEST_ASSERT_EQUAL(100, b.percent());
+  b.add(3600000, 4150);  // one hour at 4.15 W
+  TEST_ASSERT_FLOAT_WITHIN(0.5f, 4150.0f, b.usedMwh());
+  TEST_ASSERT_EQUAL(72, b.percent());  // 1 - 4150/14800 = 0.7196
+  TEST_ASSERT_FLOAT_WITHIN(0.01f, (14800.0f - 4150.0f) / 4150.0f, b.hoursLeft(4150));
+  b.addEnergy(energy::flashPulseMwh(m, 100) * 36);  // 36 flashes of 100 ms at 5 W = 5 mWh
+  TEST_ASSERT_FLOAT_WITHIN(0.5f, 4155.0f, b.usedMwh());
+  b.add(36000000, 5000);  // way past empty
+  TEST_ASSERT_EQUAL(0, b.percent());
+  TEST_ASSERT_EQUAL(0, (int)b.hoursLeft(1000));
+  b.reset();
+  TEST_ASSERT_EQUAL(100, b.percent());
+}
+
 int main(int, char**) {
   UNITY_BEGIN();
   RUN_TEST(test_log_format_basic);
@@ -584,5 +606,6 @@ int main(int, char**) {
   RUN_TEST(test_fsm_ignores_stale_and_duplicate_acks);
   RUN_TEST(test_storage_paths_and_sidecar);
   RUN_TEST(test_dither);
+  RUN_TEST(test_energy_meter);
   return UNITY_END();
 }

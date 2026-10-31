@@ -163,6 +163,17 @@ The map has a text form (`InputMap::parse`): `shutter.long=menu,encoder.rotate=s
 emits `encoder.rotate` with ± detents and the UI receives `scroll` actions. For an I2C encoder,
 write a `Driver` subclass in `inputs.cpp` that polls it and emits the same gestures.
 
+### Battery estimate
+
+`shared/include/x4/energy.h` (unit-tested). Every 250 ms the app estimates the rig's draw from a
+power model (`pw_core_mw` + per online camera `pw_cam_idle_mw` / `pw_cam_strm_mw` /
+`pw_cam_busy_mw` by heartbeat state, + flash pulses at 5 W × pulse) and integrates it.
+Remaining = `bat_cap_mwh × bat_eff_pct − used`. `used` is saved in NVS every 60 s and after each
+stored shot (power can disappear any time; at most a minute is lost). It cannot detect that the
+bank was recharged, so the user resets it: long-press the footer percentage → "Bank charged?",
+or *Bank charged* on the web page (`bat_full`). Accuracy depends on calibrating `pw_*_mw` with the
+USB meter (MEASUREMENTS.md).
+
 ## Camera firmware
 
 Boot: banner → config → **stagger `id × cam_stagger_ms`** → hardware-revision probe (SCCB
