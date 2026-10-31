@@ -1,6 +1,12 @@
 {
-	"recommendations": [
-		"platformio.platformio-ide",
-		"llvm-vs-code-extensions.vscode-clangd"
-	]
+  // x4: PlatformIO IDE for build/upload/monitor, clangd for code intelligence (faster and more
+  // accurate than Microsoft IntelliSense on ESP-IDF headers), XML for future LVGL XML views,
+  // Error Lens to show compiler errors inline.
+  "recommendations": [
+    "platformio.platformio-ide",
+    "llvm-vs-code-extensions.vscode-clangd",
+    "redhat.vscode-xml",
+    "usernamehw.errorlens"
+  ],
+  "unwantedRecommendations": ["ms-vscode.cpptools-extension-pack"]
 }

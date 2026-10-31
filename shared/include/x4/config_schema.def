@@ -50,7 +50,7 @@ X4_CFG(hb_offline_ms,   3500,  1000,  30000, ms,    CORE, 0,        "Mark a came
 // ---- camera ----------------------------------------------------------------------------------
 X4_CFG(cam_res,         5,     0,     5,     enum,  CAM,  0,        "Capture size: 0=QVGA 320x240, 1=VGA 640x480, 2=HD 1280x720, 3=UXGA 1600x1200, 4=FHD 1920x1080, 5=5MP 2592x1944 (the sizes the MEGA_CCM driver supports).")
 X4_CFG(cam_quality,     1,     0,     63,    enum,  CAM,  0,        "JPEG quality register. MEGA_CCM semantics ASSUMED 0=high 1=default 2=low; other sensors 0..63 lower=better.")
-X4_CFG(cam_jpeg_buf_kb, 2048,  512,   3072,  kB,    CAM,  REBOOT,   "JPEG frame buffer size in PSRAM. The driver default (w*h/5 = ~1 MB at 5 MP) can truncate big frames.")
+X4_CFG(cam_jpeg_buf_kb, 2560,  512,   3072,  kB,    CAM,  REBOOT,   "JPEG frame buffer size in PSRAM (x cam_fb_count). The driver default (w*h/5 = ~1 MB at 5 MP) can truncate big frames (err=204).")
 X4_CFG(cam_fb_count,    2,     1,     2,     count, CAM,  REBOOT,   "Frame buffers. 2 lets the camera hold one shot for upload while the other keeps capturing.")
 X4_CFG(cam_xclk_mhz,    20,    10,    24,    MHz,   CAM,  REBOOT,   "Sensor XCLK.")
 X4_CFG(cam_stagger_ms,  400,   0,     2000,  ms,    CAM,  REBOOT,   "Init stagger per camera id (id*value) to avoid all four cameras' init current peaks at once.")

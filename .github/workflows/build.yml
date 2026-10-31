@@ -1,0 +1,68 @@
+name: build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: native tests + generated files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Cache PlatformIO
+        uses: actions/cache@v4
+        with:
+          path: ~/.platformio
+          key: pio-native-${{ hashFiles('core/platformio.ini') }}
+      - run: pip install platformio==6.2.0
+      - name: Generated files are up to date
+        run: |
+          python tools/gen_tokens.py --check
+          python tools/gen_docs.py --check
+      - name: Unit tests (host)
+        working-directory: core
+        run: pio test -e native
+
+  build:
+    name: ${{ matrix.project }} / ${{ matrix.env }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { project: core, env: core }
+          - { project: core, env: core-hello }
+          - { project: core, env: hello-ui }
+          - { project: camera, env: cam1 }
+          - { project: camera, env: cam2 }
+          - { project: camera, env: cam3 }
+          - { project: camera, env: cam4 }
+          - { project: camera, env: cam-hello }
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # git hash for the boot banner
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Cache PlatformIO
+        uses: actions/cache@v4
+        with:
+          path: ~/.platformio
+          key: pio-${{ matrix.project }}-${{ hashFiles(format('{0}/platformio.ini', matrix.project)) }}
+      - run: pip install platformio==6.2.0
+      - name: Build
+        working-directory: ${{ matrix.project }}
+        run: pio run -e ${{ matrix.env }}
+      - name: Upload firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: fw-${{ matrix.env }}
+          path: |
+            ${{ matrix.project }}/.pio/build/${{ matrix.env }}/firmware.bin
+            ${{ matrix.project }}/.pio/build/${{ matrix.env }}/firmware.factory.bin
+          if-no-files-found: warn
