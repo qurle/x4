@@ -10,7 +10,7 @@
 
 namespace x4ui {
 
-enum class Screen : uint8_t { Splash, Main, Diagnostics };
+enum class Screen : uint8_t { Splash, Main, Settings, Diagnostics };
 
 void begin(bool helloMode);
 // Refresh visible widgets from the snapshot. Cheap: only changed values are written.

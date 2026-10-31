@@ -24,5 +24,8 @@ enum class Request : uint8_t {
 };
 void request(Request r);
 
+// Settings tiles: validates (tighten-only rules), persists and applies one option. UI loop only.
+bool setOption(const char* name, int32_t value);
+
 }  // namespace app
 }  // namespace x4core

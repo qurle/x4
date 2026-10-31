@@ -163,7 +163,7 @@ Low-current auto-off threshold: **Not sure** (not documented by Anker); measure 
 
 | item | value | how |
 |---|---|---|
-| USB-C breakout CC resistors | **present** (owner) — measure ≈ 5.1 kΩ CC1/CC2→GND once anyway | look / measure CC1, CC2 to GND |
+| USB-C breakout CC resistors | **present** (owner). Measured with the bank connected: CC1 ≈ 5 kΩ, CC2 ≈ 9.2 kΩ → **re-measure unplugged** (ohms are only valid on an unpowered circuit). If CC2 stays off 5.1 kΩ: power works in one plug orientation only (flip the plug if the rail reads 0 V) or use the bank's USB-A port | multimeter 20k range, GND ↔ CC1 / CC2, breakout unplugged |
 | breakout inline capacitor | value: ___ V rating: ___ input/output side: ___ | read marking |
 | 2200 µF voltage rating | **15 V** (owner) | read the can |
 | power switch rating | ___ A DC | read the marking |

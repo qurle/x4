@@ -55,6 +55,9 @@ def render(t):
     L.append("// ---- border (px) ----")
     for k, v in t["border"].items():
         L.append(f"constexpr int32_t kBorder{k[0].upper()}{k[1:]} = {v};")
+    L.append("// ---- layout (px, from Figma) ----")
+    for k, v in t.get("layout", {}).items():
+        L.append(f"constexpr int32_t k{k[0].upper()}{k[1:]} = {v['value']};  // {v.get('use', '')}")
     L.append("")
     L.append("// ---- motion ----")
     for k, v in t["motion"].items():

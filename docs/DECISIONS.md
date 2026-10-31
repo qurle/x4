@@ -81,9 +81,17 @@ hand-written docs (drift), JSON on SD (needs a card to boot).
 **Decision.** UI v1 is hand-written and token-driven; `ui_gen/` reserved for Editor C export.
 Runtime XML is paid and removed from open-source LVGL, so XML = compile-time export only.
 
-## ADR-013 Figma not accessible → placeholder tokens
-**Context.** The Figma MCP returned "no access to this file". **Decision.** Build on placeholder
-tokens and the brief's cues; ask the owner for access/exports. Not blocking: tokens are one JSON.
+## ADR-013 Figma not accessible → placeholder tokens (superseded by ADR-016)
+**Context.** The Figma MCP returned "no access to this file" (connector on the work account).
+**Decision.** Build on placeholder tokens; ask the owner. Superseded once access worked.
+
+## ADR-016 UI v2 implemented from Figma 73:368
+**Decision.** Replace the placeholder four-ring UI with the file's photo-first design: full-bleed
+preview, footer, tap menu, 2×2 settings tiles, Saving/Error overlays. Figma raster overlays are
+exported through the MCP (asset host blocked in the build sandbox, so via rendered screenshots)
+and baked into RGB565+A8 images by `tools/gen_assets.py`. New config options back the tiles
+(`ui_mode`, `ui_orient`, `ui_effect`, `cam_delay_ms`); the camera delay needed a protocol field
+(`dl=`, backwards compatible). Deviations are listed in UI.md "Compromises".
 
 ## ADR-014 No battery gauge
 The SE has no battery and the bank's level is not readable; the UI shows none.

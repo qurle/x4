@@ -78,6 +78,7 @@ sh::Params paramsFrom(const x4::cfg::Config& c) {
   p.parallel = (uint8_t)c.xfer_parallel;
   p.retries = (uint8_t)c.xfer_retries;
   p.minCams = (uint8_t)c.shoot_min_cams;
+  p.camDelayMs = (uint32_t)c.cam_delay_ms;
   return p;
 }
 
@@ -141,7 +142,8 @@ void startShot() {
   X4_LOGI("shoot", "start", "shot=%lu at_us=%lld lead_ms=%ld cams=%d flash=%d", (unsigned long)s.id,
           (long long)s.atUs, (long)conf::get().trig_lead_ms, s.expected(), s.flash);
   if (eff & sh::kSendTrigger) {
-    x4::proto::ShootCmd cmd{s.id, s.atUs, (uint8_t)s.flash, (uint8_t)conf::get().cam_res};
+    x4::proto::ShootCmd cmd{s.id, s.atUs, (uint8_t)s.flash, (uint8_t)conf::get().cam_res,
+                            (uint32_t)conf::get().cam_delay_ms * 1000u};
     net::sendShoot(cmd, (uint8_t)conf::get().trig_repeat);
   }
   if (eff & sh::kFireFlash) {
@@ -159,7 +161,9 @@ void writeSidecar() {
   char* buf = (char*)heap_caps_malloc(2048, MALLOC_CAP_SPIRAM);
   if (!buf) return;
   const auto& c = conf::get();
-  x4::storage::SidecarInfo info{&s, X4_FW_VERSION, X4_GIT_HASH, "", c.cam_res, c.cam_quality, s.flash, (int32_t)g_temp};
+  x4::storage::SidecarInfo info{&s, X4_FW_VERSION, X4_GIT_HASH, "", c.cam_res, c.cam_quality, s.flash, (int32_t)g_temp,
+                                c.ui_orient ? "portrait" : "horizontal", c.ui_effect ? "dithered" : "normal",
+                                c.cam_delay_ms};
   size_t n = x4::storage::sidecarJson(buf, 2048, info);
   char path[48];
   x4::storage::sidecarFile(path, sizeof(path), s.id);
@@ -372,6 +376,11 @@ void publishStatus(uint32_t now) {
   st.previewOn = g_previewOn;
   st.apStations = g_mode == Mode::Full ? net::apStations() : 0;
   st.buttonDown = inputs::shutterPressed();
+  const auto& cf = conf::get();
+  st.uiMode = (uint8_t)cf.ui_mode;
+  st.uiOrient = (uint8_t)cf.ui_orient;
+  st.uiEffect = (uint8_t)cf.ui_effect;
+  st.camDelayMs = (uint16_t)cf.cam_delay_ms;
   status::publish(st);
   x4ui::update(st, now);
 }
@@ -393,6 +402,8 @@ void pullPreview(uint32_t now) {
 void request(Request r) {
   if (g_req) xQueueSend(g_req, &r, 0);
 }
+
+bool setOption(const char* name, int32_t value) { return conf::set(name, value, nullptr); }
 
 void setup(Mode m) {
   g_mode = m;

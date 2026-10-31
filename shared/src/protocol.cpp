@@ -107,8 +107,8 @@ int64_t KvLine::i64(const char* key, int64_t def) const {
 }
 
 size_t buildShoot(char* buf, size_t cap, const ShootCmd& c) {
-  return fin(snprintf(buf, cap, "X4/%d SHOOT shot=%" PRIu32 " at=%" PRId64 " fl=%u res=%u",
-                      X4_PROTOCOL_VERSION, c.shot, c.atUs, (unsigned)c.flash, (unsigned)c.res),
+  return fin(snprintf(buf, cap, "X4/%d SHOOT shot=%" PRIu32 " at=%" PRId64 " fl=%u res=%u dl=%" PRIu32,
+                      X4_PROTOCOL_VERSION, c.shot, c.atUs, (unsigned)c.flash, (unsigned)c.res, c.dlUs),
              cap);
 }
 
@@ -119,6 +119,7 @@ bool parseShoot(const KvLine& kv, ShootCmd* out) {
   c.atUs = kv.i64("at", 0);
   c.flash = (uint8_t)kv.i64("fl", 0);
   c.res = (uint8_t)kv.i64("res", 5);
+  c.dlUs = (uint32_t)kv.i64("dl", 0);
   *out = c;
   return true;
 }

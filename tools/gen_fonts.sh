@@ -16,11 +16,16 @@ gen() { # name ttf size
     -r "$RANGE" --format lvgl --lv-include lvgl.h -o "$OUT/$1.c" --force-fast-kern-format
   echo "generated $OUT/$1.c"
 }
+# Sizes follow the Figma file (node 73:368): serif 48 (Saving/Error), 36 + 34 (settings tiles),
+# 32 (tap menu), 24 ("1 of 4"); Space Mono Bold 13 (footer). 64 = splash, mono 12/14/18 = diagnostics.
 gen x4_serif_64 InstrumentSerif-Regular.ttf 64
-gen x4_serif_40 InstrumentSerif-Regular.ttf 40
+gen x4_serif_48 InstrumentSerif-Regular.ttf 48
+gen x4_serif_36 InstrumentSerif-Regular.ttf 36
+gen x4_serif_34 InstrumentSerif-Regular.ttf 34
+gen x4_serif_32 InstrumentSerif-Regular.ttf 32
 gen x4_serif_24 InstrumentSerif-Regular.ttf 24
-gen x4_serif_italic_24 InstrumentSerif-Italic.ttf 24
 gen x4_mono_12 SpaceMono-Regular.ttf 12
 gen x4_mono_14 SpaceMono-Regular.ttf 14
 gen x4_mono_18 SpaceMono-Regular.ttf 18
+gen x4_mono_bold_13 SpaceMono-Bold.ttf 13
 gen x4_mono_bold_14 SpaceMono-Bold.ttf 14

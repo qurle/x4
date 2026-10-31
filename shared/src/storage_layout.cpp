@@ -36,11 +36,13 @@ size_t sidecarJson(char* buf, size_t cap, const SidecarInfo& in) {
   put(snprintf(buf + w, cap - w,
                "{\"format\":\"x4-shot/1\",\"shot\":%" PRIu32 ",\"fw\":\"%s\",\"git\":\"%s\","
                "\"rtc\":\"%s\",\"res\":%ld,\"quality\":%ld,\"flash\":%s,\"temp_c\":%ld,"
+               "\"orientation\":\"%s\",\"effect\":\"%s\",\"cam_delay_ms\":%ld,"
                "\"t0_ms\":%" PRIu32 ",\"at_us\":%" PRId64 ",\"captured_ms\":%" PRIu32
                ",\"done_ms\":%" PRIu32 ",\"total_ms\":%" PRIu32 ",\"skew_us\":%" PRId64
                ",\"cams\":[",
                s.id, in.fw ? in.fw : "", in.git ? in.git : "", in.rtcIso ? in.rtcIso : "",
                (long)in.res, (long)in.quality, in.flash ? "true" : "false", (long)in.tempC,
+               in.orientation ? in.orientation : "horizontal", in.effect ? in.effect : "normal", (long)in.camDelayMs,
                s.t0Ms, s.atUs, s.capturedAtMs, s.doneAtMs, s.totalMs(), s.skewUs()));
   bool first = true;
   for (int i = 0; i < proto::kMaxCams && w < cap; i++) {

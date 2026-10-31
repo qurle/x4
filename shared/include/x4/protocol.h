@@ -77,6 +77,7 @@ struct ShootCmd {
   int64_t atUs;    // Core time to capture at (esp_timer us). 0 = immediately on receipt.
   uint8_t flash;   // 1 if the Core will fire the flash around atUs (cameras may lock exposure)
   uint8_t res;     // cfg cam_res value to use for this shot
+  uint32_t dlUs;   // per-camera delay: camera N captures at atUs + (N-1) * dlUs (0 = simultaneous)
 };
 size_t buildShoot(char* buf, size_t cap, const ShootCmd& c);
 bool parseShoot(const KvLine& kv, ShootCmd* out);

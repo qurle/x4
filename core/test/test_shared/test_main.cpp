@@ -219,10 +219,10 @@ void test_flash_guard() {
 // ---------------------------------------------------------------- protocol
 void test_proto_shoot_roundtrip() {
   char buf[128];
-  proto::ShootCmd c{42, 123456789012LL, 1, 5};
+  proto::ShootCmd c{42, 123456789012LL, 1, 5, 0};
   size_t n = proto::buildShoot(buf, sizeof(buf), c);
   TEST_ASSERT_TRUE(n > 0);
-  TEST_ASSERT_EQUAL_STRING("X4/1 SHOOT shot=42 at=123456789012 fl=1 res=5", buf);
+  TEST_ASSERT_EQUAL_STRING("X4/1 SHOOT shot=42 at=123456789012 fl=1 res=5 dl=0", buf);
   proto::KvLine kv;
   TEST_ASSERT_TRUE(kv.parse(buf, n));
   TEST_ASSERT_EQUAL(1, kv.version());
@@ -231,6 +231,16 @@ void test_proto_shoot_roundtrip() {
   TEST_ASSERT_EQUAL(42, d.shot);
   TEST_ASSERT_TRUE(d.atUs == 123456789012LL);
   TEST_ASSERT_EQUAL(1, d.flash);
+  TEST_ASSERT_EQUAL(0, d.dlUs);
+  // older senders without dl= still parse (dl defaults to 0)
+  TEST_ASSERT_TRUE(kv.parse("X4/1 SHOOT shot=7 at=0 fl=0 res=5", 33));
+  TEST_ASSERT_TRUE(proto::parseShoot(kv, &d));
+  TEST_ASSERT_EQUAL(0, d.dlUs);
+  proto::ShootCmd e{8, 0, 0, 5, 300000};
+  n = proto::buildShoot(buf, sizeof(buf), e);
+  TEST_ASSERT_TRUE(kv.parse(buf, n));
+  TEST_ASSERT_TRUE(proto::parseShoot(kv, &d));
+  TEST_ASSERT_EQUAL(300000, d.dlUs);
 }
 
 void test_proto_heartbeat_ack_roundtrip() {
@@ -442,6 +452,17 @@ void test_fsm_ack_timeout_and_partial() {
   TEST_ASSERT_EQUAL((int)shoot::State::Armed, (int)c.state());
 }
 
+void test_fsm_ack_timeout_includes_cam_delay() {
+  shoot::Params p;
+  p.camDelayMs = 1000;  // last camera fires 3 s after the first
+  shoot::Controller c(p);
+  allOnline(c, 4);
+  c.bootDone(0);
+  c.shutter(0, 0, 1);
+  TEST_ASSERT_EQUAL(shoot::kNone, c.tick(p.ackTimeoutMs + p.leadMs + 2000));  // still waiting
+  TEST_ASSERT_TRUE(c.tick(p.ackTimeoutMs + p.leadMs + 3001) & shoot::kShotCaptured);
+}
+
 void test_fsm_transfer_retries() {
   shoot::Params p;
   p.retries = 1;
@@ -497,11 +518,13 @@ void test_storage_paths_and_sidecar() {
   s.cam[0].expected = s.cam[0].ok = s.cam[0].stored = true;
   s.cam[0].bytes = 1234;
   char js[1024];
-  storage::SidecarInfo info{&s, "0.1.0", "abc", "", 5, 1, false, 50};
+  storage::SidecarInfo info{&s, "0.1.0", "abc", "", 5, 1, false, 50, "portrait", "dithered", 200};
   size_t n = storage::sidecarJson(js, sizeof(js), info);
   TEST_ASSERT_TRUE(n > 0);
   TEST_ASSERT_NOT_NULL(strstr(js, "\"shot\":42"));
   TEST_ASSERT_NOT_NULL(strstr(js, "\"file\":\"cam1.jpg\""));
+  TEST_ASSERT_NOT_NULL(strstr(js, "\"orientation\":\"portrait\""));
+  TEST_ASSERT_NOT_NULL(strstr(js, "\"effect\":\"dithered\""));
   TEST_ASSERT_EQUAL(0, storage::sidecarJson(js, 20, info));  // overflow reported
 }
 
@@ -555,6 +578,7 @@ int main(int, char**) {
   RUN_TEST(test_fsm_boot_to_armed);
   RUN_TEST(test_fsm_full_shot);
   RUN_TEST(test_fsm_ack_timeout_and_partial);
+  RUN_TEST(test_fsm_ack_timeout_includes_cam_delay);
   RUN_TEST(test_fsm_transfer_retries);
   RUN_TEST(test_fsm_faults);
   RUN_TEST(test_fsm_ignores_stale_and_duplicate_acks);

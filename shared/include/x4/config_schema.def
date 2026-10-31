@@ -31,6 +31,7 @@ X4_CFG(trig_lead_ms,    120,   0,     1000,  ms,    CORE, 0,        "Schedule th
 X4_CFG(trig_repeat,     3,     1,     5,     count, CORE, 0,        "UDP shoot packet repeats (broadcast + unicast each time); cameras de-duplicate by shot id.")
 X4_CFG(trig_ack_ms,     1500,  200,   5000,  ms,    CORE, 0,        "How long the Core waits for every camera's capture ACK before marking it missing.")
 X4_CFG(shot_budget_ms,  5000,  1000,  30000, ms,    CORE, 0,        "Target time from shutter to all photos stored. Exceeding it logs err=407.")
+X4_CFG(cam_delay_ms,    0,     0,     1000,  ms,    CORE, 0,        "Settings tile 'cam delay': camera N captures (N-1) x this after the first (0 = all four at once; Figma range 0.2-1 s for sequential/wiggle shots).")
 X4_CFG(shoot_min_cams,  1,     1,     4,     count, CORE, 0,        "Cameras that must be online before the shutter is armed. 4 = refuse to shoot with a camera missing.")
 X4_CFG(burst_frames,    1,     1,     5,     count, CORE, SAFE_MAX, "RESERVED: frames per shutter press. v1 firmware always shoots 1 frame (bursts need multi-frame holding on the cameras). Hard max 5.")
 
@@ -76,4 +77,7 @@ X4_CFG(btn_double_ms,   0,     0,     600,   ms,    CORE, 0,        "Double-clic
 X4_CFG(ui_brightness,   160,   10,    255,   level, CORE, 0,        "Backlight brightness.")
 X4_CFG(ui_sound,        1,     0,     1,     bool,  CORE, 0,        "Shutter sound through the Core speaker.")
 X4_CFG(ui_volume,       96,    0,     255,   level, CORE, 0,        "Speaker volume.")
+X4_CFG(ui_mode,         1,     0,     1,     enum,  CORE, 0,        "Settings tile 'ui': 0 = minml (photo only + flash recharge indicator), 1 = full (footer with eyes online and SD free).")
+X4_CFG(ui_orient,       0,     0,     1,     enum,  CORE, 0,        "Settings tile 'orientation': 0 = horzntl, 1 = portrait (preview dims the sides to a 180 px crop; recorded in shot.json for the companion to crop).")
+X4_CFG(ui_effect,       0,     0,     1,     enum,  CORE, 0,        "Settings tile 'effect': 0 = normal, 1 = dithered (applied to the live preview; photos stay original, the choice is recorded in shot.json).")
 X4_CFG(ui_show_fps,     0,     0,     1,     bool,  CORE, 0,        "FPS overlay in the corner.")

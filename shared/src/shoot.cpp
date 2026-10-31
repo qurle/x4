@@ -197,7 +197,7 @@ uint32_t Controller::finishIfSettled(uint32_t nowMs) {
 
 uint32_t Controller::tick(uint32_t nowMs) {
   if (state_ != State::Shooting) return kNone;
-  if ((uint32_t)(nowMs - s_.t0Ms) < p_.ackTimeoutMs + p_.leadMs) return kNone;
+  if ((uint32_t)(nowMs - s_.t0Ms) < p_.ackTimeoutMs + p_.leadMs + 3 * p_.camDelayMs) return kNone;
   // ACK timeout: whoever did not answer has failed this shot.
   for (auto& c : s_.cam)
     if (c.expected && !c.acked && !c.failed) c.failed = true;

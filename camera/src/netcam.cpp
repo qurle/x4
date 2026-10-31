@@ -126,6 +126,9 @@ void shooterTask(void*) {
                               (long long)(now - localAt));
       localAt = 0;
     }
+    // Sequential mode (settings tile "cam delay"): camera N fires (N-1) x dl after the first.
+    int64_t seqOffset = (int64_t)(sys::camId() > 0 ? sys::camId() - 1 : 0) * (int64_t)j.cmd.dlUs;
+    if (seqOffset) localAt = (localAt ? localAt : j.rxLocalUs) + seqOffset;
     cam::ShotResult r = cam::shoot(j.cmd.shot, localAt, j.cmd.res, j.rxLocalUs);
     ShotAck a{sys::camId(), r.shot, (uint8_t)r.ok, toCore(r.rxLocalUs), toCore(r.capLocalUs), r.bytes, r.capMs, r.err};
     size_t len = buildShotAck(out, sizeof(out), a);

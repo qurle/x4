@@ -22,7 +22,7 @@ no router, no phone needed.
 | 0 | flashable hello builds, logging + config, power-safety assertion, bring-up tests, camera bench incl. 5 MP | built, unit-tested, **needs hardware** |
 | 1 | SoftAP, registration, heartbeat + clock sync, UDP trigger, status on screen | built, needs hardware |
 | 2 | shooting state machine, input abstraction, flash safety, capture-then-transfer, SD layout, web debug page | built, needs hardware |
-| 3 | UI v1 (tokens, Instrument Serif + Space Mono, animations, diagnostics) | built on **placeholder tokens** (Figma not accessible yet) |
+| 3 | UI v2 from the Figma file (photo-first viewfinder, tap menu, settings tiles, Saving/Error overlays, Instrument Serif + Space Mono) + diagnostics | built, needs the panel to judge |
 | 4 | live preview from one camera | built, needs measuring |
 | 5 | OTA over the AP, docs, measurement templates | OTA built; measurements pending |
 
@@ -58,5 +58,5 @@ safety, protocol, state machine) · `ui/` design tokens + fonts · `tools/` gene
 ## Read first
 
 - [Power and safety](docs/POWER.md) — why the Core can be fed through Port A, and what never to do
-- [Open questions](docs/OPEN_QUESTIONS.md) — what still needs your input (Figma access is #2)
+- [Open questions](docs/OPEN_QUESTIONS.md) — what still needs your input (Q17–Q20 are new from the Figma pass)
 - [Decisions](docs/DECISIONS.md)

@@ -6,7 +6,7 @@ Items marked ⚠ could cost a component if the default is wrong; their default i
 | # | question | default now (ASSUMPTION) | how to settle | blocking? |
 |---|---|---|---|---|
 | Q1 | Which Grove port/pins for the Core power lead, button and flash? | The SE has **only Port A**: one split Grove cable, red/black = rail, white G1 = button, yellow G2 = flash EN. Fallback: flash EN on M-Bus G7, button on G8 | bring-up step 3 (G2 idle voltage) | no |
-| Q2 | **Figma access.** Node 73:368 still unreadable (2026-10-31 retry): the Figma connector is signed in as the *work* account, the file is a view-only draft in the *personal* account, and the MCP asks for edit access | placeholder tokens in `ui/tokens.json`, UI v1 built on them | owner: reconnect the Figma connector with the personal account, or invite the connected account as editor, or move the file to a team where that account can edit; fallback: export frames (PNG @2x) + variables (JSON) into `ui/assets/` | no (UI polish waits) |
+| Q2 | ~~Figma access~~ **resolved 2026-10-31**: connector re-linked to the personal account; UI v2 implemented from node 73:368 | – | – | closed |
 | Q3 | USB-C breakout inline capacitor: input or output side, value, voltage? (**CC resistors: present**, 2200 µF cap: **15 V** — answered 2026-10-31) | treated as unknown; checked before first power-up | bring-up step 1, record in HARDWARE.md | no |
 | Q4 | ~~Font glyph sets~~ **answered 2026-10-31: Latin only, no Cyrillic** | Latin + ° · × – — … • | – | closed |
 | Q5 | Flash mode trigger semantics on the real unit | slide switch FLASH, one rising edge, EN high for `flash_pulse_ms` (100 ms), hardware timeout ≈ 220 ms as backstop | scope or 240 fps slow-mo at bring-up step 5 | no |
@@ -21,5 +21,10 @@ Items marked ⚠ could cost a component if the default is wrong; their default i
 | Q14 | Companion app scope (post-processing: alignment, dither, GIF/wiggle?) | not started; web page first | owner | no |
 | Q15 | Should shooting require all four cameras? | `shoot_min_cams=1` (shoot with what's online, mark missing) | owner; set 4 to refuse | no |
 | Q16 | Do you want an RTC clock set (phone → web page) so files carry real timestamps? | counter-based names, RTC field empty | owner | no |
+
+| Q17 | Footer left slot: the design shows a battery %, which the SE cannot measure (no battery, bank level not exposed). What should it show? | eyes online, e.g. `4/4` | owner: eyes online / shots taken / session time estimate (labelled) / nothing | no |
+| Q18 | "cam delay 0.2–1 s": delay **between cameras** (sequential/wiggle shots) or a **self-timer** before all four fire? Keep 0 = simultaneous? | between cameras, 0 = simultaneous, 0.2–1.0 s steps | owner | no |
+| Q19 | Tap menu "video" and "media": what should they do in v1? | toasts (video later; photos on the web page) | owner | no |
+| Q20 | Breakout CC2 read 9.2 kΩ, but measured with the bank connected (invalid for an ohm reading) | CC1 ≈ 5 kΩ OK; re-measure CC2 unplugged | owner, 1 minute with the meter | no |
 
 Questions the owner already answered (brief §12) are not repeated here.

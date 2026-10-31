@@ -86,6 +86,7 @@ struct Params {
   uint8_t parallel = 2;
   uint8_t retries = 2;
   uint8_t minCams = 1;
+  uint32_t camDelayMs = 0;  // sequential capture: the last camera fires 3 x this after the first
 };
 
 class Controller {

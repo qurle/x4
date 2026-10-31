@@ -67,6 +67,11 @@ struct Status {
   bool previewOn;
   int apStations;
   bool buttonDown;
+  // settings tiles (config mirror for the UI)
+  uint8_t uiMode;      // 0 minimal, 1 full
+  uint8_t uiOrient;    // 0 horizontal, 1 portrait
+  uint8_t uiEffect;    // 0 normal, 1 dithered
+  uint16_t camDelayMs;
 };
 
 namespace status {

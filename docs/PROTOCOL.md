@@ -22,7 +22,7 @@ Source of truth for names and ports: `shared/include/x4/protocol.h` (tested in
 Grammar: `X4/1 <TYPE> key=value key=value …` on one line, ASCII, ≤ 196 bytes.
 
 ```
-X4/1 SHOOT shot=42 at=123456789 fl=1 res=5
+X4/1 SHOOT shot=42 at=123456789 fl=1 res=5 dl=0
 X4/1 HB cam=2 seq=118 t1=98765432 heap=180000 psram=2800000 temp=51 st=1 rssi=-48 held=0
 X4/1 HBA seq=118 t1=98765432 t2=123400000
 X4/1 ACK cam=2 shot=42 ok=1 rx=123335000 cap=123458800 bytes=1534221 cap_ms=211 err=0
@@ -32,7 +32,7 @@ X4/1 CMD cmd=reboot
 
 | message | fields |
 |---|---|
-| `SHOOT` | `shot` (id, persistent counter on the Core), `at` = capture time in **Core** µs (`esp_timer`), 0 = now; `fl` 1 if the Core fires the flash; `res` = `cam_res` value |
+| `SHOOT` | `shot` (id, persistent counter on the Core), `at` = capture time in **Core** µs (`esp_timer`), 0 = now; `fl` 1 if the Core fires the flash; `res` = `cam_res` value; `dl` = per-camera delay in µs (camera N captures at `at + (N−1)·dl`; 0 = simultaneous; missing = 0) |
 | `HB` | `cam` 1–4, `seq`, `t1` camera µs at send, `heap`, `psram`, `temp` °C (die), `st` camera state (0 booting, 1 idle, 2 armed, 3 capturing, 4 holding, 5 streaming, 6 error), `rssi`, `held` shot id held (0 none) |
 | `HBA` | echoes `seq`, `t1`; `t2` = Core µs when the HB arrived |
 | `ACK` | `cam`, `shot`, `ok`, `rx` / `cap` = receive and frame-start times **converted to Core µs**, `bytes`, `cap_ms` (grab duration), `err` (x4 error code if `ok=0`) |
@@ -88,6 +88,6 @@ Error body (all endpoints): `{"ok":false,"err":<code>,"err_name":"…","detail":
 /x4/logs/x4.log, x4.1.log         (only with log_sd=1)
 ```
 `shot.json` (`format: "x4-shot/1"`): shot id, fw, git, rtc (empty: RTC not set), res, quality,
-flash, temp_c, t0_ms, at_us, captured_ms, done_ms, total_ms, skew_us, and per camera: cam, ok,
+flash, temp_c, orientation (`horizontal`/`portrait`), effect (`normal`/`dithered`), cam_delay_ms, t0_ms, at_us, captured_ms, done_ms, total_ms, skew_us, and per camera: cam, ok,
 stored, bytes, cap_ms, cap_us, rx_us, stored_ms, tries, file. Builder:
 `shared/src/storage_layout.cpp` (unit-tested).

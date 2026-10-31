@@ -33,6 +33,9 @@ struct SidecarInfo {
   int32_t quality;
   bool flash;
   int32_t tempC;
+  const char* orientation;  // "horizontal" / "portrait"
+  const char* effect;       // "normal" / "dithered" (applied by the companion, photos stay original)
+  int32_t camDelayMs;
 };
 // Writes the JSON sidecar. Returns length, 0 on overflow.
 size_t sidecarJson(char* buf, size_t cap, const SidecarInfo& info);
