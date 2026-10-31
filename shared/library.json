@@ -1,0 +1,12 @@
+{
+  "name": "x4-shared",
+  "version": "0.1.0",
+  "description": "x4 shared code: logging, config schema, safety limits, protocol, input mapping, shooting state machine. Hardware-independent; compiled into the Core, the camera and the native tests.",
+  "frameworks": "*",
+  "platforms": "*",
+  "build": {
+    "srcDir": "src",
+    "includeDir": "include",
+    "flags": ["-std=gnu++17"]
+  }
+}
