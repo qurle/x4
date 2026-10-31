@@ -1,0 +1,12 @@
+{
+  // PlatformIO IDE installs ms-vscode.cpptools; switch its IntelliSense off so clangd owns it.
+  "C_Cpp.intelliSenseEngine": "disabled",
+  "C_Cpp.autocomplete": "disabled",
+  "C_Cpp.errorSquiggles": "disabled",
+  // compile_commands.json per project: run the "x4: clangd database" task once per project.
+  "clangd.arguments": ["--compile-commands-dir=${workspaceFolder}/core", "--header-insertion=never", "--query-driver=**/xtensa-esp32s3-elf-*"],
+  "files.associations": { "*.def": "cpp", "*.ini": "ini" },
+  "editor.formatOnSave": false,
+  "platformio-ide.autoOpenPlatformIOIniFile": false,
+  "errorLens.excludeBySource": ["clangd(pp_file_not_found)"]
+}

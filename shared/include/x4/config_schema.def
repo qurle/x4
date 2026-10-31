@@ -1,0 +1,83 @@
+// x4 configuration schema: the single source of truth for every tunable option.
+//
+// X4_CFG(name, default, min, max, unit, scope, flags, "description")
+//   name     <= 15 chars (it is also the NVS key), [a-z0-9_]
+//   default  compile-time default (edit here, or override in core/include/config.h / camera/include/config.h)
+//   min,max  allowed range; values outside are clamped and logged (err=500 CFG_CLAMPED)
+//   unit     ms, us, C, %, count, bool, enum, kB, MHz, level, ch
+//   scope    CORE, CAM or BOTH (which firmware reads it)
+//   flags    0 or a | combination of:
+//              SAFE_MAX  safety-limited: at runtime it may only go DOWN from the default (tighten)
+//              SAFE_MIN  safety-limited: at runtime it may only go UP from the default (tighten)
+//              REBOOT    takes effect after a reboot
+//
+// docs/CONFIG.md is generated from this file: run `python tools/gen_docs.py` after editing.
+// Absolute safety limits that config can never cross are in safety.h.
+
+// ---- logging ---------------------------------------------------------------------------------
+X4_CFG(log_level,       2,     0,     4,     level, BOTH, 0,        "Runtime log level: 0=ERROR 1=WARN 2=INFO 3=DEBUG 4=TRACE.")
+X4_CFG(log_sd,          0,     0,     1,     bool,  CORE, REBOOT,   "Also write logs to /x4/logs on the SD card (rotating, size-capped). Off by default: costs SD bandwidth.")
+X4_CFG(log_sd_max_kb,   512,   64,    4096,  kB,    CORE, 0,        "Max size of one SD log file before it rotates (2 files kept).")
+X4_CFG(log_fwd_level,   1,     0,     2,     level, CAM,  0,        "Cameras forward log lines at this level or more severe to the Core (1=WARN+).")
+
+// ---- flash (Flashlight Unit, flash mode) ------------------------------------------------------
+X4_CFG(flash_enabled,   0,     0,     1,     bool,  CORE, 0,        "Allow the flash to fire with shots. Off by default until the bring-up flash test passed.")
+X4_CFG(flash_pulse_ms,  100,   10,    150,   ms,    CORE, SAFE_MAX, "Flash EN high time per shot. Hard cap 150 ms (safety.h).")
+X4_CFG(flash_cool_ms,   10000, 8000,  60000, ms,    CORE, SAFE_MIN, "Minimum time between flashes (M5 recommends 8-15 s). Never below 8000.")
+X4_CFG(flash_lead_ms,   0,     0,     100,   ms,    CORE, 0,        "Fire the flash this long before the scheduled capture time.")
+
+// ---- shooting / trigger ----------------------------------------------------------------------
+X4_CFG(trig_lead_ms,    120,   0,     1000,  ms,    CORE, 0,        "Schedule the capture this far in the future so every camera gets the packet first (0 = shoot on receipt).")
+X4_CFG(trig_repeat,     3,     1,     5,     count, CORE, 0,        "UDP shoot packet repeats (broadcast + unicast each time); cameras de-duplicate by shot id.")
+X4_CFG(trig_ack_ms,     1500,  200,   5000,  ms,    CORE, 0,        "How long the Core waits for every camera's capture ACK before marking it missing.")
+X4_CFG(shot_budget_ms,  5000,  1000,  30000, ms,    CORE, 0,        "Target time from shutter to all photos stored. Exceeding it logs err=407.")
+X4_CFG(cam_delay_ms,    0,     0,     1000,  ms,    CORE, 0,        "Settings tile 'cam delay': camera N captures (N-1) x this after the first (0 = all four at once; Figma range 0.2-1 s for sequential/wiggle shots).")
+X4_CFG(shoot_min_cams,  1,     1,     4,     count, CORE, 0,        "Cameras that must be online before the shutter is armed. 4 = refuse to shoot with a camera missing.")
+X4_CFG(burst_frames,    1,     1,     5,     count, CORE, SAFE_MAX, "RESERVED: frames per shutter press. v1 firmware always shoots 1 frame (bursts need multi-frame holding on the cameras). Hard max 5.")
+
+// ---- transfer --------------------------------------------------------------------------------
+X4_CFG(xfer_parallel,   2,     1,     4,     count, CORE, 0,        "How many cameras upload at the same time. 1 = strictly staggered.")
+X4_CFG(xfer_retries,    2,     0,     5,     count, CORE, 0,        "Retries per photo download before err=403.")
+X4_CFG(xfer_timeout_ms, 8000,  1000,  30000, ms,    CORE, 0,        "HTTP timeout for one photo download.")
+
+// ---- WiFi / SoftAP ---------------------------------------------------------------------------
+X4_CFG(ap_channel,      6,     1,     13,    ch,    BOTH, REBOOT,   "SoftAP channel. Cameras scan only this channel (faster join).")
+X4_CFG(ap_max_clients,  6,     6,     10,    count, CORE, REBOOT,   "SoftAP station limit (ESP32 default is 4; 4 cams + phone + spare = 6).")
+X4_CFG(ap_hidden,       0,     0,     1,     bool,  CORE, REBOOT,   "Hide the SSID.")
+X4_CFG(wifi_tx_qdbm,    78,    20,    84,    qdBm,  BOTH, REBOOT,   "WiFi TX power in 0.25 dBm steps (78 = 19.5 dBm). Lower it to cut current peaks if brown-outs appear.")
+X4_CFG(hb_period_ms,    1000,  250,   10000, ms,    BOTH, 0,        "Camera heartbeat period (also used for clock sync).")
+X4_CFG(hb_offline_ms,   3500,  1000,  30000, ms,    CORE, 0,        "Mark a camera offline after this long without a heartbeat.")
+
+// ---- camera ----------------------------------------------------------------------------------
+X4_CFG(cam_res,         5,     0,     5,     enum,  CAM,  0,        "Capture size: 0=QVGA 320x240, 1=VGA 640x480, 2=HD 1280x720, 3=UXGA 1600x1200, 4=FHD 1920x1080, 5=5MP 2592x1944 (the sizes the MEGA_CCM driver supports).")
+X4_CFG(cam_quality,     1,     0,     63,    enum,  CAM,  0,        "JPEG quality register. MEGA_CCM semantics ASSUMED 0=high 1=default 2=low; other sensors 0..63 lower=better.")
+X4_CFG(cam_jpeg_buf_kb, 2560,  512,   3072,  kB,    CAM,  REBOOT,   "JPEG frame buffer size in PSRAM (x cam_fb_count). The driver default (w*h/5 = ~1 MB at 5 MP) can truncate big frames (err=204).")
+X4_CFG(cam_fb_count,    2,     1,     2,     count, CAM,  REBOOT,   "Frame buffers. 2 lets the camera hold one shot for upload while the other keeps capturing.")
+X4_CFG(cam_xclk_mhz,    20,    10,    24,    MHz,   CAM,  REBOOT,   "Sensor XCLK.")
+X4_CFG(cam_stagger_ms,  400,   0,     2000,  ms,    CAM,  REBOOT,   "Init stagger per camera id (id*value) to avoid all four cameras' init current peaks at once.")
+X4_CFG(cam_hold_ms,     20000, 2000,  120000,ms,    CAM,  0,        "How long a captured shot is kept in PSRAM waiting for the Core to fetch it.")
+X4_CFG(cam_vflip,       0,     0,     1,     bool,  CAM,  0,        "Flip vertically.")
+X4_CFG(cam_hmirror,     0,     0,     1,     bool,  CAM,  0,        "Mirror horizontally.")
+
+// ---- preview ---------------------------------------------------------------------------------
+X4_CFG(prev_cam,        1,     1,     4,     count, CORE, 0,        "Which camera streams the live preview.")
+X4_CFG(prev_fps,        5,     1,     15,    count, CORE, 0,        "Target preview frame rate (decoded on the Core in software).")
+X4_CFG(prev_enabled,    1,     0,     1,     bool,  CORE, 0,        "Live preview on the main screen.")
+
+// ---- thermal ---------------------------------------------------------------------------------
+X4_CFG(therm_warn_c,    70,    40,    75,    C,     BOTH, SAFE_MAX, "Die temperature that shows a warning.")
+X4_CFG(therm_thr_c,     80,    45,    85,    C,     BOTH, SAFE_MAX, "Die temperature that stops preview/streaming and refuses bursts and flash.")
+
+// ---- input -----------------------------------------------------------------------------------
+X4_CFG(btn_debounce_ms, 25,    5,     100,   ms,    CORE, 0,        "Shutter/extra button debounce.")
+X4_CFG(btn_long_ms,     600,   300,   3000,  ms,    CORE, 0,        "Long-press threshold.")
+X4_CFG(btn_double_ms,   0,     0,     600,   ms,    CORE, 0,        "Double-click window (0 = off; keeps the shutter instant).")
+
+// ---- display / UI ----------------------------------------------------------------------------
+X4_CFG(ui_brightness,   160,   10,    255,   level, CORE, 0,        "Backlight brightness.")
+X4_CFG(ui_sound,        1,     0,     1,     bool,  CORE, 0,        "Shutter sound through the Core speaker.")
+X4_CFG(ui_volume,       96,    0,     255,   level, CORE, 0,        "Speaker volume.")
+X4_CFG(ui_mode,         1,     0,     1,     enum,  CORE, 0,        "Settings tile 'ui': 0 = minml (photo only + flash recharge indicator), 1 = full (footer with eyes online and SD free).")
+X4_CFG(ui_orient,       0,     0,     1,     enum,  CORE, 0,        "Settings tile 'orientation': 0 = horzntl, 1 = portrait (preview dims the sides to a 180 px crop; recorded in shot.json for the companion to crop).")
+X4_CFG(ui_effect,       0,     0,     1,     enum,  CORE, 0,        "Settings tile 'effect': 0 = normal, 1 = dithered (applied to the live preview; photos stay original, the choice is recorded in shot.json).")
+X4_CFG(ui_show_fps,     0,     0,     1,     bool,  CORE, 0,        "FPS overlay in the corner.")

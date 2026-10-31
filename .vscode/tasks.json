@@ -1,0 +1,286 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "x4: build all (core)",
+      "type": "shell",
+      "command": "pio run",
+      "options": {
+        "cwd": "${workspaceFolder}/core"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "x4: build all (camera)",
+      "type": "shell",
+      "command": "pio run",
+      "options": {
+        "cwd": "${workspaceFolder}/camera"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ],
+      "group": "build"
+    },
+    {
+      "label": "x4: unit tests (native)",
+      "type": "shell",
+      "command": "pio test -e native",
+      "options": {
+        "cwd": "${workspaceFolder}/core"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ],
+      "group": "test"
+    },
+    {
+      "label": "x4: core: upload (USB)",
+      "type": "shell",
+      "command": "pio run -e core -t upload",
+      "options": {
+        "cwd": "${workspaceFolder}/core"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ]
+    },
+    {
+      "label": "x4: core: monitor",
+      "type": "shell",
+      "command": "pio device monitor -e core",
+      "options": {
+        "cwd": "${workspaceFolder}/core"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ]
+    },
+    {
+      "label": "x4: core-hello: upload (USB)",
+      "type": "shell",
+      "command": "pio run -e core-hello -t upload",
+      "options": {
+        "cwd": "${workspaceFolder}/core"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ]
+    },
+    {
+      "label": "x4: core-hello: monitor",
+      "type": "shell",
+      "command": "pio device monitor -e core-hello",
+      "options": {
+        "cwd": "${workspaceFolder}/core"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ]
+    },
+    {
+      "label": "x4: hello-ui: upload (USB)",
+      "type": "shell",
+      "command": "pio run -e hello-ui -t upload",
+      "options": {
+        "cwd": "${workspaceFolder}/core"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ]
+    },
+    {
+      "label": "x4: hello-ui: monitor",
+      "type": "shell",
+      "command": "pio device monitor -e hello-ui",
+      "options": {
+        "cwd": "${workspaceFolder}/core"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ]
+    },
+    {
+      "label": "x4: cam1: upload (USB)",
+      "type": "shell",
+      "command": "pio run -e cam1 -t upload",
+      "options": {
+        "cwd": "${workspaceFolder}/camera"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ]
+    },
+    {
+      "label": "x4: cam1: monitor",
+      "type": "shell",
+      "command": "pio device monitor -e cam1",
+      "options": {
+        "cwd": "${workspaceFolder}/camera"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ]
+    },
+    {
+      "label": "x4: cam2: upload (USB)",
+      "type": "shell",
+      "command": "pio run -e cam2 -t upload",
+      "options": {
+        "cwd": "${workspaceFolder}/camera"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ]
+    },
+    {
+      "label": "x4: cam2: monitor",
+      "type": "shell",
+      "command": "pio device monitor -e cam2",
+      "options": {
+        "cwd": "${workspaceFolder}/camera"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ]
+    },
+    {
+      "label": "x4: cam3: upload (USB)",
+      "type": "shell",
+      "command": "pio run -e cam3 -t upload",
+      "options": {
+        "cwd": "${workspaceFolder}/camera"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ]
+    },
+    {
+      "label": "x4: cam3: monitor",
+      "type": "shell",
+      "command": "pio device monitor -e cam3",
+      "options": {
+        "cwd": "${workspaceFolder}/camera"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ]
+    },
+    {
+      "label": "x4: cam4: upload (USB)",
+      "type": "shell",
+      "command": "pio run -e cam4 -t upload",
+      "options": {
+        "cwd": "${workspaceFolder}/camera"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ]
+    },
+    {
+      "label": "x4: cam4: monitor",
+      "type": "shell",
+      "command": "pio device monitor -e cam4",
+      "options": {
+        "cwd": "${workspaceFolder}/camera"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ]
+    },
+    {
+      "label": "x4: cam-hello: upload (USB)",
+      "type": "shell",
+      "command": "pio run -e cam-hello -t upload",
+      "options": {
+        "cwd": "${workspaceFolder}/camera"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ]
+    },
+    {
+      "label": "x4: cam-hello: monitor",
+      "type": "shell",
+      "command": "pio device monitor -e cam-hello",
+      "options": {
+        "cwd": "${workspaceFolder}/camera"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ]
+    },
+    {
+      "label": "x4: core: upload OTA (laptop on x4 AP)",
+      "type": "shell",
+      "command": "pio run -e core -t upload --upload-port 192.168.4.1",
+      "options": {
+        "cwd": "${workspaceFolder}/core"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ]
+    },
+    {
+      "label": "x4: monitor core as table",
+      "type": "shell",
+      "command": "pio device monitor -e core | python ../tools/x4log.py",
+      "options": {
+        "cwd": "${workspaceFolder}/core"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ]
+    },
+    {
+      "label": "x4: clangd database (core)",
+      "type": "shell",
+      "command": "pio run -e core -t compiledb",
+      "options": {
+        "cwd": "${workspaceFolder}/core"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ]
+    },
+    {
+      "label": "x4: clangd database (camera)",
+      "type": "shell",
+      "command": "pio run -e cam1 -t compiledb",
+      "options": {
+        "cwd": "${workspaceFolder}/camera"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ]
+    },
+    {
+      "label": "x4: regenerate tokens + docs",
+      "type": "shell",
+      "command": "python tools/gen_tokens.py && python tools/gen_docs.py",
+      "options": {
+        "cwd": "${workspaceFolder}/"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ]
+    },
+    {
+      "label": "x4: regenerate fonts",
+      "type": "shell",
+      "command": "bash tools/gen_fonts.sh",
+      "options": {
+        "cwd": "${workspaceFolder}/"
+      },
+      "problemMatcher": [
+        "$platformio"
+      ]
+    }
+  ]
+}
