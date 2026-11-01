@@ -242,8 +242,16 @@ struct {
   lv_obj_t* toast = nullptr;
   lv_obj_t* toastL = nullptr;
   uint8_t effect = 0;
-  // settings
+  // settings: a sheet on top of the viewfinder (not a separate screen), so a swipe up can reveal
+  // the live viewfinder under it while the finger moves.
   lv_obj_t* settings = nullptr;
+  struct {
+    lv_point_t start{};
+    int mode = 0;          // 0 = not moved (a tap), 1 = vertical swipe, 2 = horizontal (cam delay)
+    int32_t lastY = 0;
+    uint32_t lastT = 0;
+    float vy = 0;          // px per ms, negative = up
+  } drag;
   Tile tOrient{}, tDelay{}, tEffect{}, tFlash{};
   int32_t shownDelay = -1;
   int lastOrient = -1, lastEffect = -1, lastFlash = -1;
@@ -575,9 +583,7 @@ Tile makeTile(lv_obj_t* parent, int32_t x, int32_t y) {
   lv_obj_set_style_border_color(t.box, c(kInk), 0);
   lv_obj_set_style_bg_color(t.box, c(kInk), 0);
   lv_obj_set_style_bg_opa(t.box, LV_OPA_TRANSP, 0);
-  // Press feedback (not in Figma): the tile takes a 20 % ink tint while pressed.
-  lv_obj_set_style_bg_opa(t.box, LV_OPA_20, LV_STATE_PRESSED);
-  lv_obj_add_flag(t.box, LV_OBJ_FLAG_CLICKABLE);
+  lv_obj_add_flag(t.box, LV_OBJ_FLAG_CLICKABLE);  // no press effect (owner, 2026-11-01)
   return t;
 }
 
@@ -609,12 +615,24 @@ int32_t fillW(int32_t ms) {
   return w < 1 ? 1 : w;
 }
 
-void onOrient(lv_event_t*) { app::setOption("ui_orient", x4core::status::get().uiOrient ? 0 : 1); }
-void onEffect(lv_event_t*) { app::setOption("ui_effect", x4core::status::get().uiEffect ? 0 : 1); }
+// A touch that moved more than kSwipeDecidePx became a swipe or a delay drag: not a tap.
+bool wasTap() { return g.drag.mode == 0; }
+
+void onOrient(lv_event_t*) {
+  if (wasTap()) app::setOption("ui_orient", x4core::status::get().uiOrient ? 0 : 1);
+}
+void onEffect(lv_event_t*) {
+  if (wasTap()) app::setOption("ui_effect", x4core::status::get().uiEffect ? 0 : 1);
+}
 void onFlash(lv_event_t*) {
+  if (!wasTap()) return;
   app::request(x4core::status::get().flashArmed ? app::Request::FlashDisarm : app::Request::FlashArm);
 }
-void onDelayDrag(lv_event_t*) {
+// cam delay follows the finger's x: on a tap, or while dragging sideways.
+void onDelay(lv_event_t* e) {
+  lv_event_code_t code = lv_event_get_code(e);
+  if (code == LV_EVENT_PRESSING && g.drag.mode != 2) return;
+  if (code == LV_EVENT_CLICKED && !wasTap()) return;
   lv_point_t p;
   lv_indev_get_point(lv_indev_active(), &p);
   lv_area_t a;
@@ -627,9 +645,97 @@ void onDelayDrag(lv_event_t*) {
   if (kDelaySteps[idx] != x4core::status::get().camDelayMs) app::setOption("cam_delay_ms", kDelaySteps[idx]);
 }
 
+// ---- the sheet: opens sliding up from the bottom; a swipe up sends it off the top.
+// While the finger moves up the sheet follows it 1:1 and the viewfinder shows underneath. Let go
+// past kSwipeDismissPx, or with a flick, and it slides away; otherwise it eases back.
+constexpr float kFlickPxPerMs = 0.5f;  // ASSUMPTION: tune on the panel
+
+void animTy(void* o, int32_t v) { lv_obj_set_style_translate_y((lv_obj_t*)o, v, 0); }
+
+void sheetOpen() {
+  lv_anim_delete(g.settings, animTy);
+  lv_obj_move_foreground(g.settings);
+  lv_obj_set_style_translate_y(g.settings, kScreenH, 0);
+  lv_obj_remove_flag(g.settings, LV_OBJ_FLAG_HIDDEN);
+  anim(g.settings, animTy, kScreenH, 0, kMsBase, pathBase());
+}
+
+void sheetClose(bool animated) {
+  lv_anim_delete(g.settings, animTy);
+  if (!animated) {
+    lv_obj_add_flag(g.settings, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_set_style_translate_y(g.settings, 0, 0);
+    return;
+  }
+  lv_anim_t a;
+  lv_anim_init(&a);
+  lv_anim_set_var(&a, g.settings);
+  lv_anim_set_exec_cb(&a, animTy);
+  lv_anim_set_values(&a, lv_obj_get_style_translate_y(g.settings, LV_PART_MAIN), -kScreenH);
+  lv_anim_set_duration(&a, kMsBase);
+  lv_anim_set_path_cb(&a, pathBase());
+  lv_anim_set_completed_cb(&a, [](lv_anim_t* an) {
+    lv_obj_add_flag((lv_obj_t*)an->var, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_set_style_translate_y((lv_obj_t*)an->var, 0, 0);
+  });
+  lv_anim_start(&a);
+}
+
+// Fully open and still: the viewfinder under it can't be seen (the app skips preview redraws).
+bool sheetCovers() {
+  return g.cur == Screen::Settings && lv_obj_get_style_translate_y(g.settings, LV_PART_MAIN) == 0 &&
+         !lv_anim_get(g.settings, animTy);
+}
+
+// Registered on the sheet and on every tile (their children aren't clickable, so a touch anywhere
+// on the settings screen arrives here).
+void onSheetTouch(lv_event_t* e) {
+  lv_event_code_t code = lv_event_get_code(e);
+  lv_point_t p;
+  lv_indev_get_point(lv_indev_active(), &p);
+  uint32_t now = lv_tick_get();
+  if (code == LV_EVENT_PRESSED) {
+    lv_anim_delete(g.settings, animTy);
+    g.drag.start = p;
+    g.drag.mode = 0;
+    g.drag.lastY = p.y;
+    g.drag.lastT = now;
+    g.drag.vy = 0;
+    return;
+  }
+  if (code == LV_EVENT_PRESSING) {
+    int32_t dx = p.x - g.drag.start.x, dy = p.y - g.drag.start.y;
+    if (g.drag.mode == 0 && LV_MAX(LV_ABS(dx), LV_ABS(dy)) > kSwipeDecidePx)
+      g.drag.mode = LV_ABS(dy) > LV_ABS(dx) ? 1 : 2;
+    if (g.drag.mode != 1) return;
+    lv_obj_set_style_translate_y(g.settings, dy < 0 ? dy : 0, 0);  // up only
+    // Speed from the last movement; a finger resting for 50 ms before it lifts is not a flick.
+    if (p.y != g.drag.lastY && now != g.drag.lastT) {
+      g.drag.vy = (float)(p.y - g.drag.lastY) / (float)(now - g.drag.lastT);
+      g.drag.lastY = p.y;
+      g.drag.lastT = now;
+    } else if (now - g.drag.lastT > 50) {
+      g.drag.vy = 0;
+    }
+    return;
+  }
+  if ((code == LV_EVENT_RELEASED || code == LV_EVENT_PRESS_LOST) && g.drag.mode == 1) {
+    int32_t ty = lv_obj_get_style_translate_y(g.settings, LV_PART_MAIN);
+    if (ty < -kSwipeDismissPx || g.drag.vy < -kFlickPxPerMs) {
+      show(Screen::Main);  // slides the rest of the way up
+    } else {
+      lv_anim_delete(g.settings, animTy);
+      anim(g.settings, animTy, ty, 0, kMsBase, pathBase());
+    }
+  }
+}
+
 void buildSettings() {
-  g.settings = screenBase(kSettingsBg);
-  lv_obj_add_event_cb(g.settings, [](lv_event_t*) { show(Screen::Main); }, LV_EVENT_GESTURE, nullptr);
+  g.settings = plain(g.main);  // clickable: takes every touch while open
+  lv_obj_set_size(g.settings, kScreenW, kScreenH);
+  lv_obj_set_style_bg_color(g.settings, c(kSettingsBg), 0);
+  lv_obj_set_style_bg_opa(g.settings, LV_OPA_COVER, 0);
+  lv_obj_add_flag(g.settings, LV_OBJ_FLAG_HIDDEN);
   const int32_t x0 = kSettingsPad, x1 = kSettingsPad + kTileW + kSettingsGap;
   const int32_t y0 = kSettingsPad, y1 = kSettingsPad + kTileH + kSettingsGap;
   const int32_t labelW = kTileW;
@@ -651,8 +757,8 @@ void buildSettings() {
   g.tDelay.a = inkRect(g.tDelay.box, 0, 0, 1, kTileH);
   g.tDelay.b = boxLabel(g.tDelay.a, fontTile(), kOnPhoto, "0 s", kTileW - kDelayLabelR, LV_TEXT_ALIGN_RIGHT);
   lv_obj_set_pos(g.tDelay.b, 0, kDelayLabelY);  // the fill sits at the tile's (0, 0)
-  lv_obj_add_event_cb(g.tDelay.box, onDelayDrag, LV_EVENT_PRESSING, nullptr);
-  lv_obj_remove_flag(g.tDelay.box, LV_OBJ_FLAG_GESTURE_BUBBLE);  // a fast drag must not leave the screen
+  lv_obj_add_event_cb(g.tDelay.box, onDelay, LV_EVENT_PRESSING, nullptr);
+  lv_obj_add_event_cb(g.tDelay.box, onDelay, LV_EVENT_CLICKED, nullptr);
 
   // style (83:2215): 40×100 strip on the right: gradient (transparent #D1D1D1 → #1E1E1E) when
   // normal, dither image when dithered. Label serif 34 bottom-left.
@@ -681,6 +787,9 @@ void buildSettings() {
   lv_obj_add_event_cb(g.tOrient.box, onOrient, LV_EVENT_CLICKED, nullptr);
   lv_obj_add_event_cb(g.tEffect.box, onEffect, LV_EVENT_CLICKED, nullptr);
   lv_obj_add_event_cb(g.tFlash.box, onFlash, LV_EVENT_CLICKED, nullptr);
+  for (lv_obj_t* o : {g.settings, g.tOrient.box, g.tDelay.box, g.tEffect.box, g.tFlash.box})
+    for (lv_event_code_t ev : {LV_EVENT_PRESSED, LV_EVENT_PRESSING, LV_EVENT_RELEASED, LV_EVENT_PRESS_LOST})
+      lv_obj_add_event_cb(o, onSheetTouch, ev, nullptr);
 }
 
 void updateSettings(const Status& s) {
@@ -724,7 +833,6 @@ void updateSettings(const Status& s) {
     g.lastFlash = s.flashArmed;
     bool on = s.flashArmed;
     lv_obj_set_style_bg_opa(g.tFlash.box, on ? LV_OPA_TRANSP : LV_OPA_COVER, 0);
-    lv_obj_set_style_bg_opa(g.tFlash.box, on ? LV_OPA_20 : LV_OPA_80, LV_STATE_PRESSED);
     lv_obj_set_style_text_color(g.tFlash.label, c(on ? kInk : kSettingsBg), 0);
     setText(g.tFlash.label, on ? "flash" : "no flash");
   }
@@ -879,22 +987,28 @@ Screen current() { return g.cur; }
 
 void show(Screen s) {
   if (s == g.cur) return;
-  lv_obj_t* scr = s == Screen::Main         ? g.main
-                  : s == Screen::Settings   ? g.settings
-                  : s == Screen::Diagnostics ? g.diag
-                                             : g.splash;
-  lv_screen_load_anim_t a = s == Screen::Diagnostics ? LV_SCREEN_LOAD_ANIM_MOVE_TOP
-                            : s == Screen::Settings  ? LV_SCREEN_LOAD_ANIM_OVER_BOTTOM
-                                                     : LV_SCREEN_LOAD_ANIM_FADE_IN;
-  lv_screen_load_anim(scr, a, kMsBase, 0, false);
-  X4_LOGD("ui", "screen", "from=%d to=%d", (int)g.cur, (int)s);
+  Screen from = g.cur;
+  X4_LOGD("ui", "screen", "from=%d to=%d", (int)from, (int)s);
   g.cur = s;
+  if (s == Screen::Settings) {
+    if (lv_screen_active() != g.main) lv_screen_load(g.main);
+    sheetOpen();
+    return;
+  }
+  if (from == Screen::Settings) {
+    sheetClose(s == Screen::Main);  // to the viewfinder: slides off the top; elsewhere: at once
+    if (s == Screen::Main) return;
+  }
+  lv_obj_t* scr = s == Screen::Main ? g.main : s == Screen::Diagnostics ? g.diag : g.splash;
+  lv_screen_load_anim_t a = s == Screen::Diagnostics ? LV_SCREEN_LOAD_ANIM_MOVE_TOP : LV_SCREEN_LOAD_ANIM_FADE_IN;
+  lv_screen_load_anim(scr, a, kMsBase, 0, false);
 }
 
 void update(const Status& s, uint32_t now) {
   if (g.cur == Screen::Splash && (int32_t)(now - g.splashUntil) >= 0)
     show(g.hello ? Screen::Diagnostics : Screen::Main);
-  if (g.cur == Screen::Main || g.cur == Screen::Splash) updateMain(s, now);
+  // The viewfinder stays current under the settings sheet: a swipe up reveals it live.
+  if (g.cur == Screen::Main || g.cur == Screen::Splash || g.cur == Screen::Settings) updateMain(s, now);
   if (g.cur == Screen::Settings) updateSettings(s);
   if (g.cur == Screen::Diagnostics) updateDiag(s, now);
 }
@@ -972,9 +1086,11 @@ void setPreviewJpeg(const uint8_t* jpg, uint32_t len, float scale) {
   g.canvas->drawJpg(jpg, len, 0, 0, kScreenW, kScreenH, 0, 0, scale, scale);
   if (g.effect == 1) ditherBE565((uint16_t*)g.canvas->getBuffer(), kScreenW, kScreenH);
   uint32_t us = micros() - t0;
-  lv_image_set_src(g.preview, &g.previewDsc);
-  for (lv_obj_t* img : g.sideImg) lv_image_set_src(img, &g.previewDsc);  // portrait side copies
-  lv_obj_invalidate(g.preview);
+  if (!sheetCovers()) {  // under a fully open settings sheet nothing shows: skip the redraw
+    lv_image_set_src(g.preview, &g.previewDsc);
+    for (lv_obj_t* img : g.sideImg) lv_image_set_src(img, &g.previewDsc);  // portrait side copies
+    lv_obj_invalidate(g.preview);
+  }
   g.hasFrame = true;
   X4_LOG_EVERY(5000, x4::log::Level::Debug, "ui", "preview_decode", "us=%lu bytes=%lu dither=%u", (unsigned long)us,
                (unsigned long)len, g.effect);

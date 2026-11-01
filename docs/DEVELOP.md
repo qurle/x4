@@ -140,7 +140,11 @@ Some scenes check **behaviour**, and those do fail the run:
 ok   a tap on the footer opens the menu (tap_footer vs preview_photo: brightness 95 vs 197)
 ok   a tap on a faded side opens the menu (portrait_tap_side vs preview_portrait: brightness 59 vs 89)
 ok   a new camera frame reaches the side copies (portrait_new_frame vs preview_portrait: mean pixel difference 43)
+ok   a long swipe up sends settings away (settings_swipe_away vs preview_photo: mean pixel difference 0.0)
 ```
+(10 in all: taps on the photo, the portrait side copies, the settings swipe (half, away, flick,
+spring back), the cam delay drag, and no press effect on tiles.) In the live window the mouse
+swipes too: press on settings, drag up, let go.
 
 The run fails if the simulator doesn't build, a scene doesn't render, or a behaviour check fails.
 Differences from Figma are for you to judge. CI runs the same and attaches `out/` as the **ui-sim** artifact, with the table in

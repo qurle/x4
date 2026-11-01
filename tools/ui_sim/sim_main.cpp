@@ -160,6 +160,24 @@ struct Scene {
 };
 
 void advance(uint32_t ms);
+bool g_hold = false;  // a scene that ends with the finger still down sets this
+
+// Finger down at (x, y0), moves to y1 over ms (straight line, 10 ms steps). lift: the finger
+// leaves the glass right at the end, like a real swipe (resting first would cancel a flick).
+void drag(int16_t x, int16_t y0, int16_t y1, uint32_t ms, bool lift) {
+  g_ptr = {true, x, y0};
+  advance(40);
+  for (uint32_t t = 10; t <= ms; t += 10) {
+    g_ptr.y = (int16_t)(y0 + (y1 - y0) * (int32_t)t / (int32_t)ms);
+    advance(10);
+  }
+  if (lift) g_ptr.down = false;
+}
+void openSettingsAndWait() {
+  x4ui::show(x4ui::Screen::Settings);
+  advance(600);
+}
+
 void tapScreen() {
   g_ptr = {true, 160, 140};
 }
@@ -176,6 +194,40 @@ void newFrame() {
 void tapSide() { g_ptr = {true, 30, 140}; }
 // A tap on the footer area is a tap on the photo too: the menu must open.
 void tapFooter() { g_ptr = {true, 160, 225}; }
+
+// Settings sheet: swipe up.
+void swipeHalfHeld() {  // 80 px up, finger still down: the viewfinder shows under the sheet
+  openSettingsAndWait();
+  drag(160, 200, 120, 200, false);
+  g_hold = true;
+}
+void swipeAway() {  // 80 px up, let go: past the 60 px threshold, the sheet slides away
+  openSettingsAndWait();
+  drag(160, 200, 120, 200, true);
+}
+void swipeShortSlow() {  // 30 px up slowly, let go: below threshold and speed, springs back
+  openSettingsAndWait();
+  drag(160, 200, 170, 600, true);
+}
+void flick() {  // 30 px up in 40 ms: short but fast, the sheet slides away
+  openSettingsAndWait();
+  drag(160, 200, 170, 40, true);
+}
+void dragDelay() {  // sideways along the cam delay tile: sets ~0.9 s, the sheet stays put
+  openSettingsAndWait();
+  g_ptr = {true, 170, 66};
+  advance(40);
+  for (int16_t x = 180; x <= 290; x += 10) {
+    g_ptr.x = x;
+    advance(20);
+  }
+  g_ptr.down = false;
+}
+void holdTile() {  // finger down on the orientation tile, not lifted: no press effect
+  openSettingsAndWait();
+  g_ptr = {true, 86, 66};
+  g_hold = true;
+}
 
 // Real touch on the orientation tile: exercises touch -> app::setOption -> status -> redraw.
 void tapOrientTile() {
@@ -224,6 +276,18 @@ const Scene kScenes[] = {
     {"settings_d", "-", "settings: cam delay 1 s", [](x4core::Status& s) { s.camDelayMs = 1000; }, openSettings},
     {"settings_tap", "-", "settings after tapping the orientation tile (touch path end to end)",
      [](x4core::Status&) {}, tapOrientTile},
+    {"settings_delay_drag", "-", "drag sideways along the cam delay tile: delay changes, sheet stays",
+     [](x4core::Status&) {}, dragDelay},
+    {"settings_hold_tile", "-", "finger held on a tile: looks the same (no press effect)",
+     [](x4core::Status&) {}, holdTile},
+    {"settings_swipe_half", "-", "settings swiped 80 px up, finger down: viewfinder underneath",
+     [](x4core::Status&) {}, swipeHalfHeld},
+    {"settings_swipe_away", "-", "settings swiped 80 px up and let go: back to the viewfinder",
+     [](x4core::Status&) {}, swipeAway},
+    {"settings_swipe_short", "-", "settings swiped 30 px up slowly and let go: springs back",
+     [](x4core::Status&) {}, swipeShortSlow},
+    {"settings_flick", "-", "settings flicked 30 px up fast: back to the viewfinder",
+     [](x4core::Status&) {}, flick},
     {"saving_1of4", "15:69", "Saving... 1 of 4", [](x4core::Status& s) { saving(s, 0); }, nullptr},
     {"saving_3of4", "15:80", "Saving... 3 of 4", [](x4core::Status& s) { saving(s, 2); }, nullptr},
     {"error_known", "83:2119", "error with a known reason: SD is full",
@@ -373,7 +437,7 @@ int renderScene(const char* name, const char* out) {
     if (sc.after) {
       sc.after();
       advance(80);
-      g_ptr.down = false;  // ends a tap, if the scene started one
+      if (!g_hold) g_ptr.down = false;  // ends a tap or a swipe, unless the scene holds it
     }
     advance(900);  // let fades, slides and springs finish
     lv_refr_now(nullptr);
