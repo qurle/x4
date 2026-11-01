@@ -211,7 +211,7 @@ Mockups (final, exact node): https://www.figma.com/design/fgEvP6Ms0bOAbWxfkFki4R
 - List every **screen and state** (including empty/error/loading) and every **transition** in `docs/UI.md`, mapped to LVGL objects and animations.
 - **Pick up the design language and keep it.** Where a mockup can't be reproduced on a 320x240 LVGL display (blur, shadows, fonts, gradients, performance), choose the closest compromise, record it in `docs/UI.md` with a before/after note, and tell the owner; never degrade silently.
 - Interaction delight is a requirement: easing (LVGL ease-in/out, overshoot, bounce), staggered reveals, press feedback, a satisfying shutter moment (optional sound through the Core's speaker; there is no haptics hardware, verify), polished empty/error states. Keep every animation cheap and measure FPS after each addition.
-- Smoke-test screen to keep as a `hello-ui` env: black screen, "Four Eyes" label, eased fade-in plus a short upward slide, tap to replay.
+- Smoke-test screen to keep as a `hello-ui` env: black screen, "x4cam" label, eased fade-in plus a short upward slide, tap to replay.
 
 ## 8. Research (early; summarise in `docs/RESEARCH.md`)
 

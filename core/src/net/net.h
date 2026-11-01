@@ -46,8 +46,9 @@ struct XferProgress {
 void progress(XferProgress out[x4::proto::kMaxCams]);
 
 // ---- preview (Stage 4) ---------------------------------------------------------------------------
-// Polls GET http://cam/capture?res=0 (QVGA JPEG) from a background task while enabled.
-void setPreview(bool on, uint8_t cam, uint8_t fps);
+// Polls GET http://cam/capture?res=<res> (0 QVGA / 1 VGA JPEG) from a background task while on.
+void setPreview(bool on, uint8_t cam, uint8_t fps, uint8_t res = 0);
+uint8_t previewCam();
 // Latest JPEG for the UI to decode: returns size (0 if none newer than *seq). Copies into buf.
 uint32_t takePreview(uint8_t* buf, uint32_t cap, uint32_t* seq);
 float previewFps();

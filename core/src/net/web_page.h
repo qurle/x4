@@ -3,11 +3,12 @@
 // /config, lists photos, triggers the shutter. Spec: docs/COMPANION.md "Web debug page".
 #pragma once
 #include <pgmspace.h>
+#include "x4/version.h"
 
 static const char kWebPage[] PROGMEM = R"HTML(<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>x4 · debug</title>
+<title>)HTML" X4_PROJECT_NAME R"HTML( · debug</title>
 <style>
 :root{--bg:#000;--sf:#141414;--ln:#2e2e2e;--fg:#f2efe8;--mu:#8c877e;--ac:#ff4a1c;--ok:#7bd88f;--wa:#ffb020;--er:#ff5a4f;
 --serif:"Instrument Serif",Georgia,"Times New Roman",serif;--mono:"Space Mono",ui-monospace,Menlo,Consolas,monospace}
@@ -28,14 +29,15 @@ input{font:inherit;background:#000;color:var(--fg);border:1px solid var(--ln);bo
 .grid4{display:grid;grid-template-columns:1fr 1fr;gap:6px}.big{font:400 40px/1 var(--serif)}
 .bar{height:4px;background:var(--ln);border-radius:2px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ok);width:0}
 </style></head><body>
-<header><h1>Four Eyes</h1><span class="mu" id="hdr">connecting…</span></header>
+<header><h1>)HTML" X4_PROJECT_NAME R"HTML(</h1><span class="mu" id="hdr">connecting…</span></header>
 <main>
 <section><h2>Rig</h2>
 <div class="row" style="justify-content:space-between"><div><div class="big" id="state">–</div><div class="mu" id="faults"></div></div>
 <div style="text-align:right"><div class="big" id="shots">0</div><div class="mu">shots</div></div></div>
 <div class="row" style="margin-top:12px"><button class="pri" onclick="act('shutter')">Shoot</button>
 <button onclick="act('flash_arm')">Arm flash</button><button onclick="act('flash_disarm')">Disarm</button>
-<button onclick="act('preview_on')">Preview on</button><button onclick="act('preview_off')">off</button></div>
+<button onclick="act('preview_on')">Preview on</button><button onclick="act('preview_off')">off</button>
+<button onclick="if(confirm('Power bank fully charged? Resets the battery estimate to 100%.'))act('bat_full')">Bank charged</button></div>
 <table style="margin-top:12px" id="sys"></table></section>
 <section><h2>Cameras</h2><table id="cams"></table><p class="mu" id="lastshot"></p></section>
 <section><h2>Log</h2><div class="row" style="margin-bottom:8px">
@@ -60,7 +62,7 @@ const f=[];if(s.faults&1)f.push('no cameras');if(s.faults&2)f.push('SD missing')
 $('faults').innerHTML=f.length?'<span class=err>'+f.join(' · ')+'</span>':'ready';
 const p=s.power,y=s.system,d=s.sd,u=s.ui,fl=s.flash;
 $('sys').innerHTML=[['5V out (BUS_OUT_EN)',p.bus_out_en?'<b class=err>ON (unsafe)</b>':'<span class=ok>off</span>'],
-['USB OTG',p.usb_otg_en?'<b class=err>ON</b>':'<span class=ok>off</span>'],['rail (VBUS)',p.vbus_mv+' mV'],['battery',p.battery],
+['USB OTG',p.usb_otg_en?'<b class=err>ON</b>':'<span class=ok>off</span>'],['rail (VBUS)',p.vbus_mv+' mV'],['battery (estimate)',`~${p.battery_pct_est}% · ${p.battery_hours_est.toFixed(1)} h left at ${p.power_mw_est} mW · ${p.battery_used_mwh.toFixed(0)} mWh used`],
 ['chip temp',`<span class=${y.overheat?'err':y.hot?'warn':''}>${y.temp_c.toFixed(1)} °C</span>`],['heap / min / psram',`${kb(y.heap)} / ${kb(y.heap_min)} / ${kb(y.psram)}`],
 ['reset · boots · brown-outs',`${y.reset} · ${y.boots} · ${y.brownouts}`],['SD',d.mounted?`${d.free_mb} / ${d.total_mb} MB free · w ${d.write_kBps.toFixed(0)} kB/s r ${d.read_kBps.toFixed(0)} kB/s`:'<span class=err>not mounted</span>'],
 ['UI',`${u.fps.toFixed(1)} fps · worst frame ${(u.frame_max_us/1000).toFixed(1)} ms · preview ${u.preview_on?u.preview_fps.toFixed(1)+' fps':'off'}`],

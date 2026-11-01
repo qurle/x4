@@ -67,6 +67,11 @@ struct Status {
   bool previewOn;
   int apStations;
   bool buttonDown;
+  // battery estimate (energy counting; the SE cannot read the bank)
+  int batteryPct;        // 0..100
+  float batteryHours;    // at the current estimated draw
+  uint32_t powerMw;      // current estimated draw
+  float batteryUsedMwh;
   // settings tiles (config mirror for the UI)
   uint8_t uiMode;      // 0 minimal, 1 full
   uint8_t uiOrient;    // 0 horizontal, 1 portrait

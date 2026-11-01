@@ -36,7 +36,7 @@ Port A with the Core on USB and nothing attached.
 | Camera: no serial port | Grove-to-USB-C adapter not used / download mode needed | M5 adapter plugged into the camera's Grove | short G0→GND before plugging in, upload, remove the jumper, replug |
 | upload starts then fails at high speed | marginal cable | – | `upload_speed = 460800` in platformio.ini for that env |
 | "both power sources" mistake: board was on the rail **and** USB | rule broken | – | unplug both, wait, reconnect one. Inspect for heat. Re-read [BRINGUP](BRINGUP.md#flashing-without-breaking-the-power-rules) |
-| OTA upload refused | wrong password / laptop not on `x4-rig` | `evt=ota` lines | `X4_OTA_PASS` in secrets.h, join the AP |
+| OTA upload refused | wrong password / laptop not on `x4cam` | `evt=ota` lines | `X4_OTA_PASS` in secrets.h, join the AP |
 | build fails "secrets.h not found" | – | it is a warning, not an error | copy `secrets.h.example` to `secrets.h` to silence it |
 
 ## Camera

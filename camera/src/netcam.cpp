@@ -149,7 +149,7 @@ void hbTask(void*) {
     const auto& c = conf::get();
     if (WiFi.isConnected() && !kHello) {
       Heartbeat h{sys::camId(), ++g_hbSeq, esp_timer_get_time(), (uint32_t)ESP.getFreeHeap(), (uint32_t)ESP.getFreePsram(),
-                  (int16_t)sys::tempC(), (uint8_t)cam::state(), (int8_t)WiFi.RSSI(), cam::heldShot()};
+                  (int16_t)sys::tempC(), (uint8_t)cam::state(), (int8_t)WiFi.RSSI(), cam::heldShot(), cam::switchMs()};
       size_t len = buildHeartbeat(out, sizeof(out), h);
       sendCore(out, len);
       while (sys::popForward(line, sizeof(line))) {
@@ -471,7 +471,7 @@ void begin() {
   startHttp();
   if (sizeof(X4_OTA_PASS) > 1) {
     char host[16];
-    snprintf(host, sizeof(host), "x4-cam%u", sys::camId());
+    snprintf(host, sizeof(host), X4_PROJECT_NAME "-cam%u", sys::camId());
     ArduinoOTA.setHostname(host);
     ArduinoOTA.setPassword(X4_OTA_PASS);
     ArduinoOTA.onStart([]() { X4_LOGW("ota", "start", "cam=%u", sys::camId()); });

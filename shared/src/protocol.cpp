@@ -127,9 +127,9 @@ bool parseShoot(const KvLine& kv, ShootCmd* out) {
 size_t buildHeartbeat(char* buf, size_t cap, const Heartbeat& h) {
   return fin(snprintf(buf, cap,
                       "X4/%d HB cam=%u seq=%" PRIu32 " t1=%" PRId64 " heap=%" PRIu32
-                      " psram=%" PRIu32 " temp=%d st=%u rssi=%d held=%" PRIu32,
+                      " psram=%" PRIu32 " temp=%d st=%u rssi=%d held=%" PRIu32 " sw=%u",
                       X4_PROTOCOL_VERSION, (unsigned)h.cam, h.seq, h.t1Us, h.heap, h.psram,
-                      (int)h.tempC, (unsigned)h.state, (int)h.rssi, h.heldShot),
+                      (int)h.tempC, (unsigned)h.state, (int)h.rssi, h.heldShot, (unsigned)h.switchMs),
              cap);
 }
 
@@ -147,6 +147,7 @@ bool parseHeartbeat(const KvLine& kv, Heartbeat* out) {
   h.state = (uint8_t)kv.i64("st", 0);
   h.rssi = (int8_t)kv.i64("rssi", 0);
   h.heldShot = (uint32_t)kv.i64("held", 0);
+  h.switchMs = (uint16_t)kv.i64("sw", 0);
   *out = h;
   return true;
 }

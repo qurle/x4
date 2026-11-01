@@ -77,7 +77,7 @@ This matches the owner's AXP2101 diagram (brief Appendix C, image 1): the top-le
 **(b) Current limit of the input path.** *Not sure.* The ME1502 datasheet was not reviewed.
 M5 documents "Grove output max current (USB powered) DC 5 V @ 680 mA" for the *output*
 direction (VERIFIED: SE spec table). The Core itself draws ~170 mA typical at 5 V (VERIFIED:
-SE spec "USB powered, working: DC 5V@166.27mA"); backlight, WiFi and speaker peaks add to that.
+SE spec `USB powered, working: DC 5V@166.27mA`); backlight, WiFi and speaker peaks add to that.
 x4 keeps every other load off the Core's Port A, so the switch and the Grove contacts carry
 only the Core's own current (estimate < 0.5 A peak, ASSUMPTION, measure).
 

@@ -1,4 +1,4 @@
-# x4 — Four Eyes
+# x4cam
 
 my first hardware project i guess
 
@@ -53,7 +53,8 @@ Firmware environments: Core `core`, `core-hello`, `hello-ui`; cameras `cam1`…`
 
 `core/` Core firmware · `camera/` camera firmware · `shared/` code both use (logging, config,
 safety, protocol, state machine) · `ui/` design tokens + fonts · `tools/` generators + log tool ·
-`app/` companion (later) · `docs/` everything else ([index](docs/README.md)).
+`app/` companion (later) · `docs/` everything else ([index](docs/README.md)) · `site/` the docs
+as a browsable manual (notes. template, `cd site && npm i && npm run dev`).
 
 ## Read first
 

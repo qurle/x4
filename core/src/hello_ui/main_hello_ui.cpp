@@ -1,5 +1,5 @@
 // hello-ui: the LVGL smoke test kept as its own environment (pio run -e hello-ui).
-// Black screen, "Four Eyes" in Instrument Serif, eased fade-in + short upward slide, tap to replay.
+// Black screen, the project name ("x4cam") in Instrument Serif, eased fade-in + short upward slide, tap to replay.
 // Also exercises the full power-safety boot path, because ANY firmware on the Core must keep the
 // 5 V output off before the board ever sees the rail.
 #include <M5Unified.h>
@@ -61,7 +61,7 @@ void setup() {
   cfg.external_speaker_value = 0;
   M5.begin(cfg);
   x4core::power::enforce("boot");
-  X4_LOGI("boot", "banner", "app=hello-ui fw=%s git=%s", X4_FW_VERSION, X4_GIT_HASH);
+  X4_LOGI("boot", "banner", "app=hello-ui name=" X4_PROJECT_NAME " fw=%s git=%s", X4_FW_VERSION, X4_GIT_HASH);
 
   x4core::display::begin(160);
   lv_obj_t* scr = lv_screen_active();
@@ -70,7 +70,7 @@ void setup() {
   lv_obj_add_event_cb(scr, onTap, LV_EVENT_CLICKED, nullptr);
 
   g_title = lv_label_create(scr);
-  lv_label_set_text(g_title, "Four Eyes");
+  lv_label_set_text(g_title, X4_PROJECT_NAME);
   lv_obj_set_style_text_font(g_title, tok::fontDisplay(), 0);
   lv_obj_set_style_text_color(g_title, tok::c(tok::kFg), 0);
   lv_obj_align(g_title, LV_ALIGN_CENTER, 0, -10);

@@ -1,0 +1,47 @@
+{
+  "name": "x4cam-manual",
+  "type": "module",
+  "version": "0.1.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "author": {
+    "name": "Nikita Denisov",
+    "email": "nick@qurle.net",
+    "url": "https://qurle.net"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qurle/x4.git"
+  },
+  "homepage": "https://github.com/qurle/x4",
+  "license": "MIT",
+  "keywords": [
+    "x4",
+    "manual",
+    "astro"
+  ],
+  "scripts": {
+    "sync": "node scripts/sync-docs.mjs",
+    "predev": "node scripts/sync-docs.mjs",
+    "dev": "astro dev",
+    "prebuild": "node scripts/sync-docs.mjs",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^6.0.3",
+    "@iconify-json/material-symbols": "^1.2.77",
+    "astro": "^6.4.6",
+    "astro-icon": "^1.1.5",
+    "fuzzysort": "^3.1.0",
+    "mermaid": "^11.17.2",
+    "typescript": "^6.0.3"
+  },
+  "devDependencies": {
+    "sass-embedded": "^1.100.0",
+    "vite-plugin-json5": "^1.4.4"
+  },
+  "description": "x4 manual: docs/*.md rendered with the notes. template"
+}

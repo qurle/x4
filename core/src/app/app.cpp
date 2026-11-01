@@ -20,6 +20,7 @@
 #include "../ui/ui.h"
 #include "config_store.h"
 #include "status.h"
+#include "x4/energy.h"
 #include "x4/log.h"
 #include "x4/shoot.h"
 #include "x4/storage_layout.h"
@@ -69,6 +70,8 @@ esp_timer_handle_t g_flashTimer = nullptr;
 uint8_t* g_previewBuf = nullptr;
 uint32_t g_previewSeq = 0;
 uint32_t g_sdFreeMb = 0, g_sdTotalMb = 0;
+x4::energy::Meter g_bat;
+uint32_t g_lastEnergy = 0, g_lastBatSave = 0, g_flashSeen = 0, g_powerMw = 0;
 
 sh::Params paramsFrom(const x4::cfg::Config& c) {
   sh::Params p;
@@ -84,6 +87,57 @@ sh::Params paramsFrom(const x4::cfg::Config& c) {
 
 void onCfgChange(const x4::cfg::OptionInfo&, int32_t) { g_cfgDirty = true; }
 
+x4::energy::PowerModel powerModel() {
+  const auto& c = conf::get();
+  x4::energy::PowerModel m;
+  m.coreMw = (uint32_t)c.pw_core_mw;
+  m.camIdleMw = (uint32_t)c.pw_cam_idle_mw;
+  m.camStreamMw = (uint32_t)c.pw_cam_strm_mw;
+  m.camBusyMw = (uint32_t)c.pw_cam_busy_mw;
+  return m;
+}
+
+// Integrates the estimated draw every 250 ms; persists every 60 s (NVS wear: ~1 write/min).
+void energyTick(uint32_t now) {
+  if (g_lastEnergy == 0) {
+    g_lastEnergy = now;
+    g_lastBatSave = now;
+    return;
+  }
+  uint32_t dt = now - g_lastEnergy;
+  if (dt < 250) return;
+  g_lastEnergy = now;
+  x4::energy::Load l;
+  auto snap = cams::snapshot();
+  for (const auto& cm : snap.cam) {
+    if (!cm.online) continue;
+    auto st = (x4::proto::CamState)cm.hb.state;
+    if (st == x4::proto::CamState::Streaming) l.camsStream++;
+    else if (st == x4::proto::CamState::Capturing || st == x4::proto::CamState::Holding ||
+             st == x4::proto::CamState::Armed)
+      l.camsBusy++;
+    else l.camsIdle++;
+  }
+  if (g_previewOn && l.camsIdle > 0 && l.camsStream == 0) {  // preview polling counts as streaming
+    l.camsIdle--;
+    l.camsStream++;
+  }
+  auto m = powerModel();
+  g_powerMw = x4::energy::estimateMw(m, l);
+  g_bat.add(dt, g_powerMw);
+  uint32_t pulses = flash::pulseCount();
+  if (pulses != g_flashSeen) {
+    g_bat.addEnergy(x4::energy::flashPulseMwh(m, (uint32_t)conf::get().flash_pulse_ms) * (float)(pulses - g_flashSeen));
+    g_flashSeen = pulses;
+  }
+  if (now - g_lastBatSave >= 60000) {
+    g_lastBatSave = now;
+    sys::saveBatteryUsedMwh(g_bat.usedMwh());
+    X4_LOGD("bat", "estimate", "pct=%d used_mwh=%.0f power_mw=%lu hours_left=%.1f", g_bat.percent(), g_bat.usedMwh(),
+            (unsigned long)g_powerMw, g_bat.hoursLeft(g_powerMw));
+  }
+}
+
 void applyLiveConfig() {
   const auto& c = conf::get();
   g_ctl.setParams(paramsFrom(c));
@@ -91,8 +145,39 @@ void applyLiveConfig() {
   inputs::applyConfig(c);
   display::setBrightness((uint8_t)c.ui_brightness);
   M5.Speaker.setVolume((uint8_t)c.ui_volume);
+  g_bat.setCapacity((uint32_t)c.bat_cap_mwh, (uint8_t)c.bat_eff_pct);
   if (g_mode == Mode::Full) net::applyTransferConfig(c);
   X4_LOGI("cfg", "applied", "live=1");
+}
+
+// Preview camera: the configured one if online, otherwise the first online camera (so a rig with
+// any single camera still has a viewfinder).
+uint8_t choosePreviewCam() {
+  bool on[x4::proto::kMaxCams];
+  cams::onlineMask(on);
+  uint8_t want = (uint8_t)conf::get().prev_cam;
+  if (want >= 1 && want <= x4::proto::kMaxCams && on[want - 1]) return want;
+  for (uint8_t i = 0; i < x4::proto::kMaxCams; i++)
+    if (on[i]) return (uint8_t)(i + 1);
+  return want;
+}
+
+void startPreview() {
+  const auto& c = conf::get();
+  if (c.prev_enabled) net::setPreview(true, choosePreviewCam(), (uint8_t)c.prev_fps, (uint8_t)c.prev_res);
+}
+
+// The preview camera runs at QVGA/VGA and must switch to the shot size before the scheduled
+// capture time. Cameras report their slowest switch (sw= in heartbeats); stretch the lead so that
+// camera is not late. Other cameras never leave the shot size.
+uint32_t effectiveLeadMs() {
+  uint32_t lead = (uint32_t)conf::get().trig_lead_ms;
+  if (!g_previewOn) return lead;
+  uint8_t pc = net::previewCam();
+  if (pc < 1 || pc > x4::proto::kMaxCams) return lead;
+  uint32_t sw = cams::snapshot().cam[pc - 1].hb.switchMs;
+  uint32_t need = sw ? sw + 40 : 0;  // 40 ms margin for the dropped first frame + scheduling
+  return need > lead ? (need > 1000 ? 1000 : need) : lead;
 }
 
 void flashTimerCb(void*) {
@@ -102,7 +187,7 @@ void flashTimerCb(void*) {
 
 void banner() {
   const auto& i = sys::info();
-  X4_LOGI("boot", "banner", "app=core mode=%s fw=%s git=%s built=\"%s\" proto=%d", g_mode == Mode::Full ? "full" : "hello",
+  X4_LOGI("boot", "banner", "app=core name=" X4_PROJECT_NAME " mode=%s fw=%s git=%s built=\"%s\" proto=%d", g_mode == Mode::Full ? "full" : "hello",
           X4_FW_VERSION, X4_GIT_HASH, X4_BUILD_TIME, X4_PROTOCOL_VERSION);
   X4_LOGI("boot", "chip", "model=esp32s3 rev=%lu cpu_mhz=%lu flash_mb=%lu psram_mb=%lu mac=%02x:%02x:%02x:%02x:%02x:%02x board=%d",
           (unsigned long)i.chipRev, (unsigned long)i.cpuMhz, (unsigned long)(i.flashBytes >> 20),
@@ -127,6 +212,9 @@ void startShot() {
   // Flash only if armed, enabled and ready; otherwise shoot without it (and tell the user).
   bool flashOk = g_flashArmed && flash::ready() && !g_overheat;
   g_ctl.setFlashArmed(flashOk);
+  sh::Params p = paramsFrom(conf::get());
+  p.leadMs = effectiveLeadMs();
+  g_ctl.setParams(p);
   uint32_t shotId = sys::lastShotId() + 1;
   uint32_t eff = g_ctl.shutter(now, nowUs, shotId);
   if (eff & sh::kShutterRefused) {
@@ -139,8 +227,9 @@ void startShot() {
   }
   sys::nextShotId();
   const auto& s = g_ctl.session();
-  X4_LOGI("shoot", "start", "shot=%lu at_us=%lld lead_ms=%ld cams=%d flash=%d", (unsigned long)s.id,
-          (long long)s.atUs, (long)conf::get().trig_lead_ms, s.expected(), s.flash);
+  X4_LOGI("shoot", "start", "shot=%lu at_us=%lld lead_ms=%lu cfg_lead_ms=%ld cams=%d flash=%d delay_ms=%ld",
+          (unsigned long)s.id, (long long)s.atUs, (unsigned long)p.leadMs, (long)conf::get().trig_lead_ms, s.expected(),
+          s.flash, (long)conf::get().cam_delay_ms);
   if (eff & sh::kSendTrigger) {
     x4::proto::ShootCmd cmd{s.id, s.atUs, (uint8_t)s.flash, (uint8_t)conf::get().cam_res,
                             (uint32_t)conf::get().cam_delay_ms * 1000u};
@@ -193,12 +282,10 @@ void handleEffects(uint32_t eff) {
       X4_LOG_ERR(Warn, "shoot", "slow", x4::Err::NET_TRANSFER_SLOW, "shot=%lu total_ms=%lu", (unsigned long)s.id,
                  (unsigned long)s.totalMs());
     x4ui::shotStored(partial, s.totalMs(), over);
+    sys::saveBatteryUsedMwh(g_bat.usedMwh());
     g_lastSd = 0;  // re-check free space now
   }
-  if (eff & sh::kResumePreview) {
-    const auto& c = conf::get();
-    if (c.prev_enabled) net::setPreview(true, (uint8_t)c.prev_cam, (uint8_t)c.prev_fps);
-  }
+  if (eff & sh::kResumePreview) startPreview();
   if (eff & sh::kPausePreview) net::setPreview(false, 0, 0);
 }
 
@@ -236,6 +323,12 @@ void processRequests() {
         conf::set("prev_enabled", 0, nullptr);
         handleEffects(g_ctl.setPreviewWanted(false, millis()));
         net::setPreview(false, 0, 0);
+        break;
+      case Request::BatteryFull:
+        g_bat.reset();
+        sys::saveBatteryUsedMwh(0);
+        X4_LOGI("bat", "reset", "pct=100 by=request");
+        x4ui::toast("battery set to 100%", 0xFFFFFF);
         break;
       case Request::Reboot:
         X4_LOGW("app", "reboot", "by=request");
@@ -376,6 +469,10 @@ void publishStatus(uint32_t now) {
   st.previewOn = g_previewOn;
   st.apStations = g_mode == Mode::Full ? net::apStations() : 0;
   st.buttonDown = inputs::shutterPressed();
+  st.batteryPct = g_bat.percent();
+  st.batteryHours = g_bat.hoursLeft(g_powerMw);
+  st.powerMw = g_powerMw;
+  st.batteryUsedMwh = g_bat.usedMwh();
   const auto& cf = conf::get();
   st.uiMode = (uint8_t)cf.ui_mode;
   st.uiOrient = (uint8_t)cf.ui_orient;
@@ -393,8 +490,8 @@ void pullPreview(uint32_t now) {
   }
   if (!want || !g_previewBuf || now - g_lastPreviewPull < 30) return;
   g_lastPreviewPull = now;
-  uint32_t n = net::takePreview(g_previewBuf, 64 * 1024, &g_previewSeq);
-  if (n) x4ui::setPreviewJpeg(g_previewBuf, n);
+  uint32_t n = net::takePreview(g_previewBuf, 128 * 1024, &g_previewSeq);
+  if (n) x4ui::setPreviewJpeg(g_previewBuf, n, conf::get().prev_res ? 0.5f : 1.0f);
 }
 
 }  // namespace
@@ -455,8 +552,12 @@ void setup(Mode m) {
     net::beginTransfer(c);
     net::beginWeb();
     net::beginOta();
-    g_previewBuf = (uint8_t*)heap_caps_malloc(64 * 1024, MALLOC_CAP_SPIRAM);
+    g_previewBuf = (uint8_t*)heap_caps_malloc(128 * 1024, MALLOC_CAP_SPIRAM);
   }
+  g_bat.setCapacity((uint32_t)c.bat_cap_mwh, (uint8_t)c.bat_eff_pct);
+  g_bat.setUsed(sys::batteryUsedMwh());
+  X4_LOGI("bat", "restore", "pct=%d used_mwh=%.0f usable_mwh=%.0f note=estimate", g_bat.percent(), g_bat.usedMwh(),
+          g_bat.usableMwh());
   g_ctl.setParams(paramsFrom(c));
   handleEffects(g_ctl.setPreviewWanted(c.prev_enabled != 0, millis()));
   handleEffects(g_ctl.bootDone(millis()));
@@ -491,6 +592,7 @@ void loop() {
       bool on[x4::proto::kMaxCams];
       cams::onlineMask(on);
       handleEffects(g_ctl.setCameras(on, now));
+      if (g_ctl.state() == State::Preview && choosePreviewCam() != net::previewCam()) startPreview();
     }
     handleEffects(g_ctl.tick(now));
     pullPreview(now);
@@ -502,6 +604,7 @@ void loop() {
     applyLiveConfig();
   }
   thermal(now);
+  energyTick(now);
   sdCheck(now);
   power::poll(now);
   flash::poll();

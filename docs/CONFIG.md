@@ -117,11 +117,22 @@ curl "http://192.168.4.50/settings?cam_id=3"
 | `cam_vflip` | 0 | 0…1 | bool | cam |  |  | Flip vertically. |
 | `cam_hmirror` | 0 | 0…1 | bool | cam |  |  | Mirror horizontally. |
 
+**battery estimate (energy counting, the SE cannot read the bank)**
+
+| option | default | range | unit | scope | safety | reboot | meaning |
+|---|---|---|---|---|---|---|---|
+| `bat_cap_mwh` | 18500 | 1000…100000 | mWh | core |  |  | Power bank energy: mAh x 3.7 V (Anker Nano 5000 = 18500). |
+| `pw_core_mw` | 900 | 100…5000 | mW | core |  |  | Estimated Core draw (screen on, AP up). Replace with the measured value. |
+| `pw_cam_idle_mw` | 750 | 100…5000 | mW | core |  |  | Estimated camera draw when online and idle. |
+| `pw_cam_strm_mw` | 1000 | 100…5000 | mW | core |  |  | Estimated camera draw while streaming the preview. |
+| `pw_cam_busy_mw` | 1500 | 100…5000 | mW | core |  |  | Estimated camera draw while capturing / uploading. |
+
 **preview**
 
 | option | default | range | unit | scope | safety | reboot | meaning |
 |---|---|---|---|---|---|---|---|
-| `prev_cam` | 1 | 1…4 | count | core |  |  | Which camera streams the live preview. |
+| `prev_cam` | 1 | 1…4 | count | core |  |  | Preferred preview camera; if it is offline the first online camera is used. |
+| `prev_res` | 0 | 0…1 | enum | core |  |  | Preview size: 0 = QVGA 320x240 (matches the screen, fastest), 1 = VGA 640x480 decoded at 1/2. |
 | `prev_fps` | 5 | 1…15 | count | core |  |  | Target preview frame rate (decoded on the Core in software). |
 | `prev_enabled` | 1 | 0…1 | bool | core |  |  | Live preview on the main screen. |
 
@@ -147,7 +158,7 @@ curl "http://192.168.4.50/settings?cam_id=3"
 | `ui_brightness` | 160 | 10…255 | level | core |  |  | Backlight brightness. |
 | `ui_sound` | 1 | 0…1 | bool | core |  |  | Shutter sound through the Core speaker. |
 | `ui_volume` | 96 | 0…255 | level | core |  |  | Speaker volume. |
-| `ui_mode` | 1 | 0…1 | enum | core |  |  | Settings tile 'ui': 0 = minml (photo only + flash recharge indicator), 1 = full (footer with eyes online and SD free). |
+| `ui_mode` | 1 | 0…1 | enum | core |  |  | Settings tile 'ui': 0 = minml (photo only + flash recharge indicator), 1 = full (footer with cameras online and SD free). |
 | `ui_orient` | 0 | 0…1 | enum | core |  |  | Settings tile 'orientation': 0 = horzntl, 1 = portrait (preview dims the sides to a 180 px crop; recorded in shot.json for the companion to crop). |
 | `ui_effect` | 0 | 0…1 | enum | core |  |  | Settings tile 'effect': 0 = normal, 1 = dithered (applied to the live preview; photos stay original, the choice is recorded in shot.json). |
 | `ui_show_fps` | 0 | 0…1 | bool | core |  |  | FPS overlay in the corner. |

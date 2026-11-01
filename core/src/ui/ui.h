@@ -28,7 +28,8 @@ void shutterRefused(const char* why);
 void toast(const char* text, uint32_t colorHex, uint32_t ms = 2200);
 
 // Live preview: decoded on the UI loop (JPEG -> RGB565) into an LVGL image.
-void setPreviewJpeg(const uint8_t* jpg, uint32_t len);
+// scale: 1.0 for QVGA (320x240 = the screen), 0.5 for VGA.
+void setPreviewJpeg(const uint8_t* jpg, uint32_t len, float scale = 1.0f);
 void clearPreview();
 
 }  // namespace x4ui

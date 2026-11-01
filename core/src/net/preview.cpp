@@ -17,11 +17,12 @@ namespace x4core {
 namespace net {
 namespace {
 
-constexpr uint32_t kMaxJpeg = 64 * 1024;  // QVGA JPEG is ~10-25 KB (ASSUMPTION, measure)
+constexpr uint32_t kMaxJpeg = 128 * 1024;  // QVGA ~10-25 KB, VGA ~30-80 KB (ASSUMPTION, measure)
 
 volatile bool g_on = false;
 volatile uint8_t g_cam = 1;
 volatile uint8_t g_fps = 5;
+volatile uint8_t g_res = 0;
 uint8_t* g_buf = nullptr;
 uint32_t g_len = 0;
 uint32_t g_seq = 0;
@@ -44,7 +45,7 @@ void previewTask(void*) {
     if (ip && tmp) {
       IPAddress a(ip);
       char url[64];
-      snprintf(url, sizeof(url), "http://%u.%u.%u.%u/capture?res=0", a[0], a[1], a[2], a[3]);
+      snprintf(url, sizeof(url), "http://%u.%u.%u.%u/capture?res=%u", a[0], a[1], a[2], a[3], (unsigned)g_res);
       http.setTimeout(1500);
       if (http.begin(url)) {
         int code = http.GET();
@@ -85,15 +86,19 @@ void previewTask(void*) {
 
 }  // namespace
 
-void setPreview(bool on, uint8_t cam, uint8_t fps) {
+void setPreview(bool on, uint8_t cam, uint8_t fps, uint8_t res) {
   if (!g_mu) {
     g_mu = xSemaphoreCreateMutex();
     g_buf = (uint8_t*)heap_caps_malloc(kMaxJpeg, MALLOC_CAP_SPIRAM);
     xTaskCreatePinnedToCore(previewTask, "preview", 6144, nullptr, 2, &g_task, 0);
   }
-  if (g_on != on) X4_LOGI("preview", on ? "start" : "stop", "cam=%u fps=%u", cam, fps);
-  g_cam = cam;
-  g_fps = fps;
+  if (g_on != on) X4_LOGI("preview", on ? "start" : "stop", "cam=%u fps=%u res=%u", cam, fps, res);
+  else if (on && cam != g_cam) X4_LOGI("preview", "switch_cam", "from=%u to=%u", g_cam, cam);
+  if (on) {
+    g_cam = cam;
+    g_fps = fps;
+    g_res = res;
+  }
   g_on = on;
 }
 
@@ -111,6 +116,7 @@ uint32_t takePreview(uint8_t* buf, uint32_t cap, uint32_t* seq) {
 }
 
 float previewFps() { return g_fpsMeasured; }
+uint8_t previewCam() { return g_cam; }
 
 }  // namespace net
 }  // namespace x4core

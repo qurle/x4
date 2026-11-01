@@ -21,5 +21,8 @@
 | [ENCLOSURE.md](ENCLOSURE.md) | v1 foam board, v2 acrylic, light and heat |
 | [BRIEF.md](BRIEF.md) | the original kickoff brief, verbatim |
 
+The same docs as a browsable site (search, themes, rendered diagrams): [`site/`](../site/README.md),
+`cd site && npm i && npm run dev`.
+
 Tags used everywhere: **VERIFIED** (with source), **ASSUMPTION** (reasoned, to measure),
 **Not sure** (unknown).

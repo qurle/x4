@@ -99,17 +99,17 @@ stateDiagram-v2
 
 | state | shutter | UI |
 |---|---|---|
-| Booting | refused | splash |
-| Idle | refused ("not ready") | "WAITING FOR CAMERAS n/4" |
-| Armed | **accepted** | "READY · n EYES" |
-| Preview | **accepted** (preview pauses) | "LIVE", preview image |
-| Shooting | refused ("busy") | white-out, rings pulse accent |
-| Transferring | refused ("busy") — the next shot waits until buffers are free | "SAVING k/n", progress rings |
-| Error | refused ("error") | "NO SD CARD" / "SD CARD FULL" / "TOO HOT" |
+| Booting | refused | splash, then "starting" |
+| Idle | refused ("not ready") | "waiting for cameras · n of 4" over the dark viewfinder |
+| Armed | **accepted** | "n of 4 cameras ready" (no preview frame yet) |
+| Preview | **accepted** (preview pauses) | live photo full-bleed + footer (full mode) |
+| Shooting | refused ("busy") | white-out, then the holographic "Saving..." overlay |
+| Transferring | refused ("busy") — the next shot waits until buffers are free | "Saving..." with "k of n" |
+| Error | refused ("error") | red "Error" overlay + reason ("no sd card", "sd card full", "too hot, cooling") |
 
 Effects the app performs: send trigger, schedule flash, pause/resume preview, start transfers
 (respecting `xfer_parallel`), write the sidecar, UI moments (`shutterMoment`, `shotCaptured`,
-`shotStored`, `shutterRefused`). Faults: no cameras, SD missing, SD full (< 12 MB), overheat.
+`shotStored`, `shutterRefused`). Screens and overlays: [UI.md](UI.md). Faults: no cameras, SD missing, SD full (< 12 MB), overheat.
 Brown-out is reported (boot log, diagnostics, web) but is not a blocking state.
 
 ### Shot timeline
@@ -162,6 +162,17 @@ The map has a text form (`InputMap::parse`): `shutter.long=menu,encoder.rotate=s
 **Adding a scroll wheel:** wire it to G5/G6 + GND, build with `-DX4_ENCODER_QUADRATURE=1`; it
 emits `encoder.rotate` with ± detents and the UI receives `scroll` actions. For an I2C encoder,
 write a `Driver` subclass in `inputs.cpp` that polls it and emits the same gestures.
+
+### Battery estimate
+
+`shared/include/x4/energy.h` (unit-tested). Every 250 ms the app estimates the rig's draw from a
+power model (`pw_core_mw` + per online camera `pw_cam_idle_mw` / `pw_cam_strm_mw` /
+`pw_cam_busy_mw` by heartbeat state, + flash pulses at 5 W × pulse) and integrates it.
+Remaining = `bat_cap_mwh × bat_eff_pct − used`. `used` is saved in NVS every 60 s and after each
+stored shot (power can disappear any time; at most a minute is lost). It cannot detect that the
+bank was recharged, so the user resets it: long-press the footer percentage → "Bank charged?",
+or *Bank charged* on the web page (`bat_full`). Accuracy depends on calibrating `pw_*_mw` with the
+USB meter (MEASUREMENTS.md).
 
 ## Camera firmware
 

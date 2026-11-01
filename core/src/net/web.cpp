@@ -109,7 +109,11 @@ void hStatus() {
   pw["bus_out_en"] = s.busOutEn;
   pw["usb_otg_en"] = s.usbOtgEn;
   pw["vbus_mv"] = s.vbusMv;
-  pw["battery"] = "none (CoreS3-SE): power bank level is not readable";
+  pw["battery_pct_est"] = s.batteryPct;
+  pw["battery_hours_est"] = s.batteryHours;
+  pw["power_mw_est"] = s.powerMw;
+  pw["battery_used_mwh"] = s.batteryUsedMwh;
+  pw["battery_note"] = "estimate by energy counting (no battery sensor on the SE)";
   JsonObject sy = d["system"].to<JsonObject>();
   sy["temp_c"] = s.tempC;
   sy["hot"] = s.hot;
@@ -240,6 +244,7 @@ void hAction() {
   else if (a == "preview_on") app::request(app::Request::PreviewOn);
   else if (a == "preview_off") app::request(app::Request::PreviewOff);
   else if (a == "reboot") app::request(app::Request::Reboot);
+  else if (a == "bat_full") app::request(app::Request::BatteryFull);
   else return sendErr(400, x4::Err::INTERNAL, "unknown action");
   X4_LOGI("web", "action", "a=%s from=%s", a.c_str(), g_srv.client().remoteIP().toString().c_str());
   JsonDocument d;
