@@ -386,6 +386,7 @@ void publishStatus(uint32_t now) {
     uint32_t left = st.flashReadyInMs > cool ? cool : st.flashReadyInMs;
     st.flashChargePct = (st.flashReady || cool == 0) ? 100 : (uint8_t)(100 - left * 100 / cool);
   }
+  st.videoMode = false;
   st.recording = false;
   st.recordMs = 0;
   const auto& p = power::last();

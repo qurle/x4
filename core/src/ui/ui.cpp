@@ -218,7 +218,8 @@ struct {
   lv_obj_t* dimL = nullptr;
   lv_obj_t* dimR = nullptr;
   lv_obj_t* footer = nullptr;
-  lv_obj_t* recGlow = nullptr;  // footer left: red glow while recording
+  lv_obj_t* glowL = nullptr;    // footer left (video mode only): corner glow
+  lv_obj_t* recGlow = nullptr;  // red glow while recording
   lv_obj_t* recDot = nullptr;   // white dot idle, red while recording
   lv_obj_t* recTime = nullptr;  // "-:--" idle, "m:ss" while recording
   lv_obj_t* glowMid = nullptr;  // footer centre glow, with the flash charge
@@ -228,6 +229,7 @@ struct {
   lv_obj_t* sdNum = nullptr;    // footer right: SD free, number + unit
   lv_obj_t* sdUnit = nullptr;
   int lastRec = -1;
+  int lastVideo = -1;
   lv_obj_t* menu = nullptr;
   uint32_t menuUntil = 0;
   lv_obj_t* saving = nullptr;
@@ -326,15 +328,16 @@ void buildMain() {
   lv_obj_set_size(g.footer, kScreenW, kFooterH);
   lv_obj_align(g.footer, LV_ALIGN_BOTTOM_LEFT, 0, 0);
   lv_obj_add_flag(g.footer, LV_OBJ_FLAG_OVERFLOW_VISIBLE);
-  lv_obj_set_pos(image(g.footer, &x4_img_glow_corner_left), 0, kGlowY);
+  g.glowL = image(g.footer, &x4_img_glow_corner_left);
+  lv_obj_set_pos(g.glowL, 0, kGlowY);
   lv_obj_set_pos(image(g.footer, &x4_img_glow_corner_right), kScreenW - x4_img_glow_corner_right.header.w, kGlowY);
   g.glowMid = image(g.footer, &x4_img_glow_mid);
   lv_obj_set_pos(g.glowMid, (kScreenW - x4_img_glow_mid.header.w) / 2, kGlowY);
   lv_obj_add_flag(g.glowMid, LV_OBJ_FLAG_HIDDEN);
 
-  // Left. The record glow (60×23 ellipse, centred on the timer's bottom-left corner) shows only
-  // while recording. Figma shows this block only in the Video footer state; it is always shown
-  // here (owner, 2026-11-01): "-:--" until video exists.
+  // Left, video mode only (Footer State "Video"; hidden in "Default" and "Flash Recharge"),
+  // together with its corner glow. The record glow (60×23 ellipse, centred on the timer's
+  // bottom-left corner) shows only while recording.
   g.recGlow = image(g.footer, &x4_img_rec_glow);
   lv_obj_set_pos(g.recGlow, 0, kRecGlowY);
   lv_obj_add_flag(g.recGlow, LV_OBJ_FLAG_HIDDEN);
@@ -346,6 +349,7 @@ void buildMain() {
   lv_obj_set_pos(g.recDot, kFooterPadX, kRecDotY);
   g.recTime = label(g.footer, fontFooter(), kOnPhoto, "-:--");
   lv_obj_set_pos(g.recTime, kRecTextX, kFooterTextY);
+  for (lv_obj_t* o : {g.glowL, g.recDot, g.recTime}) lv_obj_add_flag(o, LV_OBJ_FLAG_HIDDEN);
 
   // Centre: bolt (6.6×9.7) + gap 4 + "80%", the group centred on the screen. The bolt fades in with
   // the charge so it reads as filling up; the number moves in 1 % steps.
@@ -494,7 +498,14 @@ void updateMain(const Status& s, uint32_t now) {
   g.effect = s.uiEffect;
   setHidden(g.footer, saving || err);
 
-  // Left: record state. Idle = white dot + "-:--"; recording = red dot with the red glow + timer.
+  // Left, only in video mode (Figma): white dot + "-:--"; recording = red dot, red glow + timer.
+  int video = (s.videoMode || s.recording) ? 1 : 0;
+  if (video != g.lastVideo) {
+    g.lastVideo = video;
+    setHidden(g.glowL, !video);
+    setHidden(g.recDot, !video);
+    setHidden(g.recTime, !video);
+  }
   int rec = s.recording ? 1 : 0;
   if (rec != g.lastRec) {
     g.lastRec = rec;

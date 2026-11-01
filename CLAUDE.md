@@ -12,6 +12,8 @@ Mini Button, powered by an Anker power bank through a USB-C breakout rail. Start
   (`knowledge_search`) before answering. M5's own docs sometimes contradict each other (e.g. the
   SE pin-map page lists Ports A/B/C, the SE schematic has only J3 = Port A); say so when they do.
 - No screenshot-based UI development. Build the UI from Figma node data (see below).
+- **Figma is the truth** for the UI: where it disagrees with an earlier request or commit, follow
+  Figma (owner, 2026-11-01).
 - Project name is **x4cam** (`X4_PROJECT_NAME` in `shared/include/x4/version.h`). "Four Eyes" is
   gone for good.
 - No battery gauge of any kind (ADR-014). The bank's own indicator is the truth.
@@ -79,9 +81,9 @@ renders are in the repo.
 
 ## In flight (update or delete this section as it changes)
 
-1. Video recording is not implemented; `Status.recording` is always false. The footer already
-   shows the state (Figma shows the record block only in the Video footer state; the owner wants
-   it always, so it shows `-:--`).
+1. Video is not implemented; `Status.videoMode` and `Status.recording` are always false. The
+   footer's record block (dot + `-:--` / timer) shows only in video mode, as in Figma's Footer
+   State "Video" (owner, 2026-11-01: Figma is the truth), so it is hidden in v1.
 2. Open design question (*Not sure*): Figma puts the footer's centre glow on the Middle frame's
    left edge (x ≈ 135); the code centres it under the flash group. Ask the owner.
 3. Measure the UI on the panel: the label positions are computed from font metrics, not seen.
