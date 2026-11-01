@@ -85,6 +85,13 @@ Runtime XML is paid and removed from open-source LVGL, so XML = compile-time exp
 **Context.** The Figma MCP returned "no access to this file" (connector on the work account).
 **Decision.** Build on placeholder tokens; ask the owner. Superseded once access worked.
 
+## ADR-017 Manual site from docs/ with the notes. template
+**Decision.** `site/` is the owner's notes. Astro template (MIT) minus its demo content and
+framework islands. `docs/*.md` stays the only source: a sync script copies it into
+`site/src/pages/` (gitignored) and a remark plugin rewrites links between docs and to repo files.
+Mermaid renders client-side, lazily. **Rejected:** moving the docs into `site/src/pages/`
+(breaks GitHub reading and every relative link), Starlight/Docusaurus (not the owner's style).
+
 ## ADR-016 UI v2 implemented from Figma 73:368
 **Decision.** Replace the placeholder four-ring UI with the file's photo-first design: full-bleed
 preview, footer, tap menu, 2×2 settings tiles, Saving/Error overlays. Figma raster overlays are

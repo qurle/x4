@@ -1,0 +1,102 @@
+---
+import Icons from '@components/utils/Icons.astro'
+import '@styles/global.sass'
+import settings from '@settings'
+
+const defaultTitle = settings.title
+const {
+  title = defaultTitle,
+  simpleTitle = false,
+  description = settings.description,
+  class: className,
+} = Astro.props
+
+let pageTitle = defaultTitle
+if (title !== defaultTitle)
+  pageTitle = simpleTitle ? title : `${title} | ${defaultTitle}`
+
+const base = Astro.url.pathname.endsWith('/')
+  ? Astro.url.pathname
+  : Astro.url.pathname + '/'
+
+const origin = `${Astro.url.protocol}//${Astro.url.host}`
+---
+
+<!doctype html>
+<html
+  lang="en"
+  data-font={settings.appearance.font.default}
+  data-theme={settings.appearance.theme.default}
+>
+  <head>
+    <base href={base} target="_self" />
+    <meta charset="UTF-8" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    {!settings.indexable && <meta name="robots" content="noindex, nofollow" />}
+    <meta
+      name="viewport"
+      content="width=device-width initial-scale=1 interactive-widget=resizes-content"
+    />
+    <meta name="theme-color" content="#f8f8f8" />
+
+    <meta name="msapplication-TileColor" content="#575757" />
+    <meta name="msapplication-navbutton-color" content="#161616" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="#161616" />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:image" content={`${origin}/og/main.png`} />
+    <meta property="vk:image" content={`${origin}/og/main-vk.png`} />
+    <meta name="twitter:image" content={`${origin}/og/main.png`} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <Icons />
+
+    <script is:inline>
+      // Restore scroll before paint to avoid visible jumps.
+      if (window.location.pathname) {
+        const key = 'scroll:' + window.location.pathname
+        const saved = Number.parseInt(localStorage.getItem(key) || '', 10)
+        if (!Number.isNaN(saved)) {
+          window.scrollTo(0, saved)
+        }
+      }
+    </script>
+
+    <script is:inline>
+      // This thing comes inline to avoid flickering when your
+      // theme is not default. Sorry, just saving your eyes!
+      function loadMode(mode) {
+        const value = localStorage.getItem(mode)
+        if (value && value !== 'undefined') {
+          document.documentElement.dataset[mode] = value
+        }
+      }
+      loadMode('theme')
+      loadMode('font')
+
+      // Keep the browser chrome color in sync with the loaded theme
+      const themeColors = {
+        light: '#f8f8f8',
+        dark: '#161616',
+        digital: '#001108',
+      }
+      const theme = document.documentElement.dataset.theme
+      const themeMeta = document.querySelector('meta[name="theme-color"]')
+      if (themeMeta && themeColors[theme])
+        themeMeta.setAttribute('content', themeColors[theme])
+    </script>
+  </head>
+  <body class={className}>
+    <slot />
+
+    {
+      settings.scroll.restore && (
+        <script>
+          import { initScrollRestore } from '@scripts/utils/scroll'
+          initScrollRestore()
+        </script>
+      )
+    }
+  </body>
+</html>

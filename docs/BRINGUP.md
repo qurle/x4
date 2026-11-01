@@ -129,8 +129,8 @@ USB unplugged everywhere. USB meter between bank and breakout. Switch off betwee
 |---|---|---|
 | Core (Port A, split cable) | boots from the rail alone; ≈ 0.15–0.3 A; `vbus_mv` ≈ rail voltage | no boot: Grove contact, polarity; bank asleep (press its button) |
 | + Mini Button (white → G1) | diagnostics "button DOWN" when pressed | stays "up": wiring; "DOWN" stuck: wrong polarity or wrong unit |
-| + cam1 | +0.15–0.3 A; cam joins `x4-rig`, registers; ring 1 lights on the Core | [TROUBLESHOOTING WiFi](TROUBLESHOOTING.md#wifi) |
-| + cam2, cam3, cam4 | ≈ 1–1.5 A total at idle; four rings | brown-out resets: [Power](TROUBLESHOOTING.md#power) |
+| + cam1 | +0.15–0.3 A; cam joins `x4-rig`, registers; footer/diagnostics show 1 camera, viewfinder shows its preview | [TROUBLESHOOTING WiFi](TROUBLESHOOTING.md#wifi) |
+| + cam2, cam3, cam4 | ≈ 1–1.5 A total at idle; diagnostics list four cameras online | brown-out resets: [Power](TROUBLESHOOTING.md#power) |
 | + Flashlight (EN → G2, rail power) | nothing lights at boot; current unchanged | lights at boot: EN pulled up (step 3), unplug immediately |
 
 Then switch the whole rig on/off 10× with everything attached and watch the bank: no shut-off,
@@ -157,7 +157,7 @@ Core running `core`. Cameras join, register, heartbeat. Phone/laptop joins `x4-r
 
 | expected | if it fails |
 |---|---|
-| four `evt=register` lines, four rings lit, web page shows 4 online, `hb_age_ms` < 1500 | [WiFi](TROUBLESHOOTING.md#wifi) |
+| four `evt=register` lines, diagnostics and web page show 4 online, `hb_age_ms` < 1500 | [WiFi](TROUBLESHOOTING.md#wifi) |
 | `evt=ap … max_conn=6 (verified=6)` | AP full: raise `ap_max_clients` |
 
 ### Step 7 — Simultaneous shot

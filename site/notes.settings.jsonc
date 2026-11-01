@@ -1,0 +1,47 @@
+{
+	// Root folder name — the first heading you see in notes
+	"rootTitle": "x4.",
+	// Site name — shown in the browser tab and as the title suffix
+	"title": "x4 manual",
+	// Default description — used for the meta description and link previews
+	"description": "Four Eyes: a four-camera rig on M5Stack. Build, wiring, power, firmware and design manual.",
+	// Default look, and whether visitors can switch it
+	"appearance": {
+		"theme": {
+			// Show the theme switcher button
+			"switch": true,
+			// Starting theme: light | dark | digital
+			"default": "dark"
+		},
+		"font": {
+			// Show the font switcher button
+			"switch": true,
+			// Starting font: serif | mono | sans
+			"default": "serif"
+		}
+	},
+	// Show in search engines
+	"indexable": false,
+	// Remember scroll position when returning to a note
+	"scroll": {
+		"restore": true
+	},
+	// Footer settings
+	"footer": {
+		// Show the footer
+		"show": true,
+		// Text (or links) in the footer	
+		"content": [
+			{
+				"label": "qurle",
+				"href": "https://qurle.net",
+				"target": "_blank"
+			},
+			{
+				"label": "github",
+				"href": "https://github.com/qurle/x4",
+				"target": "_blank"
+			}
+		]
+	}
+}
