@@ -2,8 +2,8 @@
 
 A landing page plus every `docs/*.md`, rendered with [Astro](https://astro.build). Dark, like the
 device's screen (`#1E1E1E`). Instrument Serif for headings, Inter for reading, Space Mono for code,
-tables and short labels. Lime (`#DDFF00`) is the only accent: primary buttons, link underlines,
-selection and focus. Motion is short and ease-out, and only where it explains something (see the top
+tables and short labels. Lime (`#DDFF00`) is the only accent: primary buttons, link underlines on
+hover, selection and focus. Motion is short and ease-out, and only where it explains something (see the top
 of `src/styles/site.css`).
 
 **`docs/` stays the source of truth.** The site reads the Markdown where it is

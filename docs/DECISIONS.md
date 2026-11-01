@@ -89,7 +89,7 @@ Runtime XML is paid and removed from open-source LVGL, so XML = compile-time exp
 **Decision.** Replace the notes. template with a small Astro site of our own (owner, 2026-11-01):
 a landing page plus every doc. Dark like the device's screen (`#1E1E1E`); Instrument Serif for
 headings, Inter for reading, Space Mono for code and tables; one accent, lime `#DDFF00`, only on
-primary buttons, link underlines, selection and focus; short ease-out motion; no uppercase labels,
+primary buttons, link underlines on hover, selection and focus; short ease-out motion; no uppercase labels,
 thin rules or decorative separators.
 `docs/*.md` is read in place through an Astro content collection (no copy step); the page list in
 `site/src/lib/docs.mjs` fails the build if a doc is missing from it. Supersedes ADR-017.
