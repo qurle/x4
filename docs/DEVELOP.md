@@ -165,7 +165,10 @@ The terminal shows the UI's log lines, in the same format as the device.
 colours and text rendering on the real IPS panel, and how touch feels. Those still need the panel
 ([MEASUREMENTS: UI](MEASUREMENTS.md#ui)).
 
-**If it fails:** `cmake: command not found` or `SDL2 not found` → [§0](#0-set-up-once). The
+**If it fails:** `No module named 'PIL'` → the venv from [§0](#0-set-up-once) isn't active (or
+wasn't made): `source .venv/bin/activate`, and the prompt starts with `(.venv)`. A plain
+`pip3 install pillow` on macOS often stops with *externally-managed-environment*: that's why the
+guide uses a venv. `cmake: command not found` or `SDL2 not found` → [§0](#0-set-up-once). The
 window says *built without SDL2* → install SDL2, then delete `tools/ui_sim/build/` and run again.
 LVGL download fails → it comes from GitHub (`lvgl/lvgl`, tag v9.6.0): check your network.
 
