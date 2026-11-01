@@ -74,7 +74,9 @@ constexpr int32_t kStateTitleY = 101;  // Saving... / Error label top (serif 48,
 constexpr int32_t kSavingTitleX = 105;  // Saving... left edge (the word is centred, the dots trail)
 constexpr int32_t kStateSubY = 202;  // 'k of n' label top (serif 24, box y 199 -> baseline 223)
 constexpr int32_t kSavingOfX = 147;  // k is right-aligned to this x, ' of n' starts here
-constexpr int32_t kPortraitW = 180;  // portrait crop width (sides dimmed to 30%)
+constexpr int32_t kPortraitW = 180;  // portrait: the centre crop that stays as it is (Figma 73:206)
+constexpr int32_t kPortraitTileW = 111;  // portrait: each side shows a 111 px copy of the frame's middle (left at x -41, right at x 250; 70 px of each visible)
+constexpr int32_t kPortraitTileOpa = 30;  // portrait: side copies' opacity in percent, over the screen background (bg)
 
 // ---- motion ----
 constexpr uint32_t kMsInstant = 60;  // press feedback

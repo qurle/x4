@@ -214,8 +214,8 @@ struct {
   M5Canvas* canvas = nullptr;
   bool hasFrame = false;
   lv_obj_t* placeholder = nullptr;
-  lv_obj_t* dimL = nullptr;
-  lv_obj_t* dimR = nullptr;
+  lv_obj_t* sideTile[2] = {};  // portrait: faded copies of the frame's middle, left and right
+  lv_obj_t* sideImg[2] = {};
   lv_obj_t* footer = nullptr;
   lv_obj_t* glowL = nullptr;    // footer left (video mode only): corner glow
   lv_obj_t* recGlow = nullptr;  // red glow while recording
@@ -306,18 +306,28 @@ void buildMain() {
   lv_obj_set_style_text_opa(g.placeholder, LV_OPA_60, 0);
   lv_obj_align(g.placeholder, LV_ALIGN_CENTER, 0, 0);
 
-  // Portrait: the centre 180 px crop stays bright, the sides drop to 30 % (Figma "preview: portrait").
-  int32_t side = (kScreenW - kPortraitW) / 2;
-  g.dimL = plain(g.main);
-  g.dimR = plain(g.main);
-  for (lv_obj_t* d : {g.dimL, g.dimR}) {
-    lv_obj_set_size(d, side, kScreenH);
-    lv_obj_set_style_bg_color(d, lv_color_black(), 0);
-    lv_obj_set_style_bg_opa(d, LV_OPA_70, 0);
-    lv_obj_add_flag(d, LV_OBJ_FLAG_HIDDEN);
+  // Portrait (Figma "preview: portrait" 73:206): the centre 180 px crop stays as it is. Each side
+  // is a 111 px copy of the frame's middle at 30 %, over the screen background (the Figma frame
+  // has no fill, so the 30 % shows whatever is behind; on the device that's bg #1E1E1E). Left copy
+  // at x -41, right at x 250: 70 px of each on screen. Both draw the live preview buffer itself,
+  // so no extra RAM and no copying (LVGL's image cache is off: every frame shows at once).
+  // Not clickable, so a tap on the sides still opens the menu.
+  const int32_t side = (kScreenW - kPortraitW) / 2;
+  for (int i = 0; i < 2; i++) {
+    lv_obj_t* t = plain(g.main);
+    lv_obj_remove_flag(t, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_set_size(t, kPortraitTileW, kScreenH);
+    lv_obj_set_pos(t, i == 0 ? side - kPortraitTileW : kScreenW - side, 0);
+    lv_obj_set_style_bg_color(t, c(kBg), 0);
+    lv_obj_set_style_bg_opa(t, LV_OPA_COVER, 0);
+    lv_obj_t* img = lv_image_create(t);
+    lv_obj_remove_flag(img, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_set_pos(img, -(kScreenW - kPortraitTileW) / 2, 0);  // the frame's middle 111 px
+    lv_obj_set_style_image_opa(img, (lv_opa_t)(LV_OPA_COVER * kPortraitTileOpa / 100), 0);
+    lv_obj_add_flag(t, LV_OBJ_FLAG_HIDDEN);
+    g.sideTile[i] = t;
+    g.sideImg[i] = img;
   }
-  lv_obj_set_pos(g.dimL, 0, 0);
-  lv_obj_set_pos(g.dimR, kScreenW - side, 0);
 
   // Footer (Footer States 83:1905, 320×47). Footer coordinates below are Figma's.
   //   left: record state (Rec Timer 83:866) · centre: flash charge (83:1188) · right: SD free (18:782)
@@ -327,6 +337,10 @@ void buildMain() {
   lv_obj_set_size(g.footer, kScreenW, kFooterH);
   lv_obj_align(g.footer, LV_ALIGN_BOTTOM_LEFT, 0, 0);
   lv_obj_add_flag(g.footer, LV_OBJ_FLAG_OVERFLOW_VISIBLE);
+  // It sits on the photo, so taps on it are taps on the photo (open the menu): not clickable.
+  // (plain() objects are clickable by default and would swallow the tap. The Saving and Error
+  // overlays keep that on purpose: no menu under them.)
+  lv_obj_remove_flag(g.footer, LV_OBJ_FLAG_CLICKABLE);
   g.glowL = image(g.footer, &x4_img_glow_corner_left);
   lv_obj_set_pos(g.glowL, 0, kGlowY);
   lv_obj_set_pos(image(g.footer, &x4_img_glow_corner_right), kScreenW - x4_img_glow_corner_right.header.w, kGlowY);
@@ -341,6 +355,7 @@ void buildMain() {
   lv_obj_set_pos(g.recGlow, 0, kRecGlowY);
   lv_obj_add_flag(g.recGlow, LV_OBJ_FLAG_HIDDEN);
   g.recDot = plain(g.footer);
+  lv_obj_remove_flag(g.recDot, LV_OBJ_FLAG_CLICKABLE);
   lv_obj_set_size(g.recDot, kRecDot, kRecDot);
   lv_obj_set_style_radius(g.recDot, LV_RADIUS_CIRCLE, 0);
   lv_obj_set_style_bg_color(g.recDot, c(kOnPhoto), 0);
@@ -492,8 +507,7 @@ void updateMain(const Status& s, uint32_t now) {
   setText(g.placeholder, ph);
 
   // Settings reflected live.
-  setHidden(g.dimL, s.uiOrient != 1);
-  setHidden(g.dimR, s.uiOrient != 1);
+  for (lv_obj_t* t : g.sideTile) setHidden(t, !(live && s.uiOrient == 1));
   g.effect = s.uiEffect;
   setHidden(g.footer, saving || err);
 
@@ -959,6 +973,7 @@ void setPreviewJpeg(const uint8_t* jpg, uint32_t len, float scale) {
   if (g.effect == 1) ditherBE565((uint16_t*)g.canvas->getBuffer(), kScreenW, kScreenH);
   uint32_t us = micros() - t0;
   lv_image_set_src(g.preview, &g.previewDsc);
+  for (lv_obj_t* img : g.sideImg) lv_image_set_src(img, &g.previewDsc);  // portrait side copies
   lv_obj_invalidate(g.preview);
   g.hasFrame = true;
   X4_LOG_EVERY(5000, x4::log::Level::Debug, "ui", "preview_decode", "us=%lu bytes=%lu dither=%u", (unsigned long)us,

@@ -31,7 +31,7 @@ design changes show up as diffs). UI v3 (`core/src/ui/ui.cpp`) is implemented fr
 | colour (not in Figma: diagnostics/toasts) | surface `#141414`, surface2 `#2A2A2A`, line `#3A3A3A`, fg `#F2F2F2`, fgMuted `#9A9A9A`, fgFaint `#5A5A5A`, ok, warn, error |
 | type | state Instrument Serif 48 · tile 36 · tileSmall 34 · menu 32 · sub 24 · footer Space Mono Bold 13 · (splash 64, diagnostics Space Mono 12/14/18) |
 | colour (tiles) | ink `#000000` (tile frames, bars, text: the tile components use pure black), rec `#EE2E2E`, sliderText `#2E2E2E` (see cam delay) |
-| layout | footer 47 px, text inset 8, record dot 9 at (8, 29), time at x 22; tap menu 80 px; settings padding 16, gap 8, tiles 140×100, bars 25 (horzntl) / 30 (vertcl), style strip 40 at x 100; "Saving..." at x 105; "k" right-aligned to x 147; portrait crop 180 px |
+| layout | footer 47 px, text inset 8, record dot 9 at (8, 29), time at x 22; tap menu 80 px; settings padding 16, gap 8, tiles 140×100, bars 25 (horzntl) / 30 (vertcl), style strip 40 at x 100; "Saving..." at x 105; "k" right-aligned to x 147; portrait: centre 180 px + 111 px side copies at 30 % |
 | text placement | each label's top = Figma baseline − LVGL baseline offset (`line_height − base_line` of the generated font). Baseline = Figma box top + ascent (0.99 em serif, 1.12 em mono; Figma line heights are 130 % / 148 %, i.e. ascent + descent), or + cap height (0.72 em) for the cap-trimmed tile labels. Values: `*Y` tokens in `ui/tokens.json` |
 | motion (ours) | fast 140 ms (menu), base 260 ms (overlays, saving opacity steps), slow 520 ms (white-out, screens), spring 420 ms overshoot (cam delay fill) |
 
@@ -71,7 +71,7 @@ above. The serif is only used ≥ 24 px, where its hairlines survive on the 320�
 | (none) splash | Splash | serif 64 "x4cam" (`X4_PROJECT_NAME`), mono caption | fade + rise, 1.4 s, then fade to viewfinder |
 | **preview: photo** | Viewfinder | full-screen `lv_image` (RGB565 swapped, live preview), footer (Footer States 83:1905): corner-glow images + Space Mono Bold 13 labels, baseline at y 38 of the footer | left = **record state** (Rec Timer 83:866), **video mode only** (Footer state "Video"; hidden in "Default" and "Flash Recharge", with its corner glow): white 9 px dot + `-:--`; red `#EE2E2E` dot, red glow and `m:ss` while recording. Centre = **flash charge** (83:1188, Footer state "Flash Recharge"): 7×10 bolt, 4 px gap, `0…100%`, group centred, with a centre glow, while the flash is armed and recharging (percent, not seconds, so it moves in small steps; the bolt fades in with it). Right = SD free (`820 MB` / `12.3 GB` / `NO SD`), right edge 8 px in |
 | **preview: dithered** | Viewfinder, `ui_effect = dithered` | same; each preview frame dithered in place (Bayer 4×4, 4 levels per channel) | photos on SD stay original; `shot.json` records `"effect":"dithered"` for the companion |
-| **preview: portrait** | Viewfinder, `ui_orient = portrait` | two black 70 % bands (70 px each side) leave a bright 180 px centre crop | `shot.json` records `"orientation":"portrait"` |
+| **preview: portrait** | Viewfinder, `ui_orient = portrait` | the 180 px centre crop as it is; each side shows a 111 px copy of the frame's **middle** at 30 % over the screen background `#1E1E1E` (left copy at x −41, right at x 250, 70 px of each on screen). The copies are two more `lv_image`s on the same preview buffer: no extra RAM, no copying, and every camera frame reaches them at once (LVGL's image cache is off) | `shot.json` records `"orientation":"portrait"`. Taps on the sides open the menu like anywhere on the photo |
 | **preview: video, not recording / recording** | Viewfinder | footer left block appears (dot + `-:--`), then the recording look | video is not implemented yet: `Status.videoMode` and `Status.recording` are always false, so in v1 the footer shows only the flash charge (when charging) and SD free |
 | **on tap: buttons** | tap menu | 80 px vertical gradient black 80 %→0, three cells with serif 32 white labels | tap the photo: fades in (140 ms), auto-hides after 4 s, tap again to hide. Only *settings* is shown in v1 (centre cell, Figma position); *video* and *media* are hidden (owner, 2026-11-01) |
 | **settings** | Settings screen | `#D1D1D1` screen, four 140×100 tiles with 2 px ink frames | opens with "over bottom" slide (260 ms). Leave: swipe, Back, or press the shutter (the shutter always returns to the viewfinder) |
@@ -112,7 +112,7 @@ editable on the web page).
 | error example text "SD is full" | sentence-case reasons in the same style | only SD full is drawn in the file |
 | holographic / red overlays are photographic | baked images: saving opaque RGB565 (150 KB, opacity at runtime), error RGB565 + alpha (225 KB) | static; drawing one full-screen image per redraw is acceptable because nothing else animates underneath while saving |
 | saving/error overlays over the *last photo* | over whatever the viewfinder shows (preview pauses at the shutter, so it is the frame just before the shot) | the Core never decodes the 5 MP result |
-| "portrait" mock shows three photos (centre + two dim copies) | one live photo with dimmed sides | same look, one camera stream |
+| portrait sides: the Figma frame has no background, so the 30 % copies fade into whatever is behind | faded over the screen background `#1E1E1E` | the device has a screen background; Figma's canvas is not part of the design |
 | "dithered" mock (coarse colour dither) | 4-level-per-channel Bayer 4×4 on the preview | close; tune levels after seeing it on the panel |
 | settings type uses cap-height trim (`text-box-trim`) | label tops computed from the cap-height baseline (see Tokens) | LVGL has no cap trimming |
 | cam delay range 0.2–1 s in the file | 0 + 0.2–1 s | 0 keeps simultaneous capture, the rig's main purpose ([OPEN_QUESTIONS Q18](OPEN_QUESTIONS.md)) |
@@ -131,7 +131,10 @@ viewfinder, settings, saving and error frames. It found the tap-menu label 3 px 
 
 Partial rendering with 2 × 40-line buffers in internal DMA RAM; flush under the SPI lock;
 labels only rewritten on change; diagnostics text at 4 Hz. The dither pass costs CPU on the UI
-loop per preview frame (≈ 3–5 ms, ASSUMPTION). Full-screen overlays (saving, error) redraw the
+loop per preview frame (≈ 3–5 ms, ASSUMPTION). Portrait side copies: per preview frame, one opaque
+fill plus a 30 % image blend over 2 × 70 × 240 = 33.6 k pixels, about the same work as the dark
+bands they replaced (a 70 % colour blend over the same pixels); no extra RAM. Estimate ≈ 1 ms per
+frame at 5 fps (ASSUMPTION). Full-screen overlays (saving, error) redraw the
 whole screen once when they appear, then only the "k of n" label changes. **Measure FPS on the
 real panel** for each screen and record it in MEASUREMENTS.md.
 
