@@ -22,7 +22,29 @@ import shutil
 import subprocess
 import sys
 
-from PIL import Image, ImageChops
+
+def missing_tools():
+    """Plain instructions instead of a traceback when the one-time setup was skipped."""
+    mac = sys.platform == "darwin"
+    problems = []
+    try:
+        import PIL  # noqa: F401
+    except ImportError:
+        problems.append(
+            "Pillow is not installed for this Python. From the repo root:\n"
+            "    python3 -m venv .venv\n"
+            "    source .venv/bin/activate        (Windows: .venv\\Scripts\\activate)\n"
+            "    pip install pillow==13.0.0 platformio==6.2.0\n"
+            "  then run this again with the venv active (prompt starts with (.venv)).")
+    if not shutil.which("cmake"):
+        problems.append("CMake is not installed: "
+                        + ("brew install cmake ninja sdl2" if mac else "sudo apt install cmake ninja-build g++ libsdl2-dev"))
+    if problems:
+        sys.exit("ui_sim needs a one-time setup (docs/DEVELOP.md, section 0):\n\n- " + "\n- ".join(problems))
+
+
+missing_tools()
+from PIL import Image, ImageChops  # noqa: E402
 
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
