@@ -58,7 +58,7 @@ CI builds all of them.
 `steps/` small bring-up firmware, one per step · `core/` Core firmware · `camera/` camera firmware · `shared/` code both use (logging, config,
 safety, protocol, state machine) · `ui/` design tokens + fonts · `tools/` generators + log tool ·
 `app/` companion (later) · `docs/` everything else ([index](docs/README.md)) · `site/` the docs
-as a browsable manual (notes. template, `cd site && npm i && npm run dev`).
+as a website with a landing page (`cd site && npm ci && npm run dev`).
 
 ## Read first
 

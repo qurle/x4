@@ -233,7 +233,7 @@ python tools/figma_pull.py
 
 ## 5. Docs site
 
-The `docs/` pages as a browsable manual with search:
+A landing page plus every `docs/*.md` (details: `site/README.md`):
 ```bash
 cd site
 ```

@@ -40,7 +40,7 @@ cd camera && pio run                             # cam1..cam4, cam-hello
 cd steps && pio run                              # 15 bring-up envs (slow, ~5 min)
 python tools/gen_docs.py --check && python tools/gen_tokens.py --check && python tools/gen_figma_assets.py --check && python tools/gen_assets.py --check
 python tools/ui_sim/run.py                       # UI on the PC vs Figma: look at tools/ui_sim/out/index.html
-cd site && npm ci && npm run build               # manual site from docs/
+cd site && npm ci && npm run build               # website: landing page + docs/
 ```
 
 - Config options live in `shared/include/x4/config_schema.def`; `docs/CONFIG.md` is generated

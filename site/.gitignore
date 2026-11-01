@@ -22,13 +22,3 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
-
-# claude code: ship shared config + skills, keep everything else (incl. settings.local.json) local
-.claude/*
-!.claude/settings.json
-!.claude/skills/
-
-# generated from ../docs by scripts/sync-docs.mjs (docs/*.md is the source of truth)
-src/pages/*
-!src/pages/\[...folder\].astro
-

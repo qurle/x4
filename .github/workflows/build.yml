@@ -54,7 +54,7 @@ jobs:
           path: tools/ui_sim/out
 
   site:
-    name: manual site
+    name: website
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -70,7 +70,7 @@ jobs:
           npm run build
       - uses: actions/upload-artifact@v4
         with:
-          name: manual-site
+          name: website
           path: site/dist
 
   build:

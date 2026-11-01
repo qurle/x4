@@ -1,0 +1,24 @@
+---
+// One page per docs/*.md listed in src/lib/docs.mjs.
+import { getCollection, render } from 'astro:content'
+import Doc from '../layouts/Doc.astro'
+import { ALL, checkMapped } from '../lib/docs.mjs'
+
+export async function getStaticPaths() {
+  const entries = await getCollection('docs')
+  checkMapped(entries.map((e) => e.id))
+  return ALL.map((d) => {
+    const entry = entries.find((e) => e.id === d.file)
+    if (!entry) throw new Error(`docs/${d.file} is listed in src/lib/docs.mjs but doesn't exist`)
+    return { params: { slug: d.slug }, props: { entry, doc: d } }
+  })
+}
+
+const { entry, doc } = Astro.props
+const { Content, headings } = await render(entry)
+const title = headings.find((h) => h.depth === 1)?.text ?? doc.label
+---
+
+<Doc title={title} slug={doc.slug} source={doc.file}>
+  <Content />
+</Doc>

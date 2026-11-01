@@ -1,0 +1,72 @@
+---
+// Landing page: what x4cam is, four real device screens, the docs.
+import Base from '../layouts/Base.astro'
+import { ALL, GROUPS, REPO } from '../lib/docs.mjs'
+
+const screens = [
+  ['viewfinder', 'Viewfinder', 'Live view from one camera.'],
+  ['settings', 'Settings', 'Orientation, delay, style, flash.'],
+  ['saving', 'Saving', 'Fills in as each photo arrives.'],
+  ['portrait', 'Portrait', 'Centre crop, faded copies at the sides.'],
+]
+---
+
+<Base title="x4cam">
+  <main class="landing">
+    <section class="hero">
+      <h1>x4cam</h1>
+      <p class="lead">Four cameras that shoot at the same moment.</p>
+      <p class="actions">
+        <a class="btn primary" href="/steps/">Start building</a>
+        <a class="btn" href={REPO}>GitHub</a>
+      </p>
+    </section>
+
+    <section class="screens" aria-label="The device's screens">
+      {
+        screens.map(([file, name, text], i) => (
+          <figure style={`--i: ${i}`}>
+            <img src={`/screens/${file}.png`} width="320" height="240" alt={`${name} screen`} />
+            <figcaption>
+              <span>{name}</span> {text}
+            </figcaption>
+          </figure>
+        ))
+      }
+    </section>
+
+    <section class="about">
+      <h2>How it works</h2>
+      <p>
+        The Core runs the screen and its own WiFi network. The cameras join it, sync their clocks and capture at a
+        moment the Core picks 120&nbsp;ms ahead.
+      </p>
+      <h2>Where it stands</h2>
+      <p>The code is written and the UI is checked in a simulator. Nothing has run on the boards yet.</p>
+    </section>
+
+    <section class="index">
+      {
+        GROUPS.map((g) => (
+          <section>
+            <h2>{g.name}</h2>
+            <ul>
+              {ALL.filter((d) => d.group === g.name).map((d) => (
+                <li>
+                  <a href={`/${d.slug}/`}>{d.label}</a>
+                  <span>{d.blurb}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </section>
+  </main>
+  <footer class="bottom">
+    <p>
+      Set in <a href="/fonts/OFL-InstrumentSerif.txt">Instrument Serif</a>, <a href="/fonts/OFL-Inter.txt">Inter</a> and
+      <a href="/fonts/OFL-SpaceMono.txt">Space Mono</a>, all under the SIL Open Font License.
+    </p>
+  </footer>
+</Base>
