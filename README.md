@@ -43,7 +43,9 @@ no router, no phone needed.
    ```bash
    cd camera && pio run
    ```
-4. When the boards arrive: **[docs/STEPS.md](docs/STEPS.md)**: 13 small steps, each with its
+4. Before the boards arrive: click through the UI on your computer,
+   `python tools/ui_sim/run.py --live` ([docs/DEVELOP.md](docs/DEVELOP.md): build, test, simulate).
+5. When the boards arrive: **[docs/STEPS.md](docs/STEPS.md)**: 13 small steps, each with its
    own tiny firmware in `steps/`, from "the Core boots" to the full rig. Read the one-5V-source
    rule at the top of [docs/WIRING.md](docs/WIRING.md) before you plug anything in.
 
