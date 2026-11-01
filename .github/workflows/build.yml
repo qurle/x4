@@ -23,6 +23,7 @@ jobs:
         run: |
           python tools/gen_tokens.py --check
           python tools/gen_docs.py --check
+          python tools/gen_figma_assets.py --check
           python tools/gen_assets.py --check
       - name: Unit tests (host)
         working-directory: core

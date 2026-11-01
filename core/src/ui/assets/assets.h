@@ -4,9 +4,11 @@
 
 extern "C" {
 extern const lv_image_dsc_t x4_img_dither_strip;  // 40x100 from dither-strip.png
-extern const lv_image_dsc_t x4_img_flash_recharge;  // 82x32 from flash-recharge.png
-extern const lv_image_dsc_t x4_img_glow_corner_left;  // 96x47 from glow-corner-left.png
-extern const lv_image_dsc_t x4_img_glow_corner_right;  // 96x47 from glow-corner-right.png
+extern const lv_image_dsc_t x4_img_flash_bolt;  // 7x10 from flash-bolt.png
+extern const lv_image_dsc_t x4_img_glow_corner_left;  // 72x72 from glow-corner-left.png
+extern const lv_image_dsc_t x4_img_glow_corner_right;  // 72x72 from glow-corner-right.png
+extern const lv_image_dsc_t x4_img_glow_mid;  // 144x72 from glow-mid.png
 extern const lv_image_dsc_t x4_img_overlay_error;  // 320x240 from overlay-error.png
 extern const lv_image_dsc_t x4_img_overlay_saving;  // 320x240 from overlay-saving.png
+extern const lv_image_dsc_t x4_img_rec_glow;  // 54x31 from rec-glow.png
 }

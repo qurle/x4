@@ -9,6 +9,7 @@
 Writes (all committed, so design changes show up as diffs):
     ui/figma/components.json        every component / component set in the file (id, name, page)
     ui/figma/nodes/<id>.json        raw node trees: geometry, fills, strokes, effects, text styles
+    ui/figma/fills/<id>.png         source image fills of FILL_NODES (input of gen_figma_assets.py)
     ui/figma/export/<id>.png        1x renders of each requested node and each component variant
                                     (reference only; assets for the firmware still go through
                                     tools/gen_assets.py)
@@ -36,6 +37,9 @@ OUT = ROOT / "ui" / "figma"
 # 83:1905 Footer States, 83:2228 saving overlay, 83:2286 error overlay, 83:866 Rec Timer,
 # 18:587 Overlay Element (footer corners)
 DEFAULT_NODES = ["73:368", "83:2147", "83:1905", "83:2228", "83:2286", "83:866", "18:587"]
+# Nodes whose image fills tools/gen_figma_assets.py needs (saved as ui/figma/fills/<id>.png):
+# saving overlay image, error overlay image, dither strip.
+FILL_NODES = ["83:2240", "83:2288", "83:2217"]
 
 
 def token():
@@ -90,6 +94,40 @@ def collect_variants(node, acc):
         collect_variants(ch, acc)
 
 
+def find(n, nid):
+    if n.get("id") == nid:
+        return n
+    for ch in n.get("children", []):
+        r = find(ch, nid)
+        if r:
+            return r
+    return None
+
+
+def pull_fills(data):
+    refs = {}
+    for nid in FILL_NODES:
+        for entry in data.get("nodes", {}).values():
+            n = find(entry["document"], nid)
+            if n:
+                img = [f for f in n.get("fills", []) if f.get("type") == "IMAGE" and f.get("visible", True)]
+                if img:
+                    refs[nid] = img[0]["imageRef"]
+                break
+    if not refs:
+        return
+    try:
+        urls = get(f"/files/{FILE_KEY}/images").get("meta", {}).get("images", {})
+    except RateLimited as e:
+        print(f"{e}; image fills skipped", file=sys.stderr)
+        return
+    (OUT / "fills").mkdir(exist_ok=True)
+    for nid, ref in refs.items():
+        if ref in urls:
+            download(urls[ref], OUT / "fills" / f"{safe(nid)}.png")
+            print(f"fill {nid} saved")
+
+
 def main(argv):
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "nodes").mkdir(exist_ok=True)
@@ -138,6 +176,7 @@ def main(argv):
         collect_variants(doc, render)
 
     write_listing()
+    pull_fills(data)
 
     # Renders: requested nodes + every component/variant inside them, 1x (device pixels).
     seen, todo = set(), []
