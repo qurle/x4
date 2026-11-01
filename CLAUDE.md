@@ -43,7 +43,8 @@ cd site && npm ci && npm run build               # manual site from docs/
 - Config options live in `shared/include/x4/config_schema.def`; `docs/CONFIG.md` is generated
   (`python tools/gen_docs.py`). Same for error codes (`errors.def`).
 - UI tokens: edit `ui/tokens.json`, then `python tools/gen_tokens.py` → `core/src/ui/tokens.h`.
-- UI images: `ui/figma/` (pulled) → `python tools/gen_figma_assets.py` → `ui/assets/figma/*.png` →
+- UI images: `ui/figma/` (pulled) → `python tools/gen_figma_assets.py` (Pillow 13.0.0, pinned: other
+  versions resample differently and fail the CI check) → `ui/assets/figma/*.png` →
   `python tools/gen_assets.py` → `core/src/ui/assets/`.
 - Toolchain is pinned (pioarduino 55.03.312-1, M5Unified 0.2.29, M5GFX 0.2.36, LVGL 9.6.0); see
   `docs/FIRMWARE.md#pinned-versions`. If PlatformIO downloads fail in the sandbox, check the

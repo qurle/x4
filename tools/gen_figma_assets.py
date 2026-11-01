@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Builds the UI bitmaps in ui/assets/figma/ from the pulled Figma data (ui/figma/), offline.
 
-    pip install pillow
+    pip install pillow==13.0.0   # pinned (CI too): Pillow's resamplers change between versions
     python tools/gen_figma_assets.py          # write the PNGs
     python tools/gen_figma_assets.py --check  # CI: exit 1 if a PNG differs from what the data gives
 

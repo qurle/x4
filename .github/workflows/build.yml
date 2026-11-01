@@ -18,7 +18,7 @@ jobs:
         with:
           path: ~/.platformio
           key: pio-native-${{ hashFiles('core/platformio.ini') }}
-      - run: pip install platformio==6.2.0 pillow
+      - run: pip install platformio==6.2.0 pillow==13.0.0  # pinned: gen_figma_assets output depends on the resampler
       - name: Generated files are up to date
         run: |
           python tools/gen_tokens.py --check
