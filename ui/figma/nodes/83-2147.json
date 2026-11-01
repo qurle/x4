@@ -1,0 +1,3506 @@
+{
+ "document": {
+  "id": "83:2147",
+  "name": "settings states",
+  "type": "SECTION",
+  "scrollBehavior": "SCROLLS",
+  "children": [
+   {
+    "id": "83:2168",
+    "name": "orientation: portrait, hrzntl",
+    "type": "COMPONENT_SET",
+    "scrollBehavior": "SCROLLS",
+    "componentPropertyDefinitions": {
+     "State": {
+      "type": "VARIANT",
+      "defaultValue": "Default",
+      "variantOptions": [
+       "Default",
+       "Variant2"
+      ]
+     }
+    },
+    "children": [
+     {
+      "id": "83:2134",
+      "name": "State=Default",
+      "type": "COMPONENT",
+      "scrollBehavior": "SCROLLS",
+      "children": [
+       {
+        "id": "73:256",
+        "name": "Rectangle 2",
+        "type": "RECTANGLE",
+        "scrollBehavior": "SCROLLS",
+        "blendMode": "PASS_THROUGH",
+        "fills": [
+         {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+           "r": 0.0,
+           "g": 0.0,
+           "b": 0.0,
+           "a": 1.0
+          }
+         }
+        ],
+        "fillGeometry": [
+         {
+          "path": "M0 0L140 0L140 25L0 25L0 0Z",
+          "windingRule": "NONZERO"
+         }
+        ],
+        "strokes": [],
+        "strokeWeight": 1.0,
+        "strokeAlign": "INSIDE",
+        "strokeGeometry": [],
+        "absoluteBoundingBox": {
+         "x": 1581.0,
+         "y": -3068.0,
+         "width": 140.0,
+         "height": 25.0
+        },
+        "absoluteRenderBounds": {
+         "x": 1581.0,
+         "y": -3068.0,
+         "width": 140.0,
+         "height": 25.0
+        },
+        "constraints": {
+         "vertical": "TOP",
+         "horizontal": "LEFT"
+        },
+        "relativeTransform": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ]
+        ],
+        "size": {
+         "x": 140.0,
+         "y": 25.0
+        },
+        "effects": [],
+        "interactions": [],
+        "complexStrokeProperties": {
+         "strokeType": "BASIC"
+        }
+       },
+       {
+        "id": "73:257",
+        "name": "Rectangle 3",
+        "type": "RECTANGLE",
+        "scrollBehavior": "SCROLLS",
+        "blendMode": "PASS_THROUGH",
+        "fills": [
+         {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+           "r": 0.0,
+           "g": 0.0,
+           "b": 0.0,
+           "a": 1.0
+          }
+         }
+        ],
+        "fillGeometry": [
+         {
+          "path": "M0 0L140 0L140 25L0 25L0 0Z",
+          "windingRule": "NONZERO"
+         }
+        ],
+        "strokes": [],
+        "strokeWeight": 1.0,
+        "strokeAlign": "INSIDE",
+        "strokeGeometry": [],
+        "absoluteBoundingBox": {
+         "x": 1581.0,
+         "y": -2993.0,
+         "width": 140.0,
+         "height": 25.0
+        },
+        "absoluteRenderBounds": {
+         "x": 1581.0,
+         "y": -2993.0,
+         "width": 140.0,
+         "height": 25.0
+        },
+        "constraints": {
+         "vertical": "TOP",
+         "horizontal": "LEFT"
+        },
+        "relativeTransform": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          75.0
+         ]
+        ],
+        "size": {
+         "x": 140.0,
+         "y": 25.0
+        },
+        "effects": [],
+        "interactions": [],
+        "complexStrokeProperties": {
+         "strokeType": "BASIC"
+        }
+       },
+       {
+        "id": "73:258",
+        "name": "horzntl",
+        "type": "TEXT",
+        "scrollBehavior": "SCROLLS",
+        "blendMode": "PASS_THROUGH",
+        "fills": [
+         {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+           "r": 0.0,
+           "g": 0.0,
+           "b": 0.0,
+           "a": 1.0
+          }
+         }
+        ],
+        "fillGeometry": [],
+        "strokes": [],
+        "strokeWeight": 1.0,
+        "strokeAlign": "OUTSIDE",
+        "strokeGeometry": [],
+        "absoluteBoundingBox": {
+         "x": 1606.0,
+         "y": -3032.0,
+         "width": 90.0,
+         "height": 26.0
+        },
+        "absoluteRenderBounds": {
+         "x": 1606.5927734375,
+         "y": -3032.639892578125,
+         "width": 89.00439453125,
+         "height": 26.9638671875
+        },
+        "constraints": {
+         "vertical": "TOP",
+         "horizontal": "CENTER"
+        },
+        "relativeTransform": [
+         [
+          1.0,
+          0.0,
+          25.0
+         ],
+         [
+          0.0,
+          1.0,
+          36.0
+         ]
+        ],
+        "size": {
+         "x": 90.0,
+         "y": 26.0
+        },
+        "characters": "horzntl",
+        "characterStyleOverrides": [],
+        "styleOverrideTable": {},
+        "lineTypes": [
+         "NONE"
+        ],
+        "lineIndentations": [
+         0
+        ],
+        "style": {
+         "fontFamily": "Instrument Serif",
+         "fontPostScriptName": "InstrumentSerif-Regular",
+         "fontStyle": "Regular",
+         "fontWeight": 400,
+         "textAutoResize": "WIDTH_AND_HEIGHT",
+         "fontSize": 36.0,
+         "textAlignHorizontal": "CENTER",
+         "textAlignVertical": "TOP",
+         "leadingTrim": "CAP_HEIGHT",
+         "letterSpacing": 0.0,
+         "lineHeightPx": 32.39999771118164,
+         "lineHeightPercent": 69.23077392578125,
+         "lineHeightPercentFontSize": 90.0,
+         "lineHeightUnit": "FONT_SIZE_%"
+        },
+        "layoutVersion": 5,
+        "effects": [],
+        "interactions": [],
+        "complexStrokeProperties": {
+         "strokeType": "BASIC"
+        }
+       }
+      ],
+      "blendMode": "PASS_THROUGH",
+      "clipsContent": false,
+      "background": [],
+      "fills": [],
+      "strokes": [
+       {
+        "blendMode": "NORMAL",
+        "type": "SOLID",
+        "color": {
+         "r": 0.0,
+         "g": 0.0,
+         "b": 0.0,
+         "a": 1.0
+        }
+       }
+      ],
+      "strokeWeight": 2.0,
+      "strokeAlign": "INSIDE",
+      "backgroundColor": {
+       "r": 0.0,
+       "g": 0.0,
+       "b": 0.0,
+       "a": 0.0
+      },
+      "fillGeometry": [
+       {
+        "path": "M0 0L140 0L140 100L0 100L0 0Z",
+        "windingRule": "NONZERO"
+       }
+      ],
+      "strokeGeometry": [
+       {
+        "path": "M0 0L0 -2L-2 -2L-2 0L0 0ZM140 0L142 0L142 -2L140 -2L140 0ZM140 100L140 102L142 102L142 100L140 100ZM0 100L-2 100L-2 102L0 102L0 100ZM0 0L0 2L140 2L140 0L140 -2L0 -2L0 0ZM140 0L138 0L138 100L140 100L142 100L142 0L140 0ZM140 100L140 98L0 98L0 100L0 102L140 102L140 100ZM0 100L2 100L2 0L0 0L-2 0L-2 100L0 100Z",
+        "windingRule": "NONZERO"
+       }
+      ],
+      "absoluteBoundingBox": {
+       "x": 1581.0,
+       "y": -3068.0,
+       "width": 140.0,
+       "height": 100.0
+      },
+      "absoluteRenderBounds": {
+       "x": 1581.0,
+       "y": -3068.0,
+       "width": 140.0,
+       "height": 100.0
+      },
+      "constraints": {
+       "vertical": "TOP",
+       "horizontal": "LEFT"
+      },
+      "relativeTransform": [
+       [
+        1.0,
+        0.0,
+        16.0
+       ],
+       [
+        0.0,
+        1.0,
+        16.0
+       ]
+      ],
+      "size": {
+       "x": 140.0,
+       "y": 100.0
+      },
+      "effects": [],
+      "interactions": [],
+      "complexStrokeProperties": {
+       "strokeType": "BASIC"
+      }
+     },
+     {
+      "id": "83:2169",
+      "name": "State=Variant2",
+      "type": "COMPONENT",
+      "scrollBehavior": "SCROLLS",
+      "children": [
+       {
+        "id": "83:2186",
+        "name": "Rectangle 2",
+        "type": "VECTOR",
+        "scrollBehavior": "SCROLLS",
+        "blendMode": "PASS_THROUGH",
+        "fills": [
+         {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+           "r": 0.0,
+           "g": 0.0,
+           "b": 0.0,
+           "a": 1.0
+          }
+         }
+        ],
+        "vectorNetwork": {
+         "vertices": [
+          {
+           "position": {
+            "x": 0.0,
+            "y": 100.0
+           },
+           "meta": 0
+          },
+          {
+           "position": {
+            "x": 1.1924880709557328e-06,
+            "y": 0.0
+           },
+           "meta": 0
+          },
+          {
+           "position": {
+            "x": 30.0,
+            "y": 3.577465577109251e-07
+           },
+           "meta": 0
+          },
+          {
+           "position": {
+            "x": 29.999998092651367,
+            "y": 100.0
+           },
+           "meta": 0
+          }
+         ],
+         "segments": [
+          {
+           "start": 0,
+           "startTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "endTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "end": 1,
+           "meta": 0
+          },
+          {
+           "start": 1,
+           "startTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "endTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "end": 2,
+           "meta": 0
+          },
+          {
+           "start": 2,
+           "startTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "endTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "end": 3,
+           "meta": 0
+          },
+          {
+           "start": 3,
+           "startTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "endTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "end": 0,
+           "meta": 0
+          }
+         ],
+         "regions": [
+          {
+           "loops": [
+            [
+             0,
+             1,
+             2,
+             3
+            ]
+           ],
+           "windingRule": "nonzero",
+           "meta": 0
+          }
+         ]
+        },
+        "fillGeometry": [
+         {
+          "path": "M0 100L1.19249e-06 0L30 3.57747e-07L30 100L0 100Z",
+          "windingRule": "NONZERO"
+         }
+        ],
+        "strokes": [],
+        "strokeWeight": 1.0,
+        "strokeAlign": "INSIDE",
+        "strokeGeometry": [],
+        "absoluteBoundingBox": {
+         "x": 1581.0,
+         "y": -2952.0,
+         "width": 30.0,
+         "height": 100.0
+        },
+        "absoluteRenderBounds": {
+         "x": 1581.0,
+         "y": -2952.0,
+         "width": 30.0,
+         "height": 100.0
+        },
+        "constraints": {
+         "vertical": "TOP",
+         "horizontal": "LEFT"
+        },
+        "relativeTransform": [
+         [
+          1.0,
+          0.0,
+          0.0
+         ],
+         [
+          0.0,
+          1.0,
+          0.0
+         ]
+        ],
+        "size": {
+         "x": 30.0,
+         "y": 100.0
+        },
+        "effects": [],
+        "interactions": [],
+        "complexStrokeProperties": {
+         "strokeType": "BASIC"
+        }
+       },
+       {
+        "id": "83:2171",
+        "name": "Rectangle 3",
+        "type": "RECTANGLE",
+        "scrollBehavior": "SCROLLS",
+        "rotation": -1.570796314870016,
+        "blendMode": "PASS_THROUGH",
+        "fills": [
+         {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+           "r": 0.0,
+           "g": 0.0,
+           "b": 0.0,
+           "a": 1.0
+          }
+         }
+        ],
+        "fillGeometry": [
+         {
+          "path": "M0 0L100 0L100 30L0 30L0 0Z",
+          "windingRule": "NONZERO"
+         }
+        ],
+        "strokes": [],
+        "strokeWeight": 1.0,
+        "strokeAlign": "INSIDE",
+        "strokeGeometry": [],
+        "absoluteBoundingBox": {
+         "x": 1691.0,
+         "y": -2952.0,
+         "width": 29.999999285139438,
+         "height": 100.00000035774656
+        },
+        "absoluteRenderBounds": {
+         "x": 1691.0,
+         "y": -2952.0,
+         "width": 30.0,
+         "height": 100.0
+        },
+        "constraints": {
+         "vertical": "TOP",
+         "horizontal": "LEFT"
+        },
+        "relativeTransform": [
+         [
+          1.1924880638503055e-08,
+          1.0,
+          110.0
+         ],
+         [
+          -1.0,
+          1.1924880638503055e-08,
+          100.0
+         ]
+        ],
+        "size": {
+         "x": 100.0,
+         "y": 29.999998092651367
+        },
+        "effects": [],
+        "interactions": [],
+        "complexStrokeProperties": {
+         "strokeType": "BASIC"
+        }
+       },
+       {
+        "id": "83:2172",
+        "name": "vertcl",
+        "type": "TEXT",
+        "scrollBehavior": "SCROLLS",
+        "blendMode": "PASS_THROUGH",
+        "fills": [
+         {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+           "r": 0.0,
+           "g": 0.0,
+           "b": 0.0,
+           "a": 1.0
+          }
+         }
+        ],
+        "fillGeometry": [],
+        "strokes": [],
+        "strokeWeight": 1.0,
+        "strokeAlign": "OUTSIDE",
+        "strokeGeometry": [],
+        "absoluteBoundingBox": {
+         "x": 1617.0,
+         "y": -2916.0,
+         "width": 68.0,
+         "height": 26.0
+        },
+        "absoluteRenderBounds": {
+         "x": 1616.7987060546875,
+         "y": -2916.639892578125,
+         "width": 67.5484619140625,
+         "height": 26.9638671875
+        },
+        "constraints": {
+         "vertical": "TOP",
+         "horizontal": "CENTER"
+        },
+        "relativeTransform": [
+         [
+          1.0,
+          0.0,
+          36.0
+         ],
+         [
+          0.0,
+          1.0,
+          36.0
+         ]
+        ],
+        "size": {
+         "x": 68.0,
+         "y": 26.0
+        },
+        "characters": "vertcl",
+        "characterStyleOverrides": [],
+        "styleOverrideTable": {},
+        "lineTypes": [
+         "NONE"
+        ],
+        "lineIndentations": [
+         0
+        ],
+        "style": {
+         "fontFamily": "Instrument Serif",
+         "fontPostScriptName": "InstrumentSerif-Regular",
+         "fontStyle": "Regular",
+         "fontWeight": 400,
+         "textAutoResize": "WIDTH_AND_HEIGHT",
+         "fontSize": 36.0,
+         "textAlignHorizontal": "CENTER",
+         "textAlignVertical": "TOP",
+         "leadingTrim": "CAP_HEIGHT",
+         "letterSpacing": 0.0,
+         "lineHeightPx": 32.39999771118164,
+         "lineHeightPercent": 69.23077392578125,
+         "lineHeightPercentFontSize": 90.0,
+         "lineHeightUnit": "FONT_SIZE_%"
+        },
+        "layoutVersion": 5,
+        "effects": [],
+        "interactions": [],
+        "complexStrokeProperties": {
+         "strokeType": "BASIC"
+        }
+       }
+      ],
+      "blendMode": "PASS_THROUGH",
+      "clipsContent": false,
+      "background": [],
+      "fills": [],
+      "strokes": [
+       {
+        "blendMode": "NORMAL",
+        "type": "SOLID",
+        "color": {
+         "r": 0.0,
+         "g": 0.0,
+         "b": 0.0,
+         "a": 1.0
+        }
+       }
+      ],
+      "strokeWeight": 2.0,
+      "strokeAlign": "INSIDE",
+      "backgroundColor": {
+       "r": 0.0,
+       "g": 0.0,
+       "b": 0.0,
+       "a": 0.0
+      },
+      "fillGeometry": [
+       {
+        "path": "M0 0L140 0L140 100L0 100L0 0Z",
+        "windingRule": "NONZERO"
+       }
+      ],
+      "strokeGeometry": [
+       {
+        "path": "M0 0L0 -2L-2 -2L-2 0L0 0ZM140 0L142 0L142 -2L140 -2L140 0ZM140 100L140 102L142 102L142 100L140 100ZM0 100L-2 100L-2 102L0 102L0 100ZM0 0L0 2L140 2L140 0L140 -2L0 -2L0 0ZM140 0L138 0L138 100L140 100L142 100L142 0L140 0ZM140 100L140 98L0 98L0 100L0 102L140 102L140 100ZM0 100L2 100L2 0L0 0L-2 0L-2 100L0 100Z",
+        "windingRule": "NONZERO"
+       }
+      ],
+      "absoluteBoundingBox": {
+       "x": 1581.0,
+       "y": -2952.0,
+       "width": 140.0,
+       "height": 100.0
+      },
+      "absoluteRenderBounds": {
+       "x": 1581.0,
+       "y": -2952.0,
+       "width": 140.0,
+       "height": 100.0
+      },
+      "constraints": {
+       "vertical": "TOP",
+       "horizontal": "LEFT"
+      },
+      "relativeTransform": [
+       [
+        1.0,
+        0.0,
+        16.0
+       ],
+       [
+        0.0,
+        1.0,
+        132.0
+       ]
+      ],
+      "size": {
+       "x": 140.0,
+       "y": 100.0
+      },
+      "effects": [],
+      "interactions": [],
+      "complexStrokeProperties": {
+       "strokeType": "BASIC"
+      }
+     }
+    ],
+    "blendMode": "PASS_THROUGH",
+    "clipsContent": true,
+    "background": [],
+    "fills": [],
+    "strokes": [
+     {
+      "blendMode": "NORMAL",
+      "type": "SOLID",
+      "color": {
+       "r": 0.5921568870544434,
+       "g": 0.27843138575553894,
+       "b": 1.0,
+       "a": 1.0
+      }
+     }
+    ],
+    "cornerRadius": 5.0,
+    "cornerSmoothing": 0.0,
+    "strokeWeight": 1.0,
+    "strokeAlign": "INSIDE",
+    "backgroundColor": {
+     "r": 0.0,
+     "g": 0.0,
+     "b": 0.0,
+     "a": 0.0
+    },
+    "fillGeometry": [
+     {
+      "path": "M0 5C0 2.23857 2.23858 0 5 0L167 0C169.761 0 172 2.23858 172 5L172 243C172 245.761 169.761 248 167 248L5 248C2.23858 248 0 245.761 0 243L0 5Z",
+      "windingRule": "NONZERO"
+     }
+    ],
+    "strokeDashes": [
+     10.0,
+     5.0
+    ],
+    "strokeGeometry": [
+     {
+      "path": "M5 248L5 247.5C2.51472 247.5 0.5 245.485 0.5 243L0 243L-0.5 243C-0.5 246.038 1.96244 248.5 5 248.5L5 248ZM0 243L0.5 243L0.5 238.042L0 238.042L-0.5 238.042L-0.5 243L0 243ZM0 233.083L0.5 233.083L0.5 223.167L0 223.167L-0.5 223.167L-0.5 233.083L0 233.083ZM0 218.208L0.5 218.208L0.5 208.292L0 208.292L-0.5 208.292L-0.5 218.208L0 218.208ZM0 203.333L0.5 203.333L0.5 193.417L0 193.417L-0.5 193.417L-0.5 203.333L0 203.333ZM0 188.458L0.5 188.458L0.5 178.542L0 178.542L-0.5 178.542L-0.5 188.458L0 188.458ZM0 173.583L0.5 173.583L0.5 163.667L0 163.667L-0.5 163.667L-0.5 173.583L0 173.583ZM0 158.708L0.5 158.708L0.5 148.792L0 148.792L-0.5 148.792L-0.5 158.708L0 158.708ZM0 143.833L0.5 143.833L0.5 133.917L0 133.917L-0.5 133.917L-0.5 143.833L0 143.833ZM0 128.958L0.5 128.958L0.5 119.042L0 119.042L-0.5 119.042L-0.5 128.958L0 128.958ZM0 114.083L0.5 114.083L0.5 104.167L0 104.167L-0.5 104.167L-0.5 114.083L0 114.083ZM0 99.2083L0.5 99.2083L0.5 89.2917L0 89.2917L-0.5 89.2917L-0.5 99.2083L0 99.2083ZM0 84.3333L0.5 84.3333L0.5 74.4167L0 74.4167L-0.5 74.4167L-0.5 84.3333L0 84.3333ZM0 69.4583L0.5 69.4583L0.5 59.5417L0 59.5417L-0.5 59.5417L-0.5 69.4583L0 69.4583ZM0 54.5833L0.5 54.5833L0.5 44.6667L0 44.6667L-0.5 44.6667L-0.5 54.5833L0 54.5833ZM0 39.7083L0.5 39.7083L0.5 29.7917L0 29.7917L-0.5 29.7917L-0.5 39.7083L0 39.7083ZM0 24.8333L0.5 24.8333L0.5 14.9167L0 14.9167L-0.5 14.9167L-0.5 24.8333L0 24.8333ZM0 9.95832L0.5 9.95832L0.5 5L0 5L-0.5 5L-0.5 9.95832L0 9.95832ZM0 5L0.5 5C0.5 2.51471 2.51472 0.5 5 0.5L5 0L5 -0.5C1.96243 -0.5 -0.5 1.96243 -0.5 5L0 5ZM5 0L5 0.5L9.90909 0.5L9.90909 0L9.90909 -0.5L5 -0.5L5 0ZM14.8182 0L14.8182 0.5L24.6364 0.5L24.6364 0L24.6364 -0.5L14.8182 -0.5L14.8182 0ZM29.5455 0L29.5455 0.5L39.3636 0.5L39.3636 0L39.3636 -0.5L29.5455 -0.5L29.5455 0ZM44.2727 0L44.2727 0.5L54.0909 0.5L54.0909 0L54.0909 -0.5L44.2727 -0.5L44.2727 0ZM59 0L59 0.5L68.8182 0.5L68.8182 0L68.8182 -0.5L59 -0.5L59 0ZM73.7273 0L73.7273 0.5L83.5455 0.5L83.5455 0L83.5455 -0.5L73.7273 -0.5L73.7273 0ZM88.4545 0L88.4545 0.5L98.2727 0.5L98.2727 0L98.2727 -0.5L88.4545 -0.5L88.4545 0ZM103.182 0L103.182 0.5L113 0.5L113 0L113 -0.5L103.182 -0.5L103.182 0ZM117.909 0L117.909 0.5L127.727 0.5L127.727 0L127.727 -0.5L117.909 -0.5L117.909 0ZM132.636 0L132.636 0.5L142.455 0.5L142.455 0L142.455 -0.5L132.636 -0.5L132.636 0ZM147.364 0L147.364 0.5L157.182 0.5L157.182 0L157.182 -0.5L147.364 -0.5L147.364 0ZM162.091 0L162.091 0.5L167 0.5L167 0L167 -0.5L162.091 -0.5L162.091 0ZM167 0L167 0.5C169.485 0.5 171.5 2.51472 171.5 5L172 5L172.5 5C172.5 1.96243 170.038 -0.5 167 -0.5L167 0ZM172 5L171.5 5L171.5 9.95833L172 9.95833L172.5 9.95833L172.5 5L172 5ZM172 14.9167L171.5 14.9167L171.5 24.8333L172 24.8333L172.5 24.8333L172.5 14.9167L172 14.9167ZM172 29.7917L171.5 29.7917L171.5 39.7083L172 39.7083L172.5 39.7083L172.5 29.7917L172 29.7917ZM172 44.6667L171.5 44.6667L171.5 54.5833L172 54.5833L172.5 54.5833L172.5 44.6667L172 44.6667ZM172 59.5417L171.5 59.5417L171.5 69.4583L172 69.4583L172.5 69.4583L172.5 59.5417L172 59.5417ZM172 74.4167L171.5 74.4167L171.5 84.3333L172 84.3333L172.5 84.3333L172.5 74.4167L172 74.4167ZM172 89.2917L171.5 89.2917L171.5 99.2083L172 99.2083L172.5 99.2083L172.5 89.2917L172 89.2917ZM172 104.167L171.5 104.167L171.5 114.083L172 114.083L172.5 114.083L172.5 104.167L172 104.167ZM172 119.042L171.5 119.042L171.5 128.958L172 128.958L172.5 128.958L172.5 119.042L172 119.042ZM172 133.917L171.5 133.917L171.5 143.833L172 143.833L172.5 143.833L172.5 133.917L172 133.917ZM172 148.792L171.5 148.792L171.5 158.708L172 158.708L172.5 158.708L172.5 148.792L172 148.792ZM172 163.667L171.5 163.667L171.5 173.583L172 173.583L172.5 173.583L172.5 163.667L172 163.667ZM172 178.542L171.5 178.542L171.5 188.458L172 188.458L172.5 188.458L172.5 178.542L172 178.542ZM172 193.417L171.5 193.417L171.5 203.333L172 203.333L172.5 203.333L172.5 193.417L172 193.417ZM172 208.292L171.5 208.292L171.5 218.208L172 218.208L172.5 218.208L172.5 208.292L172 208.292ZM172 223.167L171.5 223.167L171.5 233.083L172 233.083L172.5 233.083L172.5 223.167L172 223.167ZM172 238.042L171.5 238.042L171.5 243L172 243L172.5 243L172.5 238.042L172 238.042ZM172 243L171.5 243C171.5 245.485 169.485 247.5 167 247.5L167 248L167 248.5C170.038 248.5 172.5 246.038 172.5 243L172 243ZM167 248L167 247.5L162.091 247.5L162.091 248L162.091 248.5L167 248.5L167 248ZM157.182 248L157.182 247.5L147.364 247.5L147.364 248L147.364 248.5L157.182 248.5L157.182 248ZM142.455 248L142.455 247.5L132.636 247.5L132.636 248L132.636 248.5L142.455 248.5L142.455 248ZM127.727 248L127.727 247.5L117.909 247.5L117.909 248L117.909 248.5L127.727 248.5L127.727 248ZM113 248L113 247.5L103.182 247.5L103.182 248L103.182 248.5L113 248.5L113 248ZM98.2727 248L98.2727 247.5L88.4545 247.5L88.4545 248L88.4545 248.5L98.2727 248.5L98.2727 248ZM83.5455 248L83.5455 247.5L73.7273 247.5L73.7273 248L73.7273 248.5L83.5455 248.5L83.5455 248ZM68.8182 248L68.8182 247.5L59 247.5L59 248L59 248.5L68.8182 248.5L68.8182 248ZM54.0909 248L54.0909 247.5L44.2727 247.5L44.2727 248L44.2727 248.5L54.0909 248.5L54.0909 248ZM39.3636 248L39.3636 247.5L29.5455 247.5L29.5455 248L29.5455 248.5L39.3636 248.5L39.3636 248ZM24.6364 248L24.6364 247.5L14.8182 247.5L14.8182 248L14.8182 248.5L24.6364 248.5L24.6364 248ZM9.90911 248L9.90911 247.5L5 247.5L5 248L5 248.5L9.90911 248.5L9.90911 248ZM5 248L5 247C2.79086 247 1 245.209 1 243L0 243L-1 243C-1 246.314 1.68629 249 5 249L5 248ZM0 243L1 243L1 238.042L0 238.042L-1 238.042L-1 243L0 243ZM0 233.083L1 233.083L1 223.167L0 223.167L-1 223.167L-1 233.083L0 233.083ZM0 218.208L1 218.208L1 208.292L0 208.292L-1 208.292L-1 218.208L0 218.208ZM0 203.333L1 203.333L1 193.417L0 193.417L-1 193.417L-1 203.333L0 203.333ZM0 188.458L1 188.458L1 178.542L0 178.542L-1 178.542L-1 188.458L0 188.458ZM0 173.583L1 173.583L1 163.667L0 163.667L-1 163.667L-1 173.583L0 173.583ZM0 158.708L1 158.708L1 148.792L0 148.792L-1 148.792L-1 158.708L0 158.708ZM0 143.833L1 143.833L1 133.917L0 133.917L-1 133.917L-1 143.833L0 143.833ZM0 128.958L1 128.958L1 119.042L0 119.042L-1 119.042L-1 128.958L0 128.958ZM0 114.083L1 114.083L1 104.167L0 104.167L-1 104.167L-1 114.083L0 114.083ZM0 99.2083L1 99.2083L1 89.2917L0 89.2917L-1 89.2917L-1 99.2083L0 99.2083ZM0 84.3333L1 84.3333L1 74.4167L0 74.4167L-1 74.4167L-1 84.3333L0 84.3333ZM0 69.4583L1 69.4583L1 59.5417L0 59.5417L-1 59.5417L-1 69.4583L0 69.4583ZM0 54.5833L1 54.5833L1 44.6667L0 44.6667L-1 44.6667L-1 54.5833L0 54.5833ZM0 39.7083L1 39.7083L1 29.7917L0 29.7917L-1 29.7917L-1 39.7083L0 39.7083ZM0 24.8333L1 24.8333L1 14.9167L0 14.9167L-1 14.9167L-1 24.8333L0 24.8333ZM0 9.95832L1 9.95832L1 5L0 5L-1 5L-1 9.95832L0 9.95832ZM0 5L1 5C1 2.79086 2.79086 1 5 1L5 0L5 -1C1.68629 -1 -1 1.68629 -1 5L0 5ZM5 0L5 1L9.90909 1L9.90909 0L9.90909 -1L5 -1L5 0ZM14.8182 0L14.8182 1L24.6364 1L24.6364 0L24.6364 -1L14.8182 -1L14.8182 0ZM29.5455 0L29.5455 1L39.3636 1L39.3636 0L39.3636 -1L29.5455 -1L29.5455 0ZM44.2727 0L44.2727 1L54.0909 1L54.0909 0L54.0909 -1L44.2727 -1L44.2727 0ZM59 0L59 1L68.8182 1L68.8182 0L68.8182 -1L59 -1L59 0ZM73.7273 0L73.7273 1L83.5455 1L83.5455 0L83.5455 -1L73.7273 -1L73.7273 0ZM88.4545 0L88.4545 1L98.2727 1L98.2727 0L98.2727 -1L88.4545 -1L88.4545 0ZM103.182 0L103.182 1L113 1L113 0L113 -1L103.182 -1L103.182 0ZM117.909 0L117.909 1L127.727 1L127.727 0L127.727 -1L117.909 -1L117.909 0ZM132.636 0L132.636 1L142.455 1L142.455 0L142.455 -1L132.636 -1L132.636 0ZM147.364 0L147.364 1L157.182 1L157.182 0L157.182 -1L147.364 -1L147.364 0ZM162.091 0L162.091 1L167 1L167 0L167 -1L162.091 -1L162.091 0ZM167 0L167 1C169.209 1 171 2.79086 171 5L172 5L173 5C173 1.68629 170.314 -1 167 -1L167 0ZM172 5L171 5L171 9.95833L172 9.95833L173 9.95833L173 5L172 5ZM172 14.9167L171 14.9167L171 24.8333L172 24.8333L173 24.8333L173 14.9167L172 14.9167ZM172 29.7917L171 29.7917L171 39.7083L172 39.7083L173 39.7083L173 29.7917L172 29.7917ZM172 44.6667L171 44.6667L171 54.5833L172 54.5833L173 54.5833L173 44.6667L172 44.6667ZM172 59.5417L171 59.5417L171 69.4583L172 69.4583L173 69.4583L173 59.5417L172 59.5417ZM172 74.4167L171 74.4167L171 84.3333L172 84.3333L173 84.3333L173 74.4167L172 74.4167ZM172 89.2917L171 89.2917L171 99.2083L172 99.2083L173 99.2083L173 89.2917L172 89.2917ZM172 104.167L171 104.167L171 114.083L172 114.083L173 114.083L173 104.167L172 104.167ZM172 119.042L171 119.042L171 128.958L172 128.958L173 128.958L173 119.042L172 119.042ZM172 133.917L171 133.917L171 143.833L172 143.833L173 143.833L173 133.917L172 133.917ZM172 148.792L171 148.792L171 158.708L172 158.708L173 158.708L173 148.792L172 148.792ZM172 163.667L171 163.667L171 173.583L172 173.583L173 173.583L173 163.667L172 163.667ZM172 178.542L171 178.542L171 188.458L172 188.458L173 188.458L173 178.542L172 178.542ZM172 193.417L171 193.417L171 203.333L172 203.333L173 203.333L173 193.417L172 193.417ZM172 208.292L171 208.292L171 218.208L172 218.208L173 218.208L173 208.292L172 208.292ZM172 223.167L171 223.167L171 233.083L172 233.083L173 233.083L173 223.167L172 223.167ZM172 238.042L171 238.042L171 243L172 243L173 243L173 238.042L172 238.042ZM172 243L171 243C171 245.209 169.209 247 167 247L167 248L167 249C170.314 249 173 246.314 173 243L172 243ZM167 248L167 247L162.091 247L162.091 248L162.091 249L167 249L167 248ZM157.182 248L157.182 247L147.364 247L147.364 248L147.364 249L157.182 249L157.182 248ZM142.455 248L142.455 247L132.636 247L132.636 248L132.636 249L142.455 249L142.455 248ZM127.727 248L127.727 247L117.909 247L117.909 248L117.909 249L127.727 249L127.727 248ZM113 248L113 247L103.182 247L103.182 248L103.182 249L113 249L113 248ZM98.2727 248L98.2727 247L88.4545 247L88.4545 248L88.4545 249L98.2727 249L98.2727 248ZM83.5455 248L83.5455 247L73.7273 247L73.7273 248L73.7273 249L83.5455 249L83.5455 248ZM68.8182 248L68.8182 247L59 247L59 248L59 249L68.8182 249L68.8182 248ZM54.0909 248L54.0909 247L44.2727 247L44.2727 248L44.2727 249L54.0909 249L54.0909 248ZM39.3636 248L39.3636 247L29.5455 247L29.5455 248L29.5455 249L39.3636 249L39.3636 248ZM24.6364 248L24.6364 247L14.8182 247L14.8182 248L14.8182 249L24.6364 249L24.6364 248ZM9.90911 248L9.90911 247L5 247L5 248L5 249L9.90911 249L9.90911 248Z",
+      "windingRule": "NONZERO"
+     }
+    ],
+    "absoluteBoundingBox": {
+     "x": 1565.0,
+     "y": -3084.0,
+     "width": 172.0,
+     "height": 248.0
+    },
+    "absoluteRenderBounds": {
+     "x": 1565.0,
+     "y": -3084.0,
+     "width": 172.0,
+     "height": 248.0
+    },
+    "constraints": {
+     "vertical": "TOP",
+     "horizontal": "LEFT"
+    },
+    "relativeTransform": [
+     [
+      1.0,
+      0.0,
+      24.0
+     ],
+     [
+      0.0,
+      1.0,
+      32.0
+     ]
+    ],
+    "size": {
+     "x": 172.0,
+     "y": 248.0
+    },
+    "effects": [],
+    "interactions": [],
+    "complexStrokeProperties": {
+     "strokeType": "BASIC"
+    }
+   },
+   {
+    "id": "83:2173",
+    "name": "cam delay: 0s to 1s",
+    "type": "COMPONENT_SET",
+    "scrollBehavior": "SCROLLS",
+    "componentPropertyDefinitions": {
+     "slider": {
+      "type": "VARIANT",
+      "defaultValue": "0%",
+      "variantOptions": [
+       "0%",
+       "20%",
+       "80%",
+       "1"
+      ]
+     }
+    },
+    "children": [
+     {
+      "id": "83:2132",
+      "name": "slider=0%",
+      "type": "COMPONENT",
+      "scrollBehavior": "SCROLLS",
+      "children": [
+       {
+        "id": "83:2192",
+        "name": "slider",
+        "type": "VECTOR",
+        "scrollBehavior": "SCROLLS",
+        "blendMode": "PASS_THROUGH",
+        "fills": [
+         {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+           "r": 0.0,
+           "g": 0.0,
+           "b": 0.0,
+           "a": 1.0
+          }
+         }
+        ],
+        "vectorNetwork": {
+         "vertices": [
+          {
+           "position": {
+            "x": 19.0,
+            "y": 8.305160008603707e-07
+           },
+           "meta": 0
+          },
+          {
+           "position": {
+            "x": 18.999996185302734,
+            "y": 100.0
+           },
+           "meta": 0
+          },
+          {
+           "position": {
+            "x": 0.0,
+            "y": 100.0
+           },
+           "meta": 0
+          },
+          {
+           "position": {
+            "x": 4.371138857095502e-06,
+            "y": 0.0
+           },
+           "meta": 0
+          }
+         ],
+         "segments": [
+          {
+           "start": 0,
+           "startTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "endTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "end": 1,
+           "meta": 0
+          },
+          {
+           "start": 1,
+           "startTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "endTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "end": 2,
+           "meta": 0
+          },
+          {
+           "start": 2,
+           "startTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "endTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "end": 3,
+           "meta": 0
+          },
+          {
+           "start": 3,
+           "startTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "endTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "end": 0,
+           "meta": 0
+          }
+         ],
+         "regions": [
+          {
+           "loops": [
+            [
+             0,
+             1,
+             2,
+             3
+            ]
+           ],
+           "windingRule": "nonzero",
+           "meta": 0
+          }
+         ]
+        },
+        "fillGeometry": [
+         {
+          "path": "M1 8.30516e-07L1 100L0 100L2.3006e-07 0L1 8.30516e-07Z",
+          "windingRule": "NONZERO"
+         }
+        ],
+        "strokes": [],
+        "strokeWeight": 1.0,
+        "strokeAlign": "INSIDE",
+        "strokeGeometry": [],
+        "absoluteBoundingBox": {
+         "x": 1770.0,
+         "y": -3068.0,
+         "width": 1.0,
+         "height": 100.0
+        },
+        "absoluteRenderBounds": {
+         "x": 1770.0,
+         "y": -3068.0,
+         "width": 1.0,
+         "height": 100.0
+        },
+        "constraints": {
+         "vertical": "TOP",
+         "horizontal": "LEFT"
+        },
+        "relativeTransform": [
+         [
+          1.0,
+          0.0,
+          -5.564415914705023e-07
+         ],
+         [
+          0.0,
+          1.0,
+          -8.305160008603707e-07
+         ]
+        ],
+        "size": {
+         "x": 1.0,
+         "y": 100.0
+        },
+        "effects": [],
+        "interactions": [],
+        "complexStrokeProperties": {
+         "strokeType": "BASIC"
+        }
+       },
+       {
+        "id": "73:261",
+        "name": "0 s",
+        "type": "TEXT",
+        "scrollBehavior": "SCROLLS",
+        "blendMode": "EXCLUSION",
+        "fills": [
+         {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+           "r": 1.0,
+           "g": 1.0,
+           "b": 1.0,
+           "a": 1.0
+          }
+         }
+        ],
+        "fillGeometry": [],
+        "strokes": [],
+        "strokeWeight": 1.0,
+        "strokeAlign": "OUTSIDE",
+        "strokeGeometry": [],
+        "absoluteBoundingBox": {
+         "x": 1868.0,
+         "y": -3002.0,
+         "width": 34.0,
+         "height": 26.0
+        },
+        "absoluteRenderBounds": {
+         "x": 1869.5460205078125,
+         "y": -3002.280029296875,
+         "width": 31.459716796875,
+         "height": 26.60400390625
+        },
+        "constraints": {
+         "vertical": "BOTTOM",
+         "horizontal": "RIGHT"
+        },
+        "relativeTransform": [
+         [
+          1.0,
+          0.0,
+          98.0
+         ],
+         [
+          0.0,
+          1.0,
+          66.0
+         ]
+        ],
+        "size": {
+         "x": 34.0,
+         "y": 26.0
+        },
+        "characters": "0 s",
+        "characterStyleOverrides": [],
+        "styleOverrideTable": {},
+        "lineTypes": [
+         "NONE"
+        ],
+        "lineIndentations": [
+         0
+        ],
+        "style": {
+         "fontFamily": "Instrument Serif",
+         "fontPostScriptName": "InstrumentSerif-Regular",
+         "fontStyle": "Regular",
+         "fontWeight": 400,
+         "textAutoResize": "WIDTH_AND_HEIGHT",
+         "fontSize": 36.0,
+         "textAlignHorizontal": "RIGHT",
+         "textAlignVertical": "TOP",
+         "leadingTrim": "CAP_HEIGHT",
+         "letterSpacing": 0.0,
+         "lineHeightPx": 32.39999771118164,
+         "lineHeightPercent": 69.23077392578125,
+         "lineHeightPercentFontSize": 90.0,
+         "lineHeightUnit": "FONT_SIZE_%"
+        },
+        "layoutVersion": 5,
+        "effects": [],
+        "interactions": [],
+        "complexStrokeProperties": {
+         "strokeType": "BASIC"
+        }
+       }
+      ],
+      "blendMode": "PASS_THROUGH",
+      "clipsContent": false,
+      "background": [],
+      "fills": [],
+      "strokes": [
+       {
+        "blendMode": "NORMAL",
+        "type": "SOLID",
+        "color": {
+         "r": 0.0,
+         "g": 0.0,
+         "b": 0.0,
+         "a": 1.0
+        }
+       }
+      ],
+      "strokeWeight": 2.0,
+      "strokeAlign": "INSIDE",
+      "backgroundColor": {
+       "r": 0.0,
+       "g": 0.0,
+       "b": 0.0,
+       "a": 0.0
+      },
+      "fillGeometry": [
+       {
+        "path": "M0 0L140 0L140 100L0 100L0 0Z",
+        "windingRule": "NONZERO"
+       }
+      ],
+      "strokeGeometry": [
+       {
+        "path": "M0 0L0 -2L-2 -2L-2 0L0 0ZM140 0L142 0L142 -2L140 -2L140 0ZM140 100L140 102L142 102L142 100L140 100ZM0 100L-2 100L-2 102L0 102L0 100ZM0 0L0 2L140 2L140 0L140 -2L0 -2L0 0ZM140 0L138 0L138 100L140 100L142 100L142 0L140 0ZM140 100L140 98L0 98L0 100L0 102L140 102L140 100ZM0 100L2 100L2 0L0 0L-2 0L-2 100L0 100Z",
+        "windingRule": "NONZERO"
+       }
+      ],
+      "absoluteBoundingBox": {
+       "x": 1770.0,
+       "y": -3068.0,
+       "width": 140.0,
+       "height": 100.0
+      },
+      "absoluteRenderBounds": {
+       "x": 1770.0,
+       "y": -3068.0,
+       "width": 140.0,
+       "height": 100.0
+      },
+      "constraints": {
+       "vertical": "TOP",
+       "horizontal": "LEFT"
+      },
+      "relativeTransform": [
+       [
+        1.0,
+        0.0,
+        16.0
+       ],
+       [
+        0.0,
+        1.0,
+        16.0
+       ]
+      ],
+      "size": {
+       "x": 140.0,
+       "y": 100.0
+      },
+      "effects": [],
+      "interactions": [],
+      "complexStrokeProperties": {
+       "strokeType": "BASIC"
+      }
+     },
+     {
+      "id": "83:2174",
+      "name": "slider=20%",
+      "type": "COMPONENT",
+      "scrollBehavior": "SCROLLS",
+      "children": [
+       {
+        "id": "83:2194",
+        "name": "slider",
+        "type": "VECTOR",
+        "scrollBehavior": "SCROLLS",
+        "blendMode": "PASS_THROUGH",
+        "fills": [
+         {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+           "r": 0.0,
+           "g": 0.0,
+           "b": 0.0,
+           "a": 1.0
+          }
+         }
+        ],
+        "vectorNetwork": {
+         "vertices": [
+          {
+           "position": {
+            "x": 19.0,
+            "y": 8.305160008603707e-07
+           },
+           "meta": 0
+          },
+          {
+           "position": {
+            "x": 18.999996185302734,
+            "y": 100.0
+           },
+           "meta": 0
+          },
+          {
+           "position": {
+            "x": 0.0,
+            "y": 100.0
+           },
+           "meta": 0
+          },
+          {
+           "position": {
+            "x": 4.371138857095502e-06,
+            "y": 0.0
+           },
+           "meta": 0
+          }
+         ],
+         "segments": [
+          {
+           "start": 0,
+           "startTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "endTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "end": 1,
+           "meta": 0
+          },
+          {
+           "start": 1,
+           "startTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "endTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "end": 2,
+           "meta": 0
+          },
+          {
+           "start": 2,
+           "startTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "endTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "end": 3,
+           "meta": 0
+          },
+          {
+           "start": 3,
+           "startTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "endTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "end": 0,
+           "meta": 0
+          }
+         ],
+         "regions": [
+          {
+           "loops": [
+            [
+             0,
+             1,
+             2,
+             3
+            ]
+           ],
+           "windingRule": "nonzero",
+           "meta": 0
+          }
+         ]
+        },
+        "fillGeometry": [
+         {
+          "path": "M28 8.30516e-07L28 100L0 100L6.44168e-06 0L28 8.30516e-07Z",
+          "windingRule": "NONZERO"
+         }
+        ],
+        "strokes": [],
+        "strokeWeight": 1.0,
+        "strokeAlign": "INSIDE",
+        "strokeGeometry": [],
+        "absoluteBoundingBox": {
+         "x": 1770.0,
+         "y": -2952.0,
+         "width": 28.0,
+         "height": 100.0
+        },
+        "absoluteRenderBounds": {
+         "x": 1770.0,
+         "y": -2952.0,
+         "width": 28.0,
+         "height": 100.0
+        },
+        "constraints": {
+         "vertical": "TOP",
+         "horizontal": "LEFT"
+        },
+        "relativeTransform": [
+         [
+          1.0,
+          0.0,
+          -5.564415914705023e-07
+         ],
+         [
+          0.0,
+          1.0,
+          -8.305160008603707e-07
+         ]
+        ],
+        "size": {
+         "x": 28.0,
+         "y": 100.0
+        },
+        "effects": [],
+        "interactions": [],
+        "complexStrokeProperties": {
+         "strokeType": "BASIC"
+        }
+       },
+       {
+        "id": "83:2176",
+        "name": "0.2 s",
+        "type": "TEXT",
+        "scrollBehavior": "SCROLLS",
+        "blendMode": "EXCLUSION",
+        "fills": [
+         {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+           "r": 1.0,
+           "g": 1.0,
+           "b": 1.0,
+           "a": 1.0
+          }
+         }
+        ],
+        "fillGeometry": [],
+        "strokes": [],
+        "strokeWeight": 1.0,
+        "strokeAlign": "OUTSIDE",
+        "strokeGeometry": [],
+        "absoluteBoundingBox": {
+         "x": 1846.0,
+         "y": -2886.0,
+         "width": 56.0,
+         "height": 26.0
+        },
+        "absoluteRenderBounds": {
+         "x": 1847.3272705078125,
+         "y": -2886.280029296875,
+         "width": 53.678466796875,
+         "height": 26.60400390625
+        },
+        "constraints": {
+         "vertical": "BOTTOM",
+         "horizontal": "RIGHT"
+        },
+        "relativeTransform": [
+         [
+          1.0,
+          0.0,
+          76.0
+         ],
+         [
+          0.0,
+          1.0,
+          66.0
+         ]
+        ],
+        "size": {
+         "x": 56.0,
+         "y": 26.0
+        },
+        "characters": "0.2 s",
+        "characterStyleOverrides": [],
+        "styleOverrideTable": {},
+        "lineTypes": [
+         "NONE"
+        ],
+        "lineIndentations": [
+         0
+        ],
+        "style": {
+         "fontFamily": "Instrument Serif",
+         "fontPostScriptName": "InstrumentSerif-Regular",
+         "fontStyle": "Regular",
+         "fontWeight": 400,
+         "textAutoResize": "WIDTH_AND_HEIGHT",
+         "fontSize": 36.0,
+         "textAlignHorizontal": "RIGHT",
+         "textAlignVertical": "TOP",
+         "leadingTrim": "CAP_HEIGHT",
+         "letterSpacing": 0.0,
+         "lineHeightPx": 32.39999771118164,
+         "lineHeightPercent": 69.23077392578125,
+         "lineHeightPercentFontSize": 90.0,
+         "lineHeightUnit": "FONT_SIZE_%"
+        },
+        "layoutVersion": 5,
+        "effects": [],
+        "interactions": [],
+        "complexStrokeProperties": {
+         "strokeType": "BASIC"
+        }
+       }
+      ],
+      "blendMode": "PASS_THROUGH",
+      "clipsContent": false,
+      "background": [],
+      "fills": [],
+      "strokes": [
+       {
+        "blendMode": "NORMAL",
+        "type": "SOLID",
+        "color": {
+         "r": 0.0,
+         "g": 0.0,
+         "b": 0.0,
+         "a": 1.0
+        }
+       }
+      ],
+      "strokeWeight": 2.0,
+      "strokeAlign": "INSIDE",
+      "backgroundColor": {
+       "r": 0.0,
+       "g": 0.0,
+       "b": 0.0,
+       "a": 0.0
+      },
+      "fillGeometry": [
+       {
+        "path": "M0 0L140 0L140 100L0 100L0 0Z",
+        "windingRule": "NONZERO"
+       }
+      ],
+      "strokeGeometry": [
+       {
+        "path": "M0 0L0 -2L-2 -2L-2 0L0 0ZM140 0L142 0L142 -2L140 -2L140 0ZM140 100L140 102L142 102L142 100L140 100ZM0 100L-2 100L-2 102L0 102L0 100ZM0 0L0 2L140 2L140 0L140 -2L0 -2L0 0ZM140 0L138 0L138 100L140 100L142 100L142 0L140 0ZM140 100L140 98L0 98L0 100L0 102L140 102L140 100ZM0 100L2 100L2 0L0 0L-2 0L-2 100L0 100Z",
+        "windingRule": "NONZERO"
+       }
+      ],
+      "absoluteBoundingBox": {
+       "x": 1770.0,
+       "y": -2952.0,
+       "width": 140.0,
+       "height": 100.0
+      },
+      "absoluteRenderBounds": {
+       "x": 1770.0,
+       "y": -2952.0,
+       "width": 140.0,
+       "height": 100.0
+      },
+      "constraints": {
+       "vertical": "TOP",
+       "horizontal": "LEFT"
+      },
+      "relativeTransform": [
+       [
+        1.0,
+        0.0,
+        16.0
+       ],
+       [
+        0.0,
+        1.0,
+        132.0
+       ]
+      ],
+      "size": {
+       "x": 140.0,
+       "y": 100.0
+      },
+      "effects": [],
+      "interactions": [],
+      "complexStrokeProperties": {
+       "strokeType": "BASIC"
+      }
+     },
+     {
+      "id": "83:2179",
+      "name": "slider=80%",
+      "type": "COMPONENT",
+      "scrollBehavior": "SCROLLS",
+      "children": [
+       {
+        "id": "83:2195",
+        "name": "slider",
+        "type": "VECTOR",
+        "scrollBehavior": "SCROLLS",
+        "blendMode": "PASS_THROUGH",
+        "fills": [
+         {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+           "r": 0.0,
+           "g": 0.0,
+           "b": 0.0,
+           "a": 1.0
+          }
+         }
+        ],
+        "vectorNetwork": {
+         "vertices": [
+          {
+           "position": {
+            "x": 19.0,
+            "y": 8.305160008603707e-07
+           },
+           "meta": 0
+          },
+          {
+           "position": {
+            "x": 18.999996185302734,
+            "y": 100.0
+           },
+           "meta": 0
+          },
+          {
+           "position": {
+            "x": 0.0,
+            "y": 100.0
+           },
+           "meta": 0
+          },
+          {
+           "position": {
+            "x": 4.371138857095502e-06,
+            "y": 0.0
+           },
+           "meta": 0
+          }
+         ],
+         "segments": [
+          {
+           "start": 0,
+           "startTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "endTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "end": 1,
+           "meta": 0
+          },
+          {
+           "start": 1,
+           "startTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "endTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "end": 2,
+           "meta": 0
+          },
+          {
+           "start": 2,
+           "startTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "endTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "end": 3,
+           "meta": 0
+          },
+          {
+           "start": 3,
+           "startTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "endTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "end": 0,
+           "meta": 0
+          }
+         ],
+         "regions": [
+          {
+           "loops": [
+            [
+             0,
+             1,
+             2,
+             3
+            ]
+           ],
+           "windingRule": "nonzero",
+           "meta": 0
+          }
+         ]
+        },
+        "fillGeometry": [
+         {
+          "path": "M112 8.30516e-07L112 100L0 100L2.57667e-05 0L112 8.30516e-07Z",
+          "windingRule": "NONZERO"
+         }
+        ],
+        "strokes": [],
+        "strokeWeight": 1.0,
+        "strokeAlign": "INSIDE",
+        "strokeGeometry": [],
+        "absoluteBoundingBox": {
+         "x": 1770.0,
+         "y": -2836.0,
+         "width": 112.0,
+         "height": 100.0
+        },
+        "absoluteRenderBounds": {
+         "x": 1770.0,
+         "y": -2836.0,
+         "width": 112.0,
+         "height": 100.0
+        },
+        "constraints": {
+         "vertical": "TOP",
+         "horizontal": "LEFT"
+        },
+        "relativeTransform": [
+         [
+          1.0,
+          0.0,
+          -5.564415914705023e-07
+         ],
+         [
+          0.0,
+          1.0,
+          -8.305160008603707e-07
+         ]
+        ],
+        "size": {
+         "x": 112.0,
+         "y": 100.0
+        },
+        "effects": [],
+        "interactions": [],
+        "complexStrokeProperties": {
+         "strokeType": "BASIC"
+        }
+       },
+       {
+        "id": "83:2181",
+        "name": "0.8 s",
+        "type": "TEXT",
+        "scrollBehavior": "SCROLLS",
+        "blendMode": "EXCLUSION",
+        "fills": [
+         {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+           "r": 1.0,
+           "g": 1.0,
+           "b": 1.0,
+           "a": 1.0
+          }
+         }
+        ],
+        "fillGeometry": [],
+        "strokes": [],
+        "strokeWeight": 1.0,
+        "strokeAlign": "OUTSIDE",
+        "strokeGeometry": [],
+        "absoluteBoundingBox": {
+         "x": 1845.0,
+         "y": -2770.0,
+         "width": 57.0,
+         "height": 26.0
+        },
+        "absoluteRenderBounds": {
+         "x": 1846.3077392578125,
+         "y": -2770.280029296875,
+         "width": 54.697998046875,
+         "height": 26.60400390625
+        },
+        "constraints": {
+         "vertical": "BOTTOM",
+         "horizontal": "RIGHT"
+        },
+        "relativeTransform": [
+         [
+          1.0,
+          0.0,
+          75.0
+         ],
+         [
+          0.0,
+          1.0,
+          66.0
+         ]
+        ],
+        "size": {
+         "x": 57.0,
+         "y": 26.0
+        },
+        "characters": "0.8 s",
+        "characterStyleOverrides": [],
+        "styleOverrideTable": {},
+        "lineTypes": [
+         "NONE"
+        ],
+        "lineIndentations": [
+         0
+        ],
+        "style": {
+         "fontFamily": "Instrument Serif",
+         "fontPostScriptName": "InstrumentSerif-Regular",
+         "fontStyle": "Regular",
+         "fontWeight": 400,
+         "textAutoResize": "WIDTH_AND_HEIGHT",
+         "fontSize": 36.0,
+         "textAlignHorizontal": "RIGHT",
+         "textAlignVertical": "TOP",
+         "leadingTrim": "CAP_HEIGHT",
+         "letterSpacing": 0.0,
+         "lineHeightPx": 32.39999771118164,
+         "lineHeightPercent": 69.23077392578125,
+         "lineHeightPercentFontSize": 90.0,
+         "lineHeightUnit": "FONT_SIZE_%"
+        },
+        "layoutVersion": 5,
+        "effects": [],
+        "interactions": [],
+        "complexStrokeProperties": {
+         "strokeType": "BASIC"
+        }
+       }
+      ],
+      "blendMode": "PASS_THROUGH",
+      "clipsContent": false,
+      "background": [],
+      "fills": [],
+      "strokes": [
+       {
+        "blendMode": "NORMAL",
+        "type": "SOLID",
+        "color": {
+         "r": 0.0,
+         "g": 0.0,
+         "b": 0.0,
+         "a": 1.0
+        }
+       }
+      ],
+      "strokeWeight": 2.0,
+      "strokeAlign": "INSIDE",
+      "backgroundColor": {
+       "r": 0.0,
+       "g": 0.0,
+       "b": 0.0,
+       "a": 0.0
+      },
+      "fillGeometry": [
+       {
+        "path": "M0 0L140 0L140 100L0 100L0 0Z",
+        "windingRule": "NONZERO"
+       }
+      ],
+      "strokeGeometry": [
+       {
+        "path": "M0 0L0 -2L-2 -2L-2 0L0 0ZM140 0L142 0L142 -2L140 -2L140 0ZM140 100L140 102L142 102L142 100L140 100ZM0 100L-2 100L-2 102L0 102L0 100ZM0 0L0 2L140 2L140 0L140 -2L0 -2L0 0ZM140 0L138 0L138 100L140 100L142 100L142 0L140 0ZM140 100L140 98L0 98L0 100L0 102L140 102L140 100ZM0 100L2 100L2 0L0 0L-2 0L-2 100L0 100Z",
+        "windingRule": "NONZERO"
+       }
+      ],
+      "absoluteBoundingBox": {
+       "x": 1770.0,
+       "y": -2836.0,
+       "width": 140.0,
+       "height": 100.0
+      },
+      "absoluteRenderBounds": {
+       "x": 1770.0,
+       "y": -2836.0,
+       "width": 140.0,
+       "height": 100.0
+      },
+      "constraints": {
+       "vertical": "TOP",
+       "horizontal": "LEFT"
+      },
+      "relativeTransform": [
+       [
+        1.0,
+        0.0,
+        16.0
+       ],
+       [
+        0.0,
+        1.0,
+        248.0
+       ]
+      ],
+      "size": {
+       "x": 140.0,
+       "y": 100.0
+      },
+      "effects": [],
+      "interactions": [],
+      "complexStrokeProperties": {
+       "strokeType": "BASIC"
+      }
+     },
+     {
+      "id": "83:2212",
+      "name": "slider=1",
+      "type": "COMPONENT",
+      "scrollBehavior": "SCROLLS",
+      "children": [
+       {
+        "id": "83:2214",
+        "name": "slider",
+        "type": "VECTOR",
+        "scrollBehavior": "SCROLLS",
+        "blendMode": "PASS_THROUGH",
+        "fills": [
+         {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+           "r": 0.0,
+           "g": 0.0,
+           "b": 0.0,
+           "a": 1.0
+          }
+         }
+        ],
+        "vectorNetwork": {
+         "vertices": [
+          {
+           "position": {
+            "x": 19.0,
+            "y": 8.305160008603707e-07
+           },
+           "meta": 0
+          },
+          {
+           "position": {
+            "x": 18.999996185302734,
+            "y": 100.0
+           },
+           "meta": 0
+          },
+          {
+           "position": {
+            "x": 0.0,
+            "y": 100.0
+           },
+           "meta": 0
+          },
+          {
+           "position": {
+            "x": 4.371138857095502e-06,
+            "y": 0.0
+           },
+           "meta": 0
+          }
+         ],
+         "segments": [
+          {
+           "start": 0,
+           "startTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "endTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "end": 1,
+           "meta": 0
+          },
+          {
+           "start": 1,
+           "startTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "endTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "end": 2,
+           "meta": 0
+          },
+          {
+           "start": 2,
+           "startTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "endTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "end": 3,
+           "meta": 0
+          },
+          {
+           "start": 3,
+           "startTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "endTangent": {
+            "x": 0.0,
+            "y": 0.0
+           },
+           "end": 0,
+           "meta": 0
+          }
+         ],
+         "regions": [
+          {
+           "loops": [
+            [
+             0,
+             1,
+             2,
+             3
+            ]
+           ],
+           "windingRule": "nonzero",
+           "meta": 0
+          }
+         ]
+        },
+        "fillGeometry": [
+         {
+          "path": "M140 8.30516e-07L140 100L0 100L3.22084e-05 0L140 8.30516e-07Z",
+          "windingRule": "NONZERO"
+         }
+        ],
+        "strokes": [],
+        "strokeWeight": 1.0,
+        "strokeAlign": "INSIDE",
+        "strokeGeometry": [],
+        "absoluteBoundingBox": {
+         "x": 1770.0,
+         "y": -2720.0,
+         "width": 140.0,
+         "height": 100.0
+        },
+        "absoluteRenderBounds": {
+         "x": 1770.0,
+         "y": -2720.0,
+         "width": 140.0,
+         "height": 100.0
+        },
+        "constraints": {
+         "vertical": "TOP",
+         "horizontal": "LEFT"
+        },
+        "relativeTransform": [
+         [
+          1.0,
+          0.0,
+          -5.564415914705023e-07
+         ],
+         [
+          0.0,
+          1.0,
+          -8.305160008603707e-07
+         ]
+        ],
+        "size": {
+         "x": 140.0,
+         "y": 100.0
+        },
+        "effects": [],
+        "interactions": [],
+        "complexStrokeProperties": {
+         "strokeType": "BASIC"
+        }
+       },
+       {
+        "id": "83:2213",
+        "name": "1 s",
+        "type": "TEXT",
+        "scrollBehavior": "SCROLLS",
+        "blendMode": "EXCLUSION",
+        "fills": [
+         {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+           "r": 1.0,
+           "g": 1.0,
+           "b": 1.0,
+           "a": 1.0
+          }
+         }
+        ],
+        "fillGeometry": [],
+        "strokes": [],
+        "strokeWeight": 1.0,
+        "strokeAlign": "OUTSIDE",
+        "strokeGeometry": [],
+        "absoluteBoundingBox": {
+         "x": 1875.0,
+         "y": -2654.0,
+         "width": 27.0,
+         "height": 26.0
+        },
+        "absoluteRenderBounds": {
+         "x": 1876.0238037109375,
+         "y": -2654.4599609375,
+         "width": 24.98193359375,
+         "height": 26.783935546875
+        },
+        "constraints": {
+         "vertical": "BOTTOM",
+         "horizontal": "RIGHT"
+        },
+        "relativeTransform": [
+         [
+          1.0,
+          0.0,
+          105.0
+         ],
+         [
+          0.0,
+          1.0,
+          66.0
+         ]
+        ],
+        "size": {
+         "x": 27.0,
+         "y": 26.0
+        },
+        "characters": "1 s",
+        "characterStyleOverrides": [],
+        "styleOverrideTable": {},
+        "lineTypes": [
+         "NONE"
+        ],
+        "lineIndentations": [
+         0
+        ],
+        "style": {
+         "fontFamily": "Instrument Serif",
+         "fontPostScriptName": "InstrumentSerif-Regular",
+         "fontStyle": "Regular",
+         "fontWeight": 400,
+         "textAutoResize": "WIDTH_AND_HEIGHT",
+         "fontSize": 36.0,
+         "textAlignHorizontal": "RIGHT",
+         "textAlignVertical": "TOP",
+         "leadingTrim": "CAP_HEIGHT",
+         "letterSpacing": 0.0,
+         "lineHeightPx": 32.39999771118164,
+         "lineHeightPercent": 69.23077392578125,
+         "lineHeightPercentFontSize": 90.0,
+         "lineHeightUnit": "FONT_SIZE_%"
+        },
+        "layoutVersion": 5,
+        "effects": [],
+        "interactions": [],
+        "complexStrokeProperties": {
+         "strokeType": "BASIC"
+        }
+       }
+      ],
+      "blendMode": "PASS_THROUGH",
+      "clipsContent": false,
+      "background": [],
+      "fills": [],
+      "strokes": [
+       {
+        "blendMode": "NORMAL",
+        "type": "SOLID",
+        "color": {
+         "r": 0.0,
+         "g": 0.0,
+         "b": 0.0,
+         "a": 1.0
+        }
+       }
+      ],
+      "strokeWeight": 2.0,
+      "strokeAlign": "INSIDE",
+      "backgroundColor": {
+       "r": 0.0,
+       "g": 0.0,
+       "b": 0.0,
+       "a": 0.0
+      },
+      "fillGeometry": [
+       {
+        "path": "M0 0L140 0L140 100L0 100L0 0Z",
+        "windingRule": "NONZERO"
+       }
+      ],
+      "strokeGeometry": [
+       {
+        "path": "M0 0L0 -2L-2 -2L-2 0L0 0ZM140 0L142 0L142 -2L140 -2L140 0ZM140 100L140 102L142 102L142 100L140 100ZM0 100L-2 100L-2 102L0 102L0 100ZM0 0L0 2L140 2L140 0L140 -2L0 -2L0 0ZM140 0L138 0L138 100L140 100L142 100L142 0L140 0ZM140 100L140 98L0 98L0 100L0 102L140 102L140 100ZM0 100L2 100L2 0L0 0L-2 0L-2 100L0 100Z",
+        "windingRule": "NONZERO"
+       }
+      ],
+      "absoluteBoundingBox": {
+       "x": 1770.0,
+       "y": -2720.0,
+       "width": 140.0,
+       "height": 100.0
+      },
+      "absoluteRenderBounds": {
+       "x": 1770.0,
+       "y": -2720.0,
+       "width": 140.0,
+       "height": 100.0
+      },
+      "constraints": {
+       "vertical": "TOP",
+       "horizontal": "LEFT"
+      },
+      "relativeTransform": [
+       [
+        1.0,
+        0.0,
+        16.0
+       ],
+       [
+        0.0,
+        1.0,
+        364.0
+       ]
+      ],
+      "size": {
+       "x": 140.0,
+       "y": 100.0
+      },
+      "effects": [],
+      "interactions": [],
+      "complexStrokeProperties": {
+       "strokeType": "BASIC"
+      }
+     }
+    ],
+    "blendMode": "PASS_THROUGH",
+    "clipsContent": true,
+    "background": [],
+    "fills": [],
+    "strokes": [
+     {
+      "blendMode": "NORMAL",
+      "type": "SOLID",
+      "color": {
+       "r": 0.5921568870544434,
+       "g": 0.27843138575553894,
+       "b": 1.0,
+       "a": 1.0
+      }
+     }
+    ],
+    "cornerRadius": 5.0,
+    "cornerSmoothing": 0.0,
+    "strokeWeight": 1.0,
+    "strokeAlign": "INSIDE",
+    "backgroundColor": {
+     "r": 0.0,
+     "g": 0.0,
+     "b": 0.0,
+     "a": 0.0
+    },
+    "fillGeometry": [
+     {
+      "path": "M0 5.00001C0 2.23859 2.23858 0 5 0L167 0C169.761 0 172 2.23858 172 5L172 475C172 477.761 169.761 480 167 480L5 480C2.23858 480 0 477.761 0 475L0 5.00001Z",
+      "windingRule": "NONZERO"
+     }
+    ],
+    "strokeDashes": [
+     10.0,
+     5.0
+    ],
+    "strokeGeometry": [
+     {
+      "path": "M5 480L5 479.5C2.51472 479.5 0.5 477.485 0.5 475L0 475L-0.5 475C-0.5 478.038 1.96244 480.5 5 480.5L5 480ZM0 475L0.5 475L0.5 469.946L0 469.946L-0.5 469.946L-0.5 475L0 475ZM0 464.892L0.5 464.892L0.5 454.785L0 454.785L-0.5 454.785L-0.5 464.892L0 464.892ZM0 449.731L0.5 449.731L0.5 439.624L0 439.624L-0.5 439.624L-0.5 449.731L0 449.731ZM0 434.57L0.5 434.57L0.5 424.462L0 424.462L-0.5 424.462L-0.5 434.57L0 434.57ZM0 419.409L0.5 419.409L0.5 409.301L0 409.301L-0.5 409.301L-0.5 419.409L0 419.409ZM0 404.247L0.5 404.247L0.5 394.14L0 394.14L-0.5 394.14L-0.5 404.247L0 404.247ZM0 389.086L0.5 389.086L0.5 378.978L0 378.978L-0.5 378.978L-0.5 389.086L0 389.086ZM0 373.925L0.5 373.925L0.5 363.817L0 363.817L-0.5 363.817L-0.5 373.925L0 373.925ZM0 358.763L0.5 358.763L0.5 348.656L0 348.656L-0.5 348.656L-0.5 358.763L0 358.763ZM0 343.602L0.5 343.602L0.5 333.495L0 333.495L-0.5 333.495L-0.5 343.602L0 343.602ZM0 328.441L0.5 328.441L0.5 318.333L0 318.333L-0.5 318.333L-0.5 328.441L0 328.441ZM0 313.28L0.5 313.28L0.5 303.172L0 303.172L-0.5 303.172L-0.5 313.28L0 313.28ZM0 298.118L0.5 298.118L0.5 288.011L0 288.011L-0.5 288.011L-0.5 298.118L0 298.118ZM0 282.957L0.5 282.957L0.5 272.849L0 272.849L-0.5 272.849L-0.5 282.957L0 282.957ZM0 267.796L0.5 267.796L0.5 257.688L0 257.688L-0.5 257.688L-0.5 267.796L0 267.796ZM0 252.634L0.5 252.634L0.5 242.527L0 242.527L-0.5 242.527L-0.5 252.634L0 252.634ZM0 237.473L0.5 237.473L0.5 227.366L0 227.366L-0.5 227.366L-0.5 237.473L0 237.473ZM0 222.312L0.5 222.312L0.5 212.204L0 212.204L-0.5 212.204L-0.5 222.312L0 222.312ZM0 207.151L0.5 207.151L0.5 197.043L0 197.043L-0.5 197.043L-0.5 207.151L0 207.151ZM0 191.989L0.5 191.989L0.5 181.882L0 181.882L-0.5 181.882L-0.5 191.989L0 191.989ZM0 176.828L0.5 176.828L0.5 166.721L0 166.721L-0.5 166.721L-0.5 176.828L0 176.828ZM0 161.667L0.5 161.667L0.5 151.559L0 151.559L-0.5 151.559L-0.5 161.667L0 161.667ZM0 146.505L0.5 146.505L0.5 136.398L0 136.398L-0.5 136.398L-0.5 146.505L0 146.505ZM0 131.344L0.5 131.344L0.5 121.237L0 121.237L-0.5 121.237L-0.5 131.344L0 131.344ZM0 116.183L0.5 116.183L0.5 106.075L0 106.075L-0.5 106.075L-0.5 116.183L0 116.183ZM0 101.022L0.5 101.022L0.5 90.9141L0 90.9141L-0.5 90.9141L-0.5 101.022L0 101.022ZM0 85.8603L0.5 85.8603L0.5 75.7528L0 75.7528L-0.5 75.7528L-0.5 85.8603L0 85.8603ZM0 70.699L0.5 70.699L0.5 60.5915L0 60.5915L-0.5 60.5915L-0.5 70.699L0 70.699ZM0 55.5377L0.5 55.5377L0.5 45.4302L0 45.4302L-0.5 45.4302L-0.5 55.5377L0 55.5377ZM0 40.3764L0.5 40.3764L0.5 30.2689L0 30.2689L-0.5 30.2689L-0.5 40.3764L0 40.3764ZM0 25.2152L0.5 25.2152L0.5 15.1076L0 15.1076L-0.5 15.1076L-0.5 25.2152L0 25.2152ZM0 10.0539L0.5 10.0539L0.5 5.00001L0 5.00001L-0.5 5.00001L-0.5 10.0539L0 10.0539ZM0 5.00001L0.5 5.00001C0.5 2.51473 2.51472 0.5 5 0.5L5 0L5 -0.5C1.96243 -0.5 -0.5 1.96244 -0.5 5.00001L0 5.00001ZM5 0L5 0.5L9.90909 0.5L9.90909 0L9.90909 -0.5L5 -0.5L5 0ZM14.8182 0L14.8182 0.5L24.6364 0.5L24.6364 0L24.6364 -0.5L14.8182 -0.5L14.8182 0ZM29.5455 0L29.5455 0.5L39.3636 0.5L39.3636 0L39.3636 -0.5L29.5455 -0.5L29.5455 0ZM44.2727 0L44.2727 0.5L54.0909 0.5L54.0909 0L54.0909 -0.5L44.2727 -0.5L44.2727 0ZM59 0L59 0.5L68.8182 0.5L68.8182 0L68.8182 -0.5L59 -0.5L59 0ZM73.7273 0L73.7273 0.5L83.5455 0.5L83.5455 0L83.5455 -0.5L73.7273 -0.5L73.7273 0ZM88.4545 0L88.4545 0.5L98.2727 0.5L98.2727 0L98.2727 -0.5L88.4545 -0.5L88.4545 0ZM103.182 0L103.182 0.5L113 0.5L113 0L113 -0.5L103.182 -0.5L103.182 0ZM117.909 0L117.909 0.5L127.727 0.5L127.727 0L127.727 -0.5L117.909 -0.5L117.909 0ZM132.636 0L132.636 0.5L142.455 0.5L142.455 0L142.455 -0.5L132.636 -0.5L132.636 0ZM147.364 0L147.364 0.5L157.182 0.5L157.182 0L157.182 -0.5L147.364 -0.5L147.364 0ZM162.091 0L162.091 0.5L167 0.5L167 0L167 -0.5L162.091 -0.5L162.091 0ZM167 0L167 0.5C169.485 0.5 171.5 2.51472 171.5 5L172 5L172.5 5C172.5 1.96243 170.038 -0.5 167 -0.5L167 0ZM172 5L171.5 5L171.5 10.0538L172 10.0538L172.5 10.0538L172.5 5L172 5ZM172 15.1075L171.5 15.1075L171.5 25.2151L172 25.2151L172.5 25.2151L172.5 15.1075L172 15.1075ZM172 30.2688L171.5 30.2688L171.5 40.3763L172 40.3763L172.5 40.3763L172.5 30.2688L172 30.2688ZM172 45.4301L171.5 45.4301L171.5 55.5376L172 55.5376L172.5 55.5376L172.5 45.4301L172 45.4301ZM172 60.5914L171.5 60.5914L171.5 70.6989L172 70.6989L172.5 70.6989L172.5 60.5914L172 60.5914ZM172 75.7527L171.5 75.7527L171.5 85.8602L172 85.8602L172.5 85.8602L172.5 75.7527L172 75.7527ZM172 90.914L171.5 90.914L171.5 101.022L172 101.022L172.5 101.022L172.5 90.914L172 90.914ZM172 106.075L171.5 106.075L171.5 116.183L172 116.183L172.5 116.183L172.5 106.075L172 106.075ZM172 121.237L171.5 121.237L171.5 131.344L172 131.344L172.5 131.344L172.5 121.237L172 121.237ZM172 136.398L171.5 136.398L171.5 146.505L172 146.505L172.5 146.505L172.5 136.398L172 136.398ZM172 151.559L171.5 151.559L171.5 161.667L172 161.667L172.5 161.667L172.5 151.559L172 151.559ZM172 166.72L171.5 166.72L171.5 176.828L172 176.828L172.5 176.828L172.5 166.72L172 166.72ZM172 181.882L171.5 181.882L171.5 191.989L172 191.989L172.5 191.989L172.5 181.882L172 181.882ZM172 197.043L171.5 197.043L171.5 207.151L172 207.151L172.5 207.151L172.5 197.043L172 197.043ZM172 212.204L171.5 212.204L171.5 222.312L172 222.312L172.5 222.312L172.5 212.204L172 212.204ZM172 227.366L171.5 227.366L171.5 237.473L172 237.473L172.5 237.473L172.5 227.366L172 227.366ZM172 242.527L171.5 242.527L171.5 252.634L172 252.634L172.5 252.634L172.5 242.527L172 242.527ZM172 257.688L171.5 257.688L171.5 267.796L172 267.796L172.5 267.796L172.5 257.688L172 257.688ZM172 272.849L171.5 272.849L171.5 282.957L172 282.957L172.5 282.957L172.5 272.849L172 272.849ZM172 288.011L171.5 288.011L171.5 298.118L172 298.118L172.5 298.118L172.5 288.011L172 288.011ZM172 303.172L171.5 303.172L171.5 313.279L172 313.279L172.5 313.279L172.5 303.172L172 303.172ZM172 318.333L171.5 318.333L171.5 328.441L172 328.441L172.5 328.441L172.5 318.333L172 318.333ZM172 333.495L171.5 333.495L171.5 343.602L172 343.602L172.5 343.602L172.5 333.495L172 333.495ZM172 348.656L171.5 348.656L171.5 358.763L172 358.763L172.5 358.763L172.5 348.656L172 348.656ZM172 363.817L171.5 363.817L171.5 373.925L172 373.925L172.5 373.925L172.5 363.817L172 363.817ZM172 378.978L171.5 378.978L171.5 389.086L172 389.086L172.5 389.086L172.5 378.978L172 378.978ZM172 394.14L171.5 394.14L171.5 404.247L172 404.247L172.5 404.247L172.5 394.14L172 394.14ZM172 409.301L171.5 409.301L171.5 419.409L172 419.409L172.5 419.409L172.5 409.301L172 409.301ZM172 424.462L171.5 424.462L171.5 434.57L172 434.57L172.5 434.57L172.5 424.462L172 424.462ZM172 439.624L171.5 439.624L171.5 449.731L172 449.731L172.5 449.731L172.5 439.624L172 439.624ZM172 454.785L171.5 454.785L171.5 464.892L172 464.892L172.5 464.892L172.5 454.785L172 454.785ZM172 469.946L171.5 469.946L171.5 475L172 475L172.5 475L172.5 469.946L172 469.946ZM172 475L171.5 475C171.5 477.485 169.485 479.5 167 479.5L167 480L167 480.5C170.038 480.5 172.5 478.038 172.5 475L172 475ZM167 480L167 479.5L162.091 479.5L162.091 480L162.091 480.5L167 480.5L167 480ZM157.182 480L157.182 479.5L147.364 479.5L147.364 480L147.364 480.5L157.182 480.5L157.182 480ZM142.455 480L142.455 479.5L132.636 479.5L132.636 480L132.636 480.5L142.455 480.5L142.455 480ZM127.727 480L127.727 479.5L117.909 479.5L117.909 480L117.909 480.5L127.727 480.5L127.727 480ZM113 480L113 479.5L103.182 479.5L103.182 480L103.182 480.5L113 480.5L113 480ZM98.2727 480L98.2727 479.5L88.4545 479.5L88.4545 480L88.4545 480.5L98.2727 480.5L98.2727 480ZM83.5455 480L83.5455 479.5L73.7273 479.5L73.7273 480L73.7273 480.5L83.5455 480.5L83.5455 480ZM68.8182 480L68.8182 479.5L59 479.5L59 480L59 480.5L68.8182 480.5L68.8182 480ZM54.0909 480L54.0909 479.5L44.2727 479.5L44.2727 480L44.2727 480.5L54.0909 480.5L54.0909 480ZM39.3636 480L39.3636 479.5L29.5455 479.5L29.5455 480L29.5455 480.5L39.3636 480.5L39.3636 480ZM24.6364 480L24.6364 479.5L14.8182 479.5L14.8182 480L14.8182 480.5L24.6364 480.5L24.6364 480ZM9.90911 480L9.90911 479.5L5 479.5L5 480L5 480.5L9.90911 480.5L9.90911 480ZM5 480L5 479C2.79086 479 1 477.209 1 475L0 475L-1 475C-1 478.314 1.68629 481 5 481L5 480ZM0 475L1 475L1 469.946L0 469.946L-1 469.946L-1 475L0 475ZM0 464.892L1 464.892L1 454.785L0 454.785L-1 454.785L-1 464.892L0 464.892ZM0 449.731L1 449.731L1 439.624L0 439.624L-1 439.624L-1 449.731L0 449.731ZM0 434.57L1 434.57L1 424.462L0 424.462L-1 424.462L-1 434.57L0 434.57ZM0 419.409L1 419.409L1 409.301L0 409.301L-1 409.301L-1 419.409L0 419.409ZM0 404.247L1 404.247L1 394.14L0 394.14L-1 394.14L-1 404.247L0 404.247ZM0 389.086L1 389.086L1 378.978L0 378.978L-1 378.978L-1 389.086L0 389.086ZM0 373.925L1 373.925L1 363.817L0 363.817L-1 363.817L-1 373.925L0 373.925ZM0 358.763L1 358.763L1 348.656L0 348.656L-1 348.656L-1 358.763L0 358.763ZM0 343.602L1 343.602L1 333.495L0 333.495L-1 333.495L-1 343.602L0 343.602ZM0 328.441L1 328.441L1 318.333L0 318.333L-1 318.333L-1 328.441L0 328.441ZM0 313.28L1 313.28L1 303.172L0 303.172L-1 303.172L-1 313.28L0 313.28ZM0 298.118L1 298.118L1 288.011L0 288.011L-1 288.011L-1 298.118L0 298.118ZM0 282.957L1 282.957L1 272.849L0 272.849L-1 272.849L-1 282.957L0 282.957ZM0 267.796L1 267.796L1 257.688L0 257.688L-1 257.688L-1 267.796L0 267.796ZM0 252.634L1 252.634L1 242.527L0 242.527L-1 242.527L-1 252.634L0 252.634ZM0 237.473L1 237.473L1 227.366L0 227.366L-1 227.366L-1 237.473L0 237.473ZM0 222.312L1 222.312L1 212.204L0 212.204L-1 212.204L-1 222.312L0 222.312ZM0 207.151L1 207.151L1 197.043L0 197.043L-1 197.043L-1 207.151L0 207.151ZM0 191.989L1 191.989L1 181.882L0 181.882L-1 181.882L-1 191.989L0 191.989ZM0 176.828L1 176.828L1 166.721L0 166.721L-1 166.721L-1 176.828L0 176.828ZM0 161.667L1 161.667L1 151.559L0 151.559L-1 151.559L-1 161.667L0 161.667ZM0 146.505L1 146.505L1 136.398L0 136.398L-1 136.398L-1 146.505L0 146.505ZM0 131.344L1 131.344L1 121.237L0 121.237L-1 121.237L-1 131.344L0 131.344ZM0 116.183L1 116.183L1 106.075L0 106.075L-1 106.075L-1 116.183L0 116.183ZM0 101.022L1 101.022L1 90.9141L0 90.9141L-1 90.9141L-1 101.022L0 101.022ZM0 85.8603L1 85.8603L1 75.7528L0 75.7528L-1 75.7528L-1 85.8603L0 85.8603ZM0 70.699L1 70.699L1 60.5915L0 60.5915L-1 60.5915L-1 70.699L0 70.699ZM0 55.5377L1 55.5377L1 45.4302L0 45.4302L-1 45.4302L-1 55.5377L0 55.5377ZM0 40.3764L1 40.3764L1 30.2689L0 30.2689L-1 30.2689L-1 40.3764L0 40.3764ZM0 25.2152L1 25.2152L1 15.1076L0 15.1076L-1 15.1076L-1 25.2152L0 25.2152ZM0 10.0539L1 10.0539L1 5.00001L0 5.00001L-1 5.00001L-1 10.0539L0 10.0539ZM0 5.00001L1 5.00001C1 2.79087 2.79086 1 5 1L5 0L5 -1C1.68629 -1 -1 1.6863 -1 5.00001L0 5.00001ZM5 0L5 1L9.90909 1L9.90909 0L9.90909 -1L5 -1L5 0ZM14.8182 0L14.8182 1L24.6364 1L24.6364 0L24.6364 -1L14.8182 -1L14.8182 0ZM29.5455 0L29.5455 1L39.3636 1L39.3636 0L39.3636 -1L29.5455 -1L29.5455 0ZM44.2727 0L44.2727 1L54.0909 1L54.0909 0L54.0909 -1L44.2727 -1L44.2727 0ZM59 0L59 1L68.8182 1L68.8182 0L68.8182 -1L59 -1L59 0ZM73.7273 0L73.7273 1L83.5455 1L83.5455 0L83.5455 -1L73.7273 -1L73.7273 0ZM88.4545 0L88.4545 1L98.2727 1L98.2727 0L98.2727 -1L88.4545 -1L88.4545 0ZM103.182 0L103.182 1L113 1L113 0L113 -1L103.182 -1L103.182 0ZM117.909 0L117.909 1L127.727 1L127.727 0L127.727 -1L117.909 -1L117.909 0ZM132.636 0L132.636 1L142.455 1L142.455 0L142.455 -1L132.636 -1L132.636 0ZM147.364 0L147.364 1L157.182 1L157.182 0L157.182 -1L147.364 -1L147.364 0ZM162.091 0L162.091 1L167 1L167 0L167 -1L162.091 -1L162.091 0ZM167 0L167 1C169.209 1 171 2.79086 171 5L172 5L173 5C173 1.68629 170.314 -1 167 -1L167 0ZM172 5L171 5L171 10.0538L172 10.0538L173 10.0538L173 5L172 5ZM172 15.1075L171 15.1075L171 25.2151L172 25.2151L173 25.2151L173 15.1075L172 15.1075ZM172 30.2688L171 30.2688L171 40.3763L172 40.3763L173 40.3763L173 30.2688L172 30.2688ZM172 45.4301L171 45.4301L171 55.5376L172 55.5376L173 55.5376L173 45.4301L172 45.4301ZM172 60.5914L171 60.5914L171 70.6989L172 70.6989L173 70.6989L173 60.5914L172 60.5914ZM172 75.7527L171 75.7527L171 85.8602L172 85.8602L173 85.8602L173 75.7527L172 75.7527ZM172 90.914L171 90.914L171 101.022L172 101.022L173 101.022L173 90.914L172 90.914ZM172 106.075L171 106.075L171 116.183L172 116.183L173 116.183L173 106.075L172 106.075ZM172 121.237L171 121.237L171 131.344L172 131.344L173 131.344L173 121.237L172 121.237ZM172 136.398L171 136.398L171 146.505L172 146.505L173 146.505L173 136.398L172 136.398ZM172 151.559L171 151.559L171 161.667L172 161.667L173 161.667L173 151.559L172 151.559ZM172 166.72L171 166.72L171 176.828L172 176.828L173 176.828L173 166.72L172 166.72ZM172 181.882L171 181.882L171 191.989L172 191.989L173 191.989L173 181.882L172 181.882ZM172 197.043L171 197.043L171 207.151L172 207.151L173 207.151L173 197.043L172 197.043ZM172 212.204L171 212.204L171 222.312L172 222.312L173 222.312L173 212.204L172 212.204ZM172 227.366L171 227.366L171 237.473L172 237.473L173 237.473L173 227.366L172 227.366ZM172 242.527L171 242.527L171 252.634L172 252.634L173 252.634L173 242.527L172 242.527ZM172 257.688L171 257.688L171 267.796L172 267.796L173 267.796L173 257.688L172 257.688ZM172 272.849L171 272.849L171 282.957L172 282.957L173 282.957L173 272.849L172 272.849ZM172 288.011L171 288.011L171 298.118L172 298.118L173 298.118L173 288.011L172 288.011ZM172 303.172L171 303.172L171 313.279L172 313.279L173 313.279L173 303.172L172 303.172ZM172 318.333L171 318.333L171 328.441L172 328.441L173 328.441L173 318.333L172 318.333ZM172 333.495L171 333.495L171 343.602L172 343.602L173 343.602L173 333.495L172 333.495ZM172 348.656L171 348.656L171 358.763L172 358.763L173 358.763L173 348.656L172 348.656ZM172 363.817L171 363.817L171 373.925L172 373.925L173 373.925L173 363.817L172 363.817ZM172 378.978L171 378.978L171 389.086L172 389.086L173 389.086L173 378.978L172 378.978ZM172 394.14L171 394.14L171 404.247L172 404.247L173 404.247L173 394.14L172 394.14ZM172 409.301L171 409.301L171 419.409L172 419.409L173 419.409L173 409.301L172 409.301ZM172 424.462L171 424.462L171 434.57L172 434.57L173 434.57L173 424.462L172 424.462ZM172 439.624L171 439.624L171 449.731L172 449.731L173 449.731L173 439.624L172 439.624ZM172 454.785L171 454.785L171 464.892L172 464.892L173 464.892L173 454.785L172 454.785ZM172 469.946L171 469.946L171 475L172 475L173 475L173 469.946L172 469.946ZM172 475L171 475C171 477.209 169.209 479 167 479L167 480L167 481C170.314 481 173 478.314 173 475L172 475ZM167 480L167 479L162.091 479L162.091 480L162.091 481L167 481L167 480ZM157.182 480L157.182 479L147.364 479L147.364 480L147.364 481L157.182 481L157.182 480ZM142.455 480L142.455 479L132.636 479L132.636 480L132.636 481L142.455 481L142.455 480ZM127.727 480L127.727 479L117.909 479L117.909 480L117.909 481L127.727 481L127.727 480ZM113 480L113 479L103.182 479L103.182 480L103.182 481L113 481L113 480ZM98.2727 480L98.2727 479L88.4545 479L88.4545 480L88.4545 481L98.2727 481L98.2727 480ZM83.5455 480L83.5455 479L73.7273 479L73.7273 480L73.7273 481L83.5455 481L83.5455 480ZM68.8182 480L68.8182 479L59 479L59 480L59 481L68.8182 481L68.8182 480ZM54.0909 480L54.0909 479L44.2727 479L44.2727 480L44.2727 481L54.0909 481L54.0909 480ZM39.3636 480L39.3636 479L29.5455 479L29.5455 480L29.5455 481L39.3636 481L39.3636 480ZM24.6364 480L24.6364 479L14.8182 479L14.8182 480L14.8182 481L24.6364 481L24.6364 480ZM9.90911 480L9.90911 479L5 479L5 480L5 481L9.90911 481L9.90911 480Z",
+      "windingRule": "NONZERO"
+     }
+    ],
+    "absoluteBoundingBox": {
+     "x": 1754.0,
+     "y": -3084.0,
+     "width": 172.0,
+     "height": 480.0
+    },
+    "absoluteRenderBounds": {
+     "x": 1754.0,
+     "y": -3084.0,
+     "width": 172.0,
+     "height": 480.0
+    },
+    "constraints": {
+     "vertical": "TOP",
+     "horizontal": "LEFT"
+    },
+    "relativeTransform": [
+     [
+      1.0,
+      0.0,
+      213.0
+     ],
+     [
+      0.0,
+      1.0,
+      32.0
+     ]
+    ],
+    "size": {
+     "x": 172.0,
+     "y": 480.0
+    },
+    "effects": [],
+    "interactions": [],
+    "complexStrokeProperties": {
+     "strokeType": "BASIC"
+    }
+   },
+   {
+    "id": "83:2215",
+    "name": "style: normal, dithered, etc",
+    "type": "COMPONENT_SET",
+    "scrollBehavior": "SCROLLS",
+    "componentPropertyDefinitions": {
+     "style": {
+      "type": "VARIANT",
+      "defaultValue": "normal",
+      "variantOptions": [
+       "normal",
+       "dithered"
+      ]
+     }
+    },
+    "children": [
+     {
+      "id": "83:2131",
+      "name": "style=normal",
+      "type": "COMPONENT",
+      "scrollBehavior": "SCROLLS",
+      "children": [
+       {
+        "id": "73:263",
+        "name": "gradient",
+        "type": "RECTANGLE",
+        "scrollBehavior": "SCROLLS",
+        "rotation": 1.6081230200044232e-16,
+        "blendMode": "PASS_THROUGH",
+        "fills": [
+         {
+          "blendMode": "NORMAL",
+          "type": "GRADIENT_LINEAR",
+          "gradientHandlePositions": [
+           {
+            "x": 4.942655937389045e-08,
+            "y": 0.5000000762939403
+           },
+           {
+            "x": 0.9999999302173139,
+            "y": 0.500000093466876
+           },
+           {
+            "x": 1.8840644486563834e-07,
+            "y": 0.5800000701904275
+           }
+          ],
+          "gradientStops": [
+           {
+            "color": {
+             "r": 0.8196078538894653,
+             "g": 0.8196078538894653,
+             "b": 0.8196078538894653,
+             "a": 0.0
+            },
+            "position": 0.0
+           },
+           {
+            "color": {
+             "r": 0.11764705926179886,
+             "g": 0.11764705926179886,
+             "b": 0.11764705926179886,
+             "a": 1.0
+            },
+            "position": 1.0
+           }
+          ]
+         }
+        ],
+        "fillGeometry": [
+         {
+          "path": "M0 0L40 0L40 100L0 100L0 0Z",
+          "windingRule": "NONZERO"
+         }
+        ],
+        "strokes": [],
+        "strokeWeight": 1.0,
+        "strokeAlign": "INSIDE",
+        "strokeGeometry": [],
+        "absoluteBoundingBox": {
+         "x": 1681.0,
+         "y": -2797.0,
+         "width": 40.0,
+         "height": 100.0
+        },
+        "absoluteRenderBounds": {
+         "x": 1681.0,
+         "y": -2797.0,
+         "width": 40.0,
+         "height": 100.0
+        },
+        "constraints": {
+         "vertical": "TOP",
+         "horizontal": "LEFT"
+        },
+        "relativeTransform": [
+         [
+          1.0,
+          -1.6081230200044232e-16,
+          100.0
+         ],
+         [
+          1.6081230200044232e-16,
+          1.0,
+          0.0
+         ]
+        ],
+        "size": {
+         "x": 40.0,
+         "y": 100.0
+        },
+        "effects": [],
+        "interactions": [],
+        "complexStrokeProperties": {
+         "strokeType": "BASIC"
+        }
+       },
+       {
+        "id": "73:264",
+        "name": "normal",
+        "type": "TEXT",
+        "scrollBehavior": "SCROLLS",
+        "blendMode": "PASS_THROUGH",
+        "fills": [
+         {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+           "r": 0.0,
+           "g": 0.0,
+           "b": 0.0,
+           "a": 1.0
+          }
+         }
+        ],
+        "fillGeometry": [],
+        "strokes": [],
+        "strokeWeight": 1.0,
+        "strokeAlign": "OUTSIDE",
+        "strokeGeometry": [],
+        "absoluteBoundingBox": {
+         "x": 1589.0,
+         "y": -2729.0,
+         "width": 86.0,
+         "height": 24.0
+        },
+        "absoluteRenderBounds": {
+         "x": 1589.510009765625,
+         "y": -2730.159912109375,
+         "width": 84.8233642578125,
+         "height": 25.4658203125
+        },
+        "constraints": {
+         "vertical": "TOP",
+         "horizontal": "CENTER"
+        },
+        "relativeTransform": [
+         [
+          1.0,
+          0.0,
+          8.0
+         ],
+         [
+          0.0,
+          1.0,
+          68.0
+         ]
+        ],
+        "size": {
+         "x": 86.0,
+         "y": 24.0
+        },
+        "characters": "normal",
+        "characterStyleOverrides": [],
+        "styleOverrideTable": {},
+        "lineTypes": [
+         "NONE"
+        ],
+        "lineIndentations": [
+         0
+        ],
+        "style": {
+         "fontFamily": "Instrument Serif",
+         "fontPostScriptName": "InstrumentSerif-Regular",
+         "fontStyle": "Regular",
+         "fontWeight": 400,
+         "textAutoResize": "WIDTH_AND_HEIGHT",
+         "fontSize": 34.0,
+         "textAlignHorizontal": "LEFT",
+         "textAlignVertical": "TOP",
+         "leadingTrim": "CAP_HEIGHT",
+         "letterSpacing": 0.0,
+         "lineHeightPx": 30.599998474121094,
+         "lineHeightPercent": 69.23077392578125,
+         "lineHeightPercentFontSize": 90.0,
+         "lineHeightUnit": "FONT_SIZE_%"
+        },
+        "layoutVersion": 5,
+        "effects": [],
+        "interactions": [],
+        "complexStrokeProperties": {
+         "strokeType": "BASIC"
+        }
+       }
+      ],
+      "blendMode": "PASS_THROUGH",
+      "clipsContent": true,
+      "background": [],
+      "fills": [],
+      "strokes": [
+       {
+        "blendMode": "NORMAL",
+        "type": "SOLID",
+        "color": {
+         "r": 0.0,
+         "g": 0.0,
+         "b": 0.0,
+         "a": 1.0
+        }
+       }
+      ],
+      "strokeWeight": 2.0,
+      "strokeAlign": "INSIDE",
+      "backgroundColor": {
+       "r": 0.0,
+       "g": 0.0,
+       "b": 0.0,
+       "a": 0.0
+      },
+      "fillGeometry": [
+       {
+        "path": "M0 0L140 0L140 100L0 100L0 0Z",
+        "windingRule": "NONZERO"
+       }
+      ],
+      "strokeGeometry": [
+       {
+        "path": "M0 0L0 -2L-2 -2L-2 0L0 0ZM140 0L142 0L142 -2L140 -2L140 0ZM140 100L140 102L142 102L142 100L140 100ZM0 100L-2 100L-2 102L0 102L0 100ZM0 0L0 2L140 2L140 0L140 -2L0 -2L0 0ZM140 0L138 0L138 100L140 100L142 100L142 0L140 0ZM140 100L140 98L0 98L0 100L0 102L140 102L140 100ZM0 100L2 100L2 0L0 0L-2 0L-2 100L0 100Z",
+        "windingRule": "NONZERO"
+       }
+      ],
+      "absoluteBoundingBox": {
+       "x": 1581.0,
+       "y": -2797.0,
+       "width": 140.0,
+       "height": 100.0
+      },
+      "absoluteRenderBounds": {
+       "x": 1581.0,
+       "y": -2797.0,
+       "width": 140.0,
+       "height": 100.0
+      },
+      "constraints": {
+       "vertical": "TOP",
+       "horizontal": "LEFT"
+      },
+      "relativeTransform": [
+       [
+        1.0,
+        0.0,
+        16.0
+       ],
+       [
+        0.0,
+        1.0,
+        16.0
+       ]
+      ],
+      "size": {
+       "x": 140.0,
+       "y": 100.0
+      },
+      "effects": [],
+      "interactions": [],
+      "complexStrokeProperties": {
+       "strokeType": "BASIC"
+      }
+     },
+     {
+      "id": "83:2216",
+      "name": "style=dithered",
+      "type": "COMPONENT",
+      "scrollBehavior": "SCROLLS",
+      "children": [
+       {
+        "id": "83:2217",
+        "name": "gradient",
+        "type": "RECTANGLE",
+        "scrollBehavior": "SCROLLS",
+        "rotation": 1.6081230200044232e-16,
+        "blendMode": "PASS_THROUGH",
+        "fills": [
+         {
+          "blendMode": "NORMAL",
+          "visible": false,
+          "type": "GRADIENT_LINEAR",
+          "gradientHandlePositions": [
+           {
+            "x": 4.942655937389045e-08,
+            "y": 0.5000000762939403
+           },
+           {
+            "x": 0.9999999302173139,
+            "y": 0.500000093466876
+           },
+           {
+            "x": 1.8840644486563834e-07,
+            "y": 0.5800000701904275
+           }
+          ],
+          "gradientStops": [
+           {
+            "color": {
+             "r": 0.8196078538894653,
+             "g": 0.8196078538894653,
+             "b": 0.8196078538894653,
+             "a": 0.0
+            },
+            "position": 0.0
+           },
+           {
+            "color": {
+             "r": 0.11764705926179886,
+             "g": 0.11764705926179886,
+             "b": 0.11764705926179886,
+             "a": 1.0
+            },
+            "position": 1.0
+           }
+          ]
+         },
+         {
+          "blendMode": "NORMAL",
+          "type": "IMAGE",
+          "scaleMode": "FILL",
+          "imageRef": "eac65766d4a2ff93680616f2cc99827341b2691d"
+         }
+        ],
+        "fillGeometry": [
+         {
+          "path": "M0 0L40 0L40 100L0 100L0 0Z",
+          "windingRule": "NONZERO"
+         }
+        ],
+        "strokes": [],
+        "strokeWeight": 1.0,
+        "strokeAlign": "INSIDE",
+        "strokeGeometry": [],
+        "absoluteBoundingBox": {
+         "x": 1681.0,
+         "y": -2681.0,
+         "width": 40.0,
+         "height": 100.0
+        },
+        "absoluteRenderBounds": {
+         "x": 1681.0,
+         "y": -2681.0,
+         "width": 40.0,
+         "height": 100.0
+        },
+        "constraints": {
+         "vertical": "TOP",
+         "horizontal": "LEFT"
+        },
+        "relativeTransform": [
+         [
+          1.0,
+          -1.6081230200044232e-16,
+          100.0
+         ],
+         [
+          1.6081230200044232e-16,
+          1.0,
+          0.0
+         ]
+        ],
+        "size": {
+         "x": 40.0,
+         "y": 100.0
+        },
+        "effects": [],
+        "interactions": [],
+        "complexStrokeProperties": {
+         "strokeType": "BASIC"
+        }
+       },
+       {
+        "id": "83:2218",
+        "name": "dithered",
+        "type": "TEXT",
+        "scrollBehavior": "SCROLLS",
+        "blendMode": "PASS_THROUGH",
+        "fills": [
+         {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+           "r": 0.0,
+           "g": 0.0,
+           "b": 0.0,
+           "a": 1.0
+          }
+         }
+        ],
+        "fillGeometry": [],
+        "strokes": [],
+        "strokeWeight": 1.0,
+        "strokeAlign": "OUTSIDE",
+        "strokeGeometry": [],
+        "absoluteBoundingBox": {
+         "x": 1589.0,
+         "y": -2613.0,
+         "width": 99.0,
+         "height": 24.0
+        },
+        "absoluteRenderBounds": {
+         "x": 1590.02001953125,
+         "y": -2614.159912109375,
+         "width": 97.2230224609375,
+         "height": 25.4658203125
+        },
+        "constraints": {
+         "vertical": "TOP",
+         "horizontal": "CENTER"
+        },
+        "relativeTransform": [
+         [
+          1.0,
+          0.0,
+          8.0
+         ],
+         [
+          0.0,
+          1.0,
+          68.0
+         ]
+        ],
+        "size": {
+         "x": 99.0,
+         "y": 24.0
+        },
+        "characters": "dithered",
+        "characterStyleOverrides": [],
+        "styleOverrideTable": {},
+        "lineTypes": [
+         "NONE"
+        ],
+        "lineIndentations": [
+         0
+        ],
+        "style": {
+         "fontFamily": "Instrument Serif",
+         "fontPostScriptName": "InstrumentSerif-Regular",
+         "fontStyle": "Regular",
+         "fontWeight": 400,
+         "textAutoResize": "WIDTH_AND_HEIGHT",
+         "fontSize": 34.0,
+         "textAlignHorizontal": "LEFT",
+         "textAlignVertical": "TOP",
+         "leadingTrim": "CAP_HEIGHT",
+         "letterSpacing": 0.0,
+         "lineHeightPx": 30.599998474121094,
+         "lineHeightPercent": 69.23077392578125,
+         "lineHeightPercentFontSize": 90.0,
+         "lineHeightUnit": "FONT_SIZE_%"
+        },
+        "layoutVersion": 5,
+        "effects": [],
+        "interactions": [],
+        "complexStrokeProperties": {
+         "strokeType": "BASIC"
+        }
+       }
+      ],
+      "blendMode": "PASS_THROUGH",
+      "clipsContent": true,
+      "background": [],
+      "fills": [],
+      "strokes": [
+       {
+        "blendMode": "NORMAL",
+        "type": "SOLID",
+        "color": {
+         "r": 0.0,
+         "g": 0.0,
+         "b": 0.0,
+         "a": 1.0
+        }
+       }
+      ],
+      "strokeWeight": 2.0,
+      "strokeAlign": "INSIDE",
+      "backgroundColor": {
+       "r": 0.0,
+       "g": 0.0,
+       "b": 0.0,
+       "a": 0.0
+      },
+      "fillGeometry": [
+       {
+        "path": "M0 0L140 0L140 100L0 100L0 0Z",
+        "windingRule": "NONZERO"
+       }
+      ],
+      "strokeGeometry": [
+       {
+        "path": "M0 0L0 -2L-2 -2L-2 0L0 0ZM140 0L142 0L142 -2L140 -2L140 0ZM140 100L140 102L142 102L142 100L140 100ZM0 100L-2 100L-2 102L0 102L0 100ZM0 0L0 2L140 2L140 0L140 -2L0 -2L0 0ZM140 0L138 0L138 100L140 100L142 100L142 0L140 0ZM140 100L140 98L0 98L0 100L0 102L140 102L140 100ZM0 100L2 100L2 0L0 0L-2 0L-2 100L0 100Z",
+        "windingRule": "NONZERO"
+       }
+      ],
+      "absoluteBoundingBox": {
+       "x": 1581.0,
+       "y": -2681.0,
+       "width": 140.0,
+       "height": 100.0
+      },
+      "absoluteRenderBounds": {
+       "x": 1581.0,
+       "y": -2681.0,
+       "width": 140.0,
+       "height": 100.0
+      },
+      "constraints": {
+       "vertical": "TOP",
+       "horizontal": "LEFT"
+      },
+      "relativeTransform": [
+       [
+        1.0,
+        0.0,
+        16.0
+       ],
+       [
+        0.0,
+        1.0,
+        132.0
+       ]
+      ],
+      "size": {
+       "x": 140.0,
+       "y": 100.0
+      },
+      "effects": [],
+      "interactions": [],
+      "complexStrokeProperties": {
+       "strokeType": "BASIC"
+      }
+     }
+    ],
+    "blendMode": "PASS_THROUGH",
+    "clipsContent": true,
+    "background": [],
+    "fills": [],
+    "strokes": [
+     {
+      "blendMode": "NORMAL",
+      "type": "SOLID",
+      "color": {
+       "r": 0.5921568870544434,
+       "g": 0.27843138575553894,
+       "b": 1.0,
+       "a": 1.0
+      }
+     }
+    ],
+    "cornerRadius": 5.0,
+    "cornerSmoothing": 0.0,
+    "strokeWeight": 1.0,
+    "strokeAlign": "INSIDE",
+    "backgroundColor": {
+     "r": 0.0,
+     "g": 0.0,
+     "b": 0.0,
+     "a": 0.0
+    },
+    "fillGeometry": [
+     {
+      "path": "M0 5C0 2.23857 2.23858 0 5 0L167 0C169.761 0 172 2.23858 172 5L172 243C172 245.761 169.761 248 167 248L5 248C2.23858 248 0 245.761 0 243L0 5Z",
+      "windingRule": "NONZERO"
+     }
+    ],
+    "strokeDashes": [
+     10.0,
+     5.0
+    ],
+    "strokeGeometry": [
+     {
+      "path": "M5 248L5 247.5C2.51472 247.5 0.5 245.485 0.5 243L0 243L-0.5 243C-0.5 246.038 1.96244 248.5 5 248.5L5 248ZM0 243L0.5 243L0.5 238.042L0 238.042L-0.5 238.042L-0.5 243L0 243ZM0 233.083L0.5 233.083L0.5 223.167L0 223.167L-0.5 223.167L-0.5 233.083L0 233.083ZM0 218.208L0.5 218.208L0.5 208.292L0 208.292L-0.5 208.292L-0.5 218.208L0 218.208ZM0 203.333L0.5 203.333L0.5 193.417L0 193.417L-0.5 193.417L-0.5 203.333L0 203.333ZM0 188.458L0.5 188.458L0.5 178.542L0 178.542L-0.5 178.542L-0.5 188.458L0 188.458ZM0 173.583L0.5 173.583L0.5 163.667L0 163.667L-0.5 163.667L-0.5 173.583L0 173.583ZM0 158.708L0.5 158.708L0.5 148.792L0 148.792L-0.5 148.792L-0.5 158.708L0 158.708ZM0 143.833L0.5 143.833L0.5 133.917L0 133.917L-0.5 133.917L-0.5 143.833L0 143.833ZM0 128.958L0.5 128.958L0.5 119.042L0 119.042L-0.5 119.042L-0.5 128.958L0 128.958ZM0 114.083L0.5 114.083L0.5 104.167L0 104.167L-0.5 104.167L-0.5 114.083L0 114.083ZM0 99.2083L0.5 99.2083L0.5 89.2917L0 89.2917L-0.5 89.2917L-0.5 99.2083L0 99.2083ZM0 84.3333L0.5 84.3333L0.5 74.4167L0 74.4167L-0.5 74.4167L-0.5 84.3333L0 84.3333ZM0 69.4583L0.5 69.4583L0.5 59.5417L0 59.5417L-0.5 59.5417L-0.5 69.4583L0 69.4583ZM0 54.5833L0.5 54.5833L0.5 44.6667L0 44.6667L-0.5 44.6667L-0.5 54.5833L0 54.5833ZM0 39.7083L0.5 39.7083L0.5 29.7917L0 29.7917L-0.5 29.7917L-0.5 39.7083L0 39.7083ZM0 24.8333L0.5 24.8333L0.5 14.9167L0 14.9167L-0.5 14.9167L-0.5 24.8333L0 24.8333ZM0 9.95832L0.5 9.95832L0.5 5L0 5L-0.5 5L-0.5 9.95832L0 9.95832ZM0 5L0.5 5C0.5 2.51471 2.51472 0.5 5 0.5L5 0L5 -0.5C1.96243 -0.5 -0.5 1.96243 -0.5 5L0 5ZM5 0L5 0.5L9.90909 0.5L9.90909 0L9.90909 -0.5L5 -0.5L5 0ZM14.8182 0L14.8182 0.5L24.6364 0.5L24.6364 0L24.6364 -0.5L14.8182 -0.5L14.8182 0ZM29.5455 0L29.5455 0.5L39.3636 0.5L39.3636 0L39.3636 -0.5L29.5455 -0.5L29.5455 0ZM44.2727 0L44.2727 0.5L54.0909 0.5L54.0909 0L54.0909 -0.5L44.2727 -0.5L44.2727 0ZM59 0L59 0.5L68.8182 0.5L68.8182 0L68.8182 -0.5L59 -0.5L59 0ZM73.7273 0L73.7273 0.5L83.5455 0.5L83.5455 0L83.5455 -0.5L73.7273 -0.5L73.7273 0ZM88.4545 0L88.4545 0.5L98.2727 0.5L98.2727 0L98.2727 -0.5L88.4545 -0.5L88.4545 0ZM103.182 0L103.182 0.5L113 0.5L113 0L113 -0.5L103.182 -0.5L103.182 0ZM117.909 0L117.909 0.5L127.727 0.5L127.727 0L127.727 -0.5L117.909 -0.5L117.909 0ZM132.636 0L132.636 0.5L142.455 0.5L142.455 0L142.455 -0.5L132.636 -0.5L132.636 0ZM147.364 0L147.364 0.5L157.182 0.5L157.182 0L157.182 -0.5L147.364 -0.5L147.364 0ZM162.091 0L162.091 0.5L167 0.5L167 0L167 -0.5L162.091 -0.5L162.091 0ZM167 0L167 0.5C169.485 0.5 171.5 2.51472 171.5 5L172 5L172.5 5C172.5 1.96243 170.038 -0.5 167 -0.5L167 0ZM172 5L171.5 5L171.5 9.95833L172 9.95833L172.5 9.95833L172.5 5L172 5ZM172 14.9167L171.5 14.9167L171.5 24.8333L172 24.8333L172.5 24.8333L172.5 14.9167L172 14.9167ZM172 29.7917L171.5 29.7917L171.5 39.7083L172 39.7083L172.5 39.7083L172.5 29.7917L172 29.7917ZM172 44.6667L171.5 44.6667L171.5 54.5833L172 54.5833L172.5 54.5833L172.5 44.6667L172 44.6667ZM172 59.5417L171.5 59.5417L171.5 69.4583L172 69.4583L172.5 69.4583L172.5 59.5417L172 59.5417ZM172 74.4167L171.5 74.4167L171.5 84.3333L172 84.3333L172.5 84.3333L172.5 74.4167L172 74.4167ZM172 89.2917L171.5 89.2917L171.5 99.2083L172 99.2083L172.5 99.2083L172.5 89.2917L172 89.2917ZM172 104.167L171.5 104.167L171.5 114.083L172 114.083L172.5 114.083L172.5 104.167L172 104.167ZM172 119.042L171.5 119.042L171.5 128.958L172 128.958L172.5 128.958L172.5 119.042L172 119.042ZM172 133.917L171.5 133.917L171.5 143.833L172 143.833L172.5 143.833L172.5 133.917L172 133.917ZM172 148.792L171.5 148.792L171.5 158.708L172 158.708L172.5 158.708L172.5 148.792L172 148.792ZM172 163.667L171.5 163.667L171.5 173.583L172 173.583L172.5 173.583L172.5 163.667L172 163.667ZM172 178.542L171.5 178.542L171.5 188.458L172 188.458L172.5 188.458L172.5 178.542L172 178.542ZM172 193.417L171.5 193.417L171.5 203.333L172 203.333L172.5 203.333L172.5 193.417L172 193.417ZM172 208.292L171.5 208.292L171.5 218.208L172 218.208L172.5 218.208L172.5 208.292L172 208.292ZM172 223.167L171.5 223.167L171.5 233.083L172 233.083L172.5 233.083L172.5 223.167L172 223.167ZM172 238.042L171.5 238.042L171.5 243L172 243L172.5 243L172.5 238.042L172 238.042ZM172 243L171.5 243C171.5 245.485 169.485 247.5 167 247.5L167 248L167 248.5C170.038 248.5 172.5 246.038 172.5 243L172 243ZM167 248L167 247.5L162.091 247.5L162.091 248L162.091 248.5L167 248.5L167 248ZM157.182 248L157.182 247.5L147.364 247.5L147.364 248L147.364 248.5L157.182 248.5L157.182 248ZM142.455 248L142.455 247.5L132.636 247.5L132.636 248L132.636 248.5L142.455 248.5L142.455 248ZM127.727 248L127.727 247.5L117.909 247.5L117.909 248L117.909 248.5L127.727 248.5L127.727 248ZM113 248L113 247.5L103.182 247.5L103.182 248L103.182 248.5L113 248.5L113 248ZM98.2727 248L98.2727 247.5L88.4545 247.5L88.4545 248L88.4545 248.5L98.2727 248.5L98.2727 248ZM83.5455 248L83.5455 247.5L73.7273 247.5L73.7273 248L73.7273 248.5L83.5455 248.5L83.5455 248ZM68.8182 248L68.8182 247.5L59 247.5L59 248L59 248.5L68.8182 248.5L68.8182 248ZM54.0909 248L54.0909 247.5L44.2727 247.5L44.2727 248L44.2727 248.5L54.0909 248.5L54.0909 248ZM39.3636 248L39.3636 247.5L29.5455 247.5L29.5455 248L29.5455 248.5L39.3636 248.5L39.3636 248ZM24.6364 248L24.6364 247.5L14.8182 247.5L14.8182 248L14.8182 248.5L24.6364 248.5L24.6364 248ZM9.90911 248L9.90911 247.5L5 247.5L5 248L5 248.5L9.90911 248.5L9.90911 248ZM5 248L5 247C2.79086 247 1 245.209 1 243L0 243L-1 243C-1 246.314 1.68629 249 5 249L5 248ZM0 243L1 243L1 238.042L0 238.042L-1 238.042L-1 243L0 243ZM0 233.083L1 233.083L1 223.167L0 223.167L-1 223.167L-1 233.083L0 233.083ZM0 218.208L1 218.208L1 208.292L0 208.292L-1 208.292L-1 218.208L0 218.208ZM0 203.333L1 203.333L1 193.417L0 193.417L-1 193.417L-1 203.333L0 203.333ZM0 188.458L1 188.458L1 178.542L0 178.542L-1 178.542L-1 188.458L0 188.458ZM0 173.583L1 173.583L1 163.667L0 163.667L-1 163.667L-1 173.583L0 173.583ZM0 158.708L1 158.708L1 148.792L0 148.792L-1 148.792L-1 158.708L0 158.708ZM0 143.833L1 143.833L1 133.917L0 133.917L-1 133.917L-1 143.833L0 143.833ZM0 128.958L1 128.958L1 119.042L0 119.042L-1 119.042L-1 128.958L0 128.958ZM0 114.083L1 114.083L1 104.167L0 104.167L-1 104.167L-1 114.083L0 114.083ZM0 99.2083L1 99.2083L1 89.2917L0 89.2917L-1 89.2917L-1 99.2083L0 99.2083ZM0 84.3333L1 84.3333L1 74.4167L0 74.4167L-1 74.4167L-1 84.3333L0 84.3333ZM0 69.4583L1 69.4583L1 59.5417L0 59.5417L-1 59.5417L-1 69.4583L0 69.4583ZM0 54.5833L1 54.5833L1 44.6667L0 44.6667L-1 44.6667L-1 54.5833L0 54.5833ZM0 39.7083L1 39.7083L1 29.7917L0 29.7917L-1 29.7917L-1 39.7083L0 39.7083ZM0 24.8333L1 24.8333L1 14.9167L0 14.9167L-1 14.9167L-1 24.8333L0 24.8333ZM0 9.95832L1 9.95832L1 5L0 5L-1 5L-1 9.95832L0 9.95832ZM0 5L1 5C1 2.79086 2.79086 1 5 1L5 0L5 -1C1.68629 -1 -1 1.68629 -1 5L0 5ZM5 0L5 1L9.90909 1L9.90909 0L9.90909 -1L5 -1L5 0ZM14.8182 0L14.8182 1L24.6364 1L24.6364 0L24.6364 -1L14.8182 -1L14.8182 0ZM29.5455 0L29.5455 1L39.3636 1L39.3636 0L39.3636 -1L29.5455 -1L29.5455 0ZM44.2727 0L44.2727 1L54.0909 1L54.0909 0L54.0909 -1L44.2727 -1L44.2727 0ZM59 0L59 1L68.8182 1L68.8182 0L68.8182 -1L59 -1L59 0ZM73.7273 0L73.7273 1L83.5455 1L83.5455 0L83.5455 -1L73.7273 -1L73.7273 0ZM88.4545 0L88.4545 1L98.2727 1L98.2727 0L98.2727 -1L88.4545 -1L88.4545 0ZM103.182 0L103.182 1L113 1L113 0L113 -1L103.182 -1L103.182 0ZM117.909 0L117.909 1L127.727 1L127.727 0L127.727 -1L117.909 -1L117.909 0ZM132.636 0L132.636 1L142.455 1L142.455 0L142.455 -1L132.636 -1L132.636 0ZM147.364 0L147.364 1L157.182 1L157.182 0L157.182 -1L147.364 -1L147.364 0ZM162.091 0L162.091 1L167 1L167 0L167 -1L162.091 -1L162.091 0ZM167 0L167 1C169.209 1 171 2.79086 171 5L172 5L173 5C173 1.68629 170.314 -1 167 -1L167 0ZM172 5L171 5L171 9.95833L172 9.95833L173 9.95833L173 5L172 5ZM172 14.9167L171 14.9167L171 24.8333L172 24.8333L173 24.8333L173 14.9167L172 14.9167ZM172 29.7917L171 29.7917L171 39.7083L172 39.7083L173 39.7083L173 29.7917L172 29.7917ZM172 44.6667L171 44.6667L171 54.5833L172 54.5833L173 54.5833L173 44.6667L172 44.6667ZM172 59.5417L171 59.5417L171 69.4583L172 69.4583L173 69.4583L173 59.5417L172 59.5417ZM172 74.4167L171 74.4167L171 84.3333L172 84.3333L173 84.3333L173 74.4167L172 74.4167ZM172 89.2917L171 89.2917L171 99.2083L172 99.2083L173 99.2083L173 89.2917L172 89.2917ZM172 104.167L171 104.167L171 114.083L172 114.083L173 114.083L173 104.167L172 104.167ZM172 119.042L171 119.042L171 128.958L172 128.958L173 128.958L173 119.042L172 119.042ZM172 133.917L171 133.917L171 143.833L172 143.833L173 143.833L173 133.917L172 133.917ZM172 148.792L171 148.792L171 158.708L172 158.708L173 158.708L173 148.792L172 148.792ZM172 163.667L171 163.667L171 173.583L172 173.583L173 173.583L173 163.667L172 163.667ZM172 178.542L171 178.542L171 188.458L172 188.458L173 188.458L173 178.542L172 178.542ZM172 193.417L171 193.417L171 203.333L172 203.333L173 203.333L173 193.417L172 193.417ZM172 208.292L171 208.292L171 218.208L172 218.208L173 218.208L173 208.292L172 208.292ZM172 223.167L171 223.167L171 233.083L172 233.083L173 233.083L173 223.167L172 223.167ZM172 238.042L171 238.042L171 243L172 243L173 243L173 238.042L172 238.042ZM172 243L171 243C171 245.209 169.209 247 167 247L167 248L167 249C170.314 249 173 246.314 173 243L172 243ZM167 248L167 247L162.091 247L162.091 248L162.091 249L167 249L167 248ZM157.182 248L157.182 247L147.364 247L147.364 248L147.364 249L157.182 249L157.182 248ZM142.455 248L142.455 247L132.636 247L132.636 248L132.636 249L142.455 249L142.455 248ZM127.727 248L127.727 247L117.909 247L117.909 248L117.909 249L127.727 249L127.727 248ZM113 248L113 247L103.182 247L103.182 248L103.182 249L113 249L113 248ZM98.2727 248L98.2727 247L88.4545 247L88.4545 248L88.4545 249L98.2727 249L98.2727 248ZM83.5455 248L83.5455 247L73.7273 247L73.7273 248L73.7273 249L83.5455 249L83.5455 248ZM68.8182 248L68.8182 247L59 247L59 248L59 249L68.8182 249L68.8182 248ZM54.0909 248L54.0909 247L44.2727 247L44.2727 248L44.2727 249L54.0909 249L54.0909 248ZM39.3636 248L39.3636 247L29.5455 247L29.5455 248L29.5455 249L39.3636 249L39.3636 248ZM24.6364 248L24.6364 247L14.8182 247L14.8182 248L14.8182 249L24.6364 249L24.6364 248ZM9.90911 248L9.90911 247L5 247L5 248L5 249L9.90911 249L9.90911 248Z",
+      "windingRule": "NONZERO"
+     }
+    ],
+    "absoluteBoundingBox": {
+     "x": 1565.0,
+     "y": -2813.0,
+     "width": 172.0,
+     "height": 248.0
+    },
+    "absoluteRenderBounds": {
+     "x": 1565.0,
+     "y": -2813.0,
+     "width": 172.0,
+     "height": 248.0
+    },
+    "constraints": {
+     "vertical": "TOP",
+     "horizontal": "LEFT"
+    },
+    "relativeTransform": [
+     [
+      1.0,
+      0.0,
+      24.0
+     ],
+     [
+      0.0,
+      1.0,
+      303.0
+     ]
+    ],
+    "size": {
+     "x": 172.0,
+     "y": 248.0
+    },
+    "effects": [],
+    "interactions": [],
+    "complexStrokeProperties": {
+     "strokeType": "BASIC"
+    }
+   },
+   {
+    "id": "83:2219",
+    "name": "flashlight: flash, no flash",
+    "type": "COMPONENT_SET",
+    "scrollBehavior": "SCROLLS",
+    "componentPropertyDefinitions": {
+     "flash": {
+      "type": "VARIANT",
+      "defaultValue": "false",
+      "variantOptions": [
+       "false",
+       "true"
+      ]
+     }
+    },
+    "children": [
+     {
+      "id": "83:2133",
+      "name": "flash=false",
+      "type": "COMPONENT",
+      "scrollBehavior": "SCROLLS",
+      "children": [
+       {
+        "id": "83:216",
+        "name": "no flash",
+        "type": "TEXT",
+        "scrollBehavior": "SCROLLS",
+        "blendMode": "PASS_THROUGH",
+        "fills": [
+         {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+           "r": 0.8178335428237915,
+           "g": 0.8178335428237915,
+           "b": 0.8178335428237915,
+           "a": 1.0
+          }
+         }
+        ],
+        "fillGeometry": [],
+        "strokes": [],
+        "strokeWeight": 1.0,
+        "strokeAlign": "OUTSIDE",
+        "strokeGeometry": [],
+        "absoluteBoundingBox": {
+         "x": 1791.0,
+         "y": -2518.0,
+         "width": 98.0,
+         "height": 26.0
+        },
+        "absoluteRenderBounds": {
+         "x": 1791.8310546875,
+         "y": -2518.927978515625,
+         "width": 96.4918212890625,
+         "height": 27.251953125
+        },
+        "constraints": {
+         "vertical": "TOP",
+         "horizontal": "LEFT"
+        },
+        "relativeTransform": [
+         [
+          1.0,
+          0.0,
+          21.0
+         ],
+         [
+          0.0,
+          1.0,
+          37.0
+         ]
+        ],
+        "size": {
+         "x": 98.0,
+         "y": 26.0
+        },
+        "characters": "no flash",
+        "characterStyleOverrides": [],
+        "styleOverrideTable": {},
+        "lineTypes": [
+         "NONE"
+        ],
+        "lineIndentations": [
+         0
+        ],
+        "style": {
+         "fontFamily": "Instrument Serif",
+         "fontPostScriptName": "InstrumentSerif-Regular",
+         "fontStyle": "Regular",
+         "fontWeight": 400,
+         "textAutoResize": "WIDTH_AND_HEIGHT",
+         "fontSize": 36.0,
+         "textAlignHorizontal": "CENTER",
+         "textAlignVertical": "TOP",
+         "leadingTrim": "CAP_HEIGHT",
+         "letterSpacing": 0.0,
+         "lineHeightPx": 32.39999771118164,
+         "lineHeightPercent": 69.23077392578125,
+         "lineHeightPercentFontSize": 90.0,
+         "lineHeightUnit": "FONT_SIZE_%"
+        },
+        "layoutVersion": 5,
+        "effects": [],
+        "interactions": [],
+        "complexStrokeProperties": {
+         "strokeType": "BASIC"
+        }
+       }
+      ],
+      "blendMode": "PASS_THROUGH",
+      "clipsContent": false,
+      "background": [
+       {
+        "blendMode": "NORMAL",
+        "type": "SOLID",
+        "color": {
+         "r": 0.0,
+         "g": 0.0,
+         "b": 0.0,
+         "a": 1.0
+        }
+       }
+      ],
+      "fills": [
+       {
+        "blendMode": "NORMAL",
+        "type": "SOLID",
+        "color": {
+         "r": 0.0,
+         "g": 0.0,
+         "b": 0.0,
+         "a": 1.0
+        }
+       }
+      ],
+      "strokes": [
+       {
+        "blendMode": "NORMAL",
+        "type": "SOLID",
+        "color": {
+         "r": 0.0,
+         "g": 0.0,
+         "b": 0.0,
+         "a": 1.0
+        }
+       }
+      ],
+      "strokeWeight": 2.0,
+      "strokeAlign": "INSIDE",
+      "backgroundColor": {
+       "r": 0.0,
+       "g": 0.0,
+       "b": 0.0,
+       "a": 1.0
+      },
+      "fillGeometry": [
+       {
+        "path": "M0 0L140 0L140 100L0 100L0 0Z",
+        "windingRule": "NONZERO"
+       }
+      ],
+      "strokeGeometry": [
+       {
+        "path": "M0 0L0 -2L-2 -2L-2 0L0 0ZM140 0L142 0L142 -2L140 -2L140 0ZM140 100L140 102L142 102L142 100L140 100ZM0 100L-2 100L-2 102L0 102L0 100ZM0 0L0 2L140 2L140 0L140 -2L0 -2L0 0ZM140 0L138 0L138 100L140 100L142 100L142 0L140 0ZM140 100L140 98L0 98L0 100L0 102L140 102L140 100ZM0 100L2 100L2 0L0 0L-2 0L-2 100L0 100Z",
+        "windingRule": "NONZERO"
+       }
+      ],
+      "absoluteBoundingBox": {
+       "x": 1770.0,
+       "y": -2555.0,
+       "width": 140.0,
+       "height": 100.0
+      },
+      "absoluteRenderBounds": {
+       "x": 1770.0,
+       "y": -2555.0,
+       "width": 140.0,
+       "height": 100.0
+      },
+      "constraints": {
+       "vertical": "TOP",
+       "horizontal": "LEFT"
+      },
+      "relativeTransform": [
+       [
+        1.0,
+        0.0,
+        16.0
+       ],
+       [
+        0.0,
+        1.0,
+        16.0
+       ]
+      ],
+      "size": {
+       "x": 140.0,
+       "y": 100.0
+      },
+      "effects": [],
+      "interactions": [],
+      "complexStrokeProperties": {
+       "strokeType": "BASIC"
+      }
+     },
+     {
+      "id": "83:2220",
+      "name": "flash=true",
+      "type": "COMPONENT",
+      "scrollBehavior": "SCROLLS",
+      "children": [
+       {
+        "id": "83:2221",
+        "name": "flash",
+        "type": "TEXT",
+        "scrollBehavior": "SCROLLS",
+        "blendMode": "PASS_THROUGH",
+        "fills": [
+         {
+          "blendMode": "NORMAL",
+          "type": "SOLID",
+          "color": {
+           "r": 0.0,
+           "g": 0.0,
+           "b": 0.0,
+           "a": 1.0
+          }
+         }
+        ],
+        "fillGeometry": [],
+        "strokes": [],
+        "strokeWeight": 1.0,
+        "strokeAlign": "OUTSIDE",
+        "strokeGeometry": [],
+        "absoluteBoundingBox": {
+         "x": 1810.0,
+         "y": -2402.0,
+         "width": 60.0,
+         "height": 26.0
+        },
+        "absoluteRenderBounds": {
+         "x": 1810.620361328125,
+         "y": -2402.927978515625,
+         "width": 58.8411865234375,
+         "height": 27.251953125
+        },
+        "constraints": {
+         "vertical": "TOP",
+         "horizontal": "CENTER"
+        },
+        "relativeTransform": [
+         [
+          1.0,
+          0.0,
+          40.0
+         ],
+         [
+          0.0,
+          1.0,
+          37.0
+         ]
+        ],
+        "size": {
+         "x": 60.0,
+         "y": 26.0
+        },
+        "characters": "flash",
+        "characterStyleOverrides": [],
+        "styleOverrideTable": {},
+        "lineTypes": [
+         "NONE"
+        ],
+        "lineIndentations": [
+         0
+        ],
+        "style": {
+         "fontFamily": "Instrument Serif",
+         "fontPostScriptName": "InstrumentSerif-Regular",
+         "fontStyle": "Regular",
+         "fontWeight": 400,
+         "textAutoResize": "WIDTH_AND_HEIGHT",
+         "fontSize": 36.0,
+         "textAlignHorizontal": "CENTER",
+         "textAlignVertical": "TOP",
+         "leadingTrim": "CAP_HEIGHT",
+         "letterSpacing": 0.0,
+         "lineHeightPx": 32.39999771118164,
+         "lineHeightPercent": 69.23077392578125,
+         "lineHeightPercentFontSize": 90.0,
+         "lineHeightUnit": "FONT_SIZE_%"
+        },
+        "layoutVersion": 5,
+        "effects": [],
+        "interactions": [],
+        "complexStrokeProperties": {
+         "strokeType": "BASIC"
+        }
+       }
+      ],
+      "blendMode": "PASS_THROUGH",
+      "clipsContent": false,
+      "background": [],
+      "fills": [],
+      "strokes": [
+       {
+        "blendMode": "NORMAL",
+        "type": "SOLID",
+        "color": {
+         "r": 0.0,
+         "g": 0.0,
+         "b": 0.0,
+         "a": 1.0
+        }
+       }
+      ],
+      "strokeWeight": 2.0,
+      "strokeAlign": "INSIDE",
+      "backgroundColor": {
+       "r": 0.0,
+       "g": 0.0,
+       "b": 0.0,
+       "a": 0.0
+      },
+      "fillGeometry": [
+       {
+        "path": "M0 0L140 0L140 100L0 100L0 0Z",
+        "windingRule": "NONZERO"
+       }
+      ],
+      "strokeGeometry": [
+       {
+        "path": "M0 0L0 -2L-2 -2L-2 0L0 0ZM140 0L142 0L142 -2L140 -2L140 0ZM140 100L140 102L142 102L142 100L140 100ZM0 100L-2 100L-2 102L0 102L0 100ZM0 0L0 2L140 2L140 0L140 -2L0 -2L0 0ZM140 0L138 0L138 100L140 100L142 100L142 0L140 0ZM140 100L140 98L0 98L0 100L0 102L140 102L140 100ZM0 100L2 100L2 0L0 0L-2 0L-2 100L0 100Z",
+        "windingRule": "NONZERO"
+       }
+      ],
+      "absoluteBoundingBox": {
+       "x": 1770.0,
+       "y": -2439.0,
+       "width": 140.0,
+       "height": 100.0
+      },
+      "absoluteRenderBounds": {
+       "x": 1770.0,
+       "y": -2439.0,
+       "width": 140.0,
+       "height": 100.0
+      },
+      "constraints": {
+       "vertical": "TOP",
+       "horizontal": "LEFT"
+      },
+      "relativeTransform": [
+       [
+        1.0,
+        0.0,
+        16.0
+       ],
+       [
+        0.0,
+        1.0,
+        132.0
+       ]
+      ],
+      "size": {
+       "x": 140.0,
+       "y": 100.0
+      },
+      "effects": [],
+      "interactions": [],
+      "complexStrokeProperties": {
+       "strokeType": "BASIC"
+      }
+     }
+    ],
+    "blendMode": "PASS_THROUGH",
+    "clipsContent": true,
+    "background": [],
+    "fills": [],
+    "strokes": [
+     {
+      "blendMode": "NORMAL",
+      "type": "SOLID",
+      "color": {
+       "r": 0.5921568870544434,
+       "g": 0.27843138575553894,
+       "b": 1.0,
+       "a": 1.0
+      }
+     }
+    ],
+    "cornerRadius": 5.0,
+    "cornerSmoothing": 0.0,
+    "strokeWeight": 1.0,
+    "strokeAlign": "INSIDE",
+    "backgroundColor": {
+     "r": 0.0,
+     "g": 0.0,
+     "b": 0.0,
+     "a": 0.0
+    },
+    "fillGeometry": [
+     {
+      "path": "M0 5C0 2.23857 2.23858 0 5 0L167 0C169.761 0 172 2.23858 172 5L172 243C172 245.761 169.761 248 167 248L5 248C2.23858 248 0 245.761 0 243L0 5Z",
+      "windingRule": "NONZERO"
+     }
+    ],
+    "strokeDashes": [
+     10.0,
+     5.0
+    ],
+    "strokeGeometry": [
+     {
+      "path": "M5 248L5 247.5C2.51472 247.5 0.5 245.485 0.5 243L0 243L-0.5 243C-0.5 246.038 1.96244 248.5 5 248.5L5 248ZM0 243L0.5 243L0.5 238.042L0 238.042L-0.5 238.042L-0.5 243L0 243ZM0 233.083L0.5 233.083L0.5 223.167L0 223.167L-0.5 223.167L-0.5 233.083L0 233.083ZM0 218.208L0.5 218.208L0.5 208.292L0 208.292L-0.5 208.292L-0.5 218.208L0 218.208ZM0 203.333L0.5 203.333L0.5 193.417L0 193.417L-0.5 193.417L-0.5 203.333L0 203.333ZM0 188.458L0.5 188.458L0.5 178.542L0 178.542L-0.5 178.542L-0.5 188.458L0 188.458ZM0 173.583L0.5 173.583L0.5 163.667L0 163.667L-0.5 163.667L-0.5 173.583L0 173.583ZM0 158.708L0.5 158.708L0.5 148.792L0 148.792L-0.5 148.792L-0.5 158.708L0 158.708ZM0 143.833L0.5 143.833L0.5 133.917L0 133.917L-0.5 133.917L-0.5 143.833L0 143.833ZM0 128.958L0.5 128.958L0.5 119.042L0 119.042L-0.5 119.042L-0.5 128.958L0 128.958ZM0 114.083L0.5 114.083L0.5 104.167L0 104.167L-0.5 104.167L-0.5 114.083L0 114.083ZM0 99.2083L0.5 99.2083L0.5 89.2917L0 89.2917L-0.5 89.2917L-0.5 99.2083L0 99.2083ZM0 84.3333L0.5 84.3333L0.5 74.4167L0 74.4167L-0.5 74.4167L-0.5 84.3333L0 84.3333ZM0 69.4583L0.5 69.4583L0.5 59.5417L0 59.5417L-0.5 59.5417L-0.5 69.4583L0 69.4583ZM0 54.5833L0.5 54.5833L0.5 44.6667L0 44.6667L-0.5 44.6667L-0.5 54.5833L0 54.5833ZM0 39.7083L0.5 39.7083L0.5 29.7917L0 29.7917L-0.5 29.7917L-0.5 39.7083L0 39.7083ZM0 24.8333L0.5 24.8333L0.5 14.9167L0 14.9167L-0.5 14.9167L-0.5 24.8333L0 24.8333ZM0 9.95832L0.5 9.95832L0.5 5L0 5L-0.5 5L-0.5 9.95832L0 9.95832ZM0 5L0.5 5C0.5 2.51471 2.51472 0.5 5 0.5L5 0L5 -0.5C1.96243 -0.5 -0.5 1.96243 -0.5 5L0 5ZM5 0L5 0.5L9.90909 0.5L9.90909 0L9.90909 -0.5L5 -0.5L5 0ZM14.8182 0L14.8182 0.5L24.6364 0.5L24.6364 0L24.6364 -0.5L14.8182 -0.5L14.8182 0ZM29.5455 0L29.5455 0.5L39.3636 0.5L39.3636 0L39.3636 -0.5L29.5455 -0.5L29.5455 0ZM44.2727 0L44.2727 0.5L54.0909 0.5L54.0909 0L54.0909 -0.5L44.2727 -0.5L44.2727 0ZM59 0L59 0.5L68.8182 0.5L68.8182 0L68.8182 -0.5L59 -0.5L59 0ZM73.7273 0L73.7273 0.5L83.5455 0.5L83.5455 0L83.5455 -0.5L73.7273 -0.5L73.7273 0ZM88.4545 0L88.4545 0.5L98.2727 0.5L98.2727 0L98.2727 -0.5L88.4545 -0.5L88.4545 0ZM103.182 0L103.182 0.5L113 0.5L113 0L113 -0.5L103.182 -0.5L103.182 0ZM117.909 0L117.909 0.5L127.727 0.5L127.727 0L127.727 -0.5L117.909 -0.5L117.909 0ZM132.636 0L132.636 0.5L142.455 0.5L142.455 0L142.455 -0.5L132.636 -0.5L132.636 0ZM147.364 0L147.364 0.5L157.182 0.5L157.182 0L157.182 -0.5L147.364 -0.5L147.364 0ZM162.091 0L162.091 0.5L167 0.5L167 0L167 -0.5L162.091 -0.5L162.091 0ZM167 0L167 0.5C169.485 0.5 171.5 2.51472 171.5 5L172 5L172.5 5C172.5 1.96243 170.038 -0.5 167 -0.5L167 0ZM172 5L171.5 5L171.5 9.95833L172 9.95833L172.5 9.95833L172.5 5L172 5ZM172 14.9167L171.5 14.9167L171.5 24.8333L172 24.8333L172.5 24.8333L172.5 14.9167L172 14.9167ZM172 29.7917L171.5 29.7917L171.5 39.7083L172 39.7083L172.5 39.7083L172.5 29.7917L172 29.7917ZM172 44.6667L171.5 44.6667L171.5 54.5833L172 54.5833L172.5 54.5833L172.5 44.6667L172 44.6667ZM172 59.5417L171.5 59.5417L171.5 69.4583L172 69.4583L172.5 69.4583L172.5 59.5417L172 59.5417ZM172 74.4167L171.5 74.4167L171.5 84.3333L172 84.3333L172.5 84.3333L172.5 74.4167L172 74.4167ZM172 89.2917L171.5 89.2917L171.5 99.2083L172 99.2083L172.5 99.2083L172.5 89.2917L172 89.2917ZM172 104.167L171.5 104.167L171.5 114.083L172 114.083L172.5 114.083L172.5 104.167L172 104.167ZM172 119.042L171.5 119.042L171.5 128.958L172 128.958L172.5 128.958L172.5 119.042L172 119.042ZM172 133.917L171.5 133.917L171.5 143.833L172 143.833L172.5 143.833L172.5 133.917L172 133.917ZM172 148.792L171.5 148.792L171.5 158.708L172 158.708L172.5 158.708L172.5 148.792L172 148.792ZM172 163.667L171.5 163.667L171.5 173.583L172 173.583L172.5 173.583L172.5 163.667L172 163.667ZM172 178.542L171.5 178.542L171.5 188.458L172 188.458L172.5 188.458L172.5 178.542L172 178.542ZM172 193.417L171.5 193.417L171.5 203.333L172 203.333L172.5 203.333L172.5 193.417L172 193.417ZM172 208.292L171.5 208.292L171.5 218.208L172 218.208L172.5 218.208L172.5 208.292L172 208.292ZM172 223.167L171.5 223.167L171.5 233.083L172 233.083L172.5 233.083L172.5 223.167L172 223.167ZM172 238.042L171.5 238.042L171.5 243L172 243L172.5 243L172.5 238.042L172 238.042ZM172 243L171.5 243C171.5 245.485 169.485 247.5 167 247.5L167 248L167 248.5C170.038 248.5 172.5 246.038 172.5 243L172 243ZM167 248L167 247.5L162.091 247.5L162.091 248L162.091 248.5L167 248.5L167 248ZM157.182 248L157.182 247.5L147.364 247.5L147.364 248L147.364 248.5L157.182 248.5L157.182 248ZM142.455 248L142.455 247.5L132.636 247.5L132.636 248L132.636 248.5L142.455 248.5L142.455 248ZM127.727 248L127.727 247.5L117.909 247.5L117.909 248L117.909 248.5L127.727 248.5L127.727 248ZM113 248L113 247.5L103.182 247.5L103.182 248L103.182 248.5L113 248.5L113 248ZM98.2727 248L98.2727 247.5L88.4545 247.5L88.4545 248L88.4545 248.5L98.2727 248.5L98.2727 248ZM83.5455 248L83.5455 247.5L73.7273 247.5L73.7273 248L73.7273 248.5L83.5455 248.5L83.5455 248ZM68.8182 248L68.8182 247.5L59 247.5L59 248L59 248.5L68.8182 248.5L68.8182 248ZM54.0909 248L54.0909 247.5L44.2727 247.5L44.2727 248L44.2727 248.5L54.0909 248.5L54.0909 248ZM39.3636 248L39.3636 247.5L29.5455 247.5L29.5455 248L29.5455 248.5L39.3636 248.5L39.3636 248ZM24.6364 248L24.6364 247.5L14.8182 247.5L14.8182 248L14.8182 248.5L24.6364 248.5L24.6364 248ZM9.90911 248L9.90911 247.5L5 247.5L5 248L5 248.5L9.90911 248.5L9.90911 248ZM5 248L5 247C2.79086 247 1 245.209 1 243L0 243L-1 243C-1 246.314 1.68629 249 5 249L5 248ZM0 243L1 243L1 238.042L0 238.042L-1 238.042L-1 243L0 243ZM0 233.083L1 233.083L1 223.167L0 223.167L-1 223.167L-1 233.083L0 233.083ZM0 218.208L1 218.208L1 208.292L0 208.292L-1 208.292L-1 218.208L0 218.208ZM0 203.333L1 203.333L1 193.417L0 193.417L-1 193.417L-1 203.333L0 203.333ZM0 188.458L1 188.458L1 178.542L0 178.542L-1 178.542L-1 188.458L0 188.458ZM0 173.583L1 173.583L1 163.667L0 163.667L-1 163.667L-1 173.583L0 173.583ZM0 158.708L1 158.708L1 148.792L0 148.792L-1 148.792L-1 158.708L0 158.708ZM0 143.833L1 143.833L1 133.917L0 133.917L-1 133.917L-1 143.833L0 143.833ZM0 128.958L1 128.958L1 119.042L0 119.042L-1 119.042L-1 128.958L0 128.958ZM0 114.083L1 114.083L1 104.167L0 104.167L-1 104.167L-1 114.083L0 114.083ZM0 99.2083L1 99.2083L1 89.2917L0 89.2917L-1 89.2917L-1 99.2083L0 99.2083ZM0 84.3333L1 84.3333L1 74.4167L0 74.4167L-1 74.4167L-1 84.3333L0 84.3333ZM0 69.4583L1 69.4583L1 59.5417L0 59.5417L-1 59.5417L-1 69.4583L0 69.4583ZM0 54.5833L1 54.5833L1 44.6667L0 44.6667L-1 44.6667L-1 54.5833L0 54.5833ZM0 39.7083L1 39.7083L1 29.7917L0 29.7917L-1 29.7917L-1 39.7083L0 39.7083ZM0 24.8333L1 24.8333L1 14.9167L0 14.9167L-1 14.9167L-1 24.8333L0 24.8333ZM0 9.95832L1 9.95832L1 5L0 5L-1 5L-1 9.95832L0 9.95832ZM0 5L1 5C1 2.79086 2.79086 1 5 1L5 0L5 -1C1.68629 -1 -1 1.68629 -1 5L0 5ZM5 0L5 1L9.90909 1L9.90909 0L9.90909 -1L5 -1L5 0ZM14.8182 0L14.8182 1L24.6364 1L24.6364 0L24.6364 -1L14.8182 -1L14.8182 0ZM29.5455 0L29.5455 1L39.3636 1L39.3636 0L39.3636 -1L29.5455 -1L29.5455 0ZM44.2727 0L44.2727 1L54.0909 1L54.0909 0L54.0909 -1L44.2727 -1L44.2727 0ZM59 0L59 1L68.8182 1L68.8182 0L68.8182 -1L59 -1L59 0ZM73.7273 0L73.7273 1L83.5455 1L83.5455 0L83.5455 -1L73.7273 -1L73.7273 0ZM88.4545 0L88.4545 1L98.2727 1L98.2727 0L98.2727 -1L88.4545 -1L88.4545 0ZM103.182 0L103.182 1L113 1L113 0L113 -1L103.182 -1L103.182 0ZM117.909 0L117.909 1L127.727 1L127.727 0L127.727 -1L117.909 -1L117.909 0ZM132.636 0L132.636 1L142.455 1L142.455 0L142.455 -1L132.636 -1L132.636 0ZM147.364 0L147.364 1L157.182 1L157.182 0L157.182 -1L147.364 -1L147.364 0ZM162.091 0L162.091 1L167 1L167 0L167 -1L162.091 -1L162.091 0ZM167 0L167 1C169.209 1 171 2.79086 171 5L172 5L173 5C173 1.68629 170.314 -1 167 -1L167 0ZM172 5L171 5L171 9.95833L172 9.95833L173 9.95833L173 5L172 5ZM172 14.9167L171 14.9167L171 24.8333L172 24.8333L173 24.8333L173 14.9167L172 14.9167ZM172 29.7917L171 29.7917L171 39.7083L172 39.7083L173 39.7083L173 29.7917L172 29.7917ZM172 44.6667L171 44.6667L171 54.5833L172 54.5833L173 54.5833L173 44.6667L172 44.6667ZM172 59.5417L171 59.5417L171 69.4583L172 69.4583L173 69.4583L173 59.5417L172 59.5417ZM172 74.4167L171 74.4167L171 84.3333L172 84.3333L173 84.3333L173 74.4167L172 74.4167ZM172 89.2917L171 89.2917L171 99.2083L172 99.2083L173 99.2083L173 89.2917L172 89.2917ZM172 104.167L171 104.167L171 114.083L172 114.083L173 114.083L173 104.167L172 104.167ZM172 119.042L171 119.042L171 128.958L172 128.958L173 128.958L173 119.042L172 119.042ZM172 133.917L171 133.917L171 143.833L172 143.833L173 143.833L173 133.917L172 133.917ZM172 148.792L171 148.792L171 158.708L172 158.708L173 158.708L173 148.792L172 148.792ZM172 163.667L171 163.667L171 173.583L172 173.583L173 173.583L173 163.667L172 163.667ZM172 178.542L171 178.542L171 188.458L172 188.458L173 188.458L173 178.542L172 178.542ZM172 193.417L171 193.417L171 203.333L172 203.333L173 203.333L173 193.417L172 193.417ZM172 208.292L171 208.292L171 218.208L172 218.208L173 218.208L173 208.292L172 208.292ZM172 223.167L171 223.167L171 233.083L172 233.083L173 233.083L173 223.167L172 223.167ZM172 238.042L171 238.042L171 243L172 243L173 243L173 238.042L172 238.042ZM172 243L171 243C171 245.209 169.209 247 167 247L167 248L167 249C170.314 249 173 246.314 173 243L172 243ZM167 248L167 247L162.091 247L162.091 248L162.091 249L167 249L167 248ZM157.182 248L157.182 247L147.364 247L147.364 248L147.364 249L157.182 249L157.182 248ZM142.455 248L142.455 247L132.636 247L132.636 248L132.636 249L142.455 249L142.455 248ZM127.727 248L127.727 247L117.909 247L117.909 248L117.909 249L127.727 249L127.727 248ZM113 248L113 247L103.182 247L103.182 248L103.182 249L113 249L113 248ZM98.2727 248L98.2727 247L88.4545 247L88.4545 248L88.4545 249L98.2727 249L98.2727 248ZM83.5455 248L83.5455 247L73.7273 247L73.7273 248L73.7273 249L83.5455 249L83.5455 248ZM68.8182 248L68.8182 247L59 247L59 248L59 249L68.8182 249L68.8182 248ZM54.0909 248L54.0909 247L44.2727 247L44.2727 248L44.2727 249L54.0909 249L54.0909 248ZM39.3636 248L39.3636 247L29.5455 247L29.5455 248L29.5455 249L39.3636 249L39.3636 248ZM24.6364 248L24.6364 247L14.8182 247L14.8182 248L14.8182 249L24.6364 249L24.6364 248ZM9.90911 248L9.90911 247L5 247L5 248L5 249L9.90911 249L9.90911 248Z",
+      "windingRule": "NONZERO"
+     }
+    ],
+    "absoluteBoundingBox": {
+     "x": 1754.0,
+     "y": -2571.0,
+     "width": 172.0,
+     "height": 248.0
+    },
+    "absoluteRenderBounds": {
+     "x": 1754.0,
+     "y": -2571.0,
+     "width": 172.0,
+     "height": 248.0
+    },
+    "constraints": {
+     "vertical": "TOP",
+     "horizontal": "LEFT"
+    },
+    "relativeTransform": [
+     [
+      1.0,
+      0.0,
+      213.0
+     ],
+     [
+      0.0,
+      1.0,
+      545.0
+     ]
+    ],
+    "size": {
+     "x": 172.0,
+     "y": 248.0
+    },
+    "effects": [],
+    "interactions": [],
+    "complexStrokeProperties": {
+     "strokeType": "BASIC"
+    }
+   }
+  ],
+  "fills": [
+   {
+    "blendMode": "NORMAL",
+    "type": "SOLID",
+    "color": {
+     "r": 0.8178335428237915,
+     "g": 0.8178335428237915,
+     "b": 0.8178335428237915,
+     "a": 1.0
+    }
+   }
+  ],
+  "fillGeometry": [
+   {
+    "path": "M0 1.99999C0 0.895423 0.895431 0 2 0L446 0C447.105 0 448 0.895431 448 2L448 861C448 862.105 447.105 863 446 863L1.99999 863C0.895423 863 0 862.105 0 861L0 1.99999Z",
+    "windingRule": "NONZERO"
+   }
+  ],
+  "strokes": [
+   {
+    "opacity": 0.10000000149011612,
+    "blendMode": "NORMAL",
+    "type": "SOLID",
+    "color": {
+     "r": 1.0,
+     "g": 1.0,
+     "b": 1.0,
+     "a": 1.0
+    }
+   }
+  ],
+  "strokeWeight": 1.0,
+  "strokeAlign": "INSIDE",
+  "strokeGeometry": [
+   {
+    "path": "M2 0L2 1L446 1L446 0L446 -1L2 -1L2 0ZM448 2L447 2L447 861L448 861L449 861L449 2L448 2ZM446 863L446 862L1.99999 862L1.99999 863L1.99999 864L446 864L446 863ZM0 861L1 861L1 1.99999L0 1.99999L-1 1.99999L-1 861L0 861ZM1.99999 863L1.99999 862C1.44771 862 1 861.552 1 861L0 861L-1 861C-1 862.657 0.343133 864 1.99999 864L1.99999 863ZM448 861L447 861C447 861.552 446.552 862 446 862L446 863L446 864C447.657 864 449 862.657 449 861L448 861ZM446 0L446 1C446.552 1 447 1.44771 447 2L448 2L449 2C449 0.343151 447.657 -1 446 -1L446 0ZM2 0L2 -1C0.343151 -1 -1 0.343133 -1 1.99999L0 1.99999L1 1.99999C1 1.44771 1.44771 1 2 1L2 0Z",
+    "windingRule": "NONZERO"
+   }
+  ],
+  "absoluteBoundingBox": {
+   "x": 1541.0,
+   "y": -3116.0,
+   "width": 448.0,
+   "height": 863.0
+  },
+  "absoluteRenderBounds": {
+   "x": 1541.0,
+   "y": -3116.0,
+   "width": 448.0,
+   "height": 863.0
+  },
+  "relativeTransform": [
+   [
+    1.0,
+    0.0,
+    1541.0
+   ],
+   [
+    0.0,
+    1.0,
+    -3116.0
+   ]
+  ],
+  "size": {
+   "x": 448.0,
+   "y": 863.0
+  },
+  "sectionContentsHidden": false
+ },
+ "components": {
+  "83:2134": {
+   "key": "e58b52f4fb4d65579ce1e40a7a431e9aa905779e",
+   "name": "State=Default",
+   "description": "",
+   "remote": false,
+   "componentSetId": "83:2168",
+   "documentationLinks": []
+  },
+  "83:2169": {
+   "key": "b4ddbe88f8be13ef197eb4405aa1cb77fe2dfdf1",
+   "name": "State=Variant2",
+   "description": "",
+   "remote": false,
+   "componentSetId": "83:2168",
+   "documentationLinks": []
+  },
+  "83:2132": {
+   "key": "f8987b8ef730295818a32892e5dc72a4f46772c2",
+   "name": "slider=0%",
+   "description": "",
+   "remote": false,
+   "componentSetId": "83:2173",
+   "documentationLinks": []
+  },
+  "83:2174": {
+   "key": "9b3a72061b8f1864bd6e1741aa5902463e066e11",
+   "name": "slider=20%",
+   "description": "",
+   "remote": false,
+   "componentSetId": "83:2173",
+   "documentationLinks": []
+  },
+  "83:2179": {
+   "key": "4be15d7558d3fbc98fb78b2abebe1e5ec6362c4e",
+   "name": "slider=80%",
+   "description": "",
+   "remote": false,
+   "componentSetId": "83:2173",
+   "documentationLinks": []
+  },
+  "83:2212": {
+   "key": "9bd8b29eba8a12a9bbfc37dab7689bfc1506f4fc",
+   "name": "slider=1",
+   "description": "",
+   "remote": false,
+   "componentSetId": "83:2173",
+   "documentationLinks": []
+  },
+  "83:2131": {
+   "key": "0bc550b3314e8419f1f2e05b39b85e5b044f580b",
+   "name": "style=normal",
+   "description": "",
+   "remote": false,
+   "componentSetId": "83:2215",
+   "documentationLinks": []
+  },
+  "83:2216": {
+   "key": "5218d19ee0010a620acf710e872a1739b18868dc",
+   "name": "style=dithered",
+   "description": "",
+   "remote": false,
+   "componentSetId": "83:2215",
+   "documentationLinks": []
+  },
+  "83:2133": {
+   "key": "0263c2da5abf3b269ff8693fb35dc58fe2ba65d4",
+   "name": "flash=false",
+   "description": "",
+   "remote": false,
+   "componentSetId": "83:2219",
+   "documentationLinks": []
+  },
+  "83:2220": {
+   "key": "3c0d34bfd0e6d2f5fcf2f50401e42be0e87dcd1f",
+   "name": "flash=true",
+   "description": "",
+   "remote": false,
+   "componentSetId": "83:2219",
+   "documentationLinks": []
+  }
+ },
+ "componentSets": {
+  "83:2168": {
+   "key": "202331197265eb08d07b1d5ef8b6ad5b18edc2bc",
+   "name": "orientation: portrait, hrzntl",
+   "description": "",
+   "documentationLinks": []
+  },
+  "83:2173": {
+   "key": "86c1d86f18de4bb93f64fc4b37d43e34e4898ebf",
+   "name": "cam delay: 0s to 1s",
+   "description": "",
+   "documentationLinks": []
+  },
+  "83:2215": {
+   "key": "5b9160a3cec85a04a31128739b7b86d56a6df801",
+   "name": "style: normal, dithered, etc",
+   "description": "",
+   "documentationLinks": []
+  },
+  "83:2219": {
+   "key": "0df5254390a1d857a8365b777fe5cb9ffc0104ad",
+   "name": "flashlight: flash, no flash",
+   "description": "",
+   "documentationLinks": []
+  }
+ },
+ "schemaVersion": 0,
+ "styles": {}
+}
