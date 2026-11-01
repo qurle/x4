@@ -75,7 +75,6 @@ lv_obj_t* image(lv_obj_t* parent, const lv_image_dsc_t* src) {
 
 void animOpa(void* o, int32_t v) { lv_obj_set_style_opa((lv_obj_t*)o, (lv_opa_t)v, 0); }
 void animY(void* o, int32_t v) { lv_obj_set_style_translate_y((lv_obj_t*)o, v, 0); }
-void animX(void* o, int32_t v) { lv_obj_set_x((lv_obj_t*)o, v); }
 void animBgOpa(void* o, int32_t v) { lv_obj_set_style_bg_opa((lv_obj_t*)o, (lv_opa_t)v, 0); }
 void animImgOpa(void* o, int32_t v) { lv_obj_set_style_image_opa((lv_obj_t*)o, (lv_opa_t)v, 0); }
 void animW(void* o, int32_t v) { lv_obj_set_width((lv_obj_t*)o, v < 1 ? 1 : v); }  // spring may undershoot
@@ -386,7 +385,7 @@ void buildMain() {
     lv_obj_add_flag(cell, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(cell, onMenu, LV_EVENT_CLICKED, (void*)(intptr_t)i);
     lv_obj_t* l = label(cell, fontMenu(), kOnPhoto, kItems[i]);
-    lv_obj_align(l, LV_ALIGN_TOP_MID, 0, kMenuPadTop);
+    lv_obj_align(l, LV_ALIGN_TOP_MID, 0, kMenuLabelY);
     lv_obj_set_style_text_opa(l, LV_OPA_60, LV_STATE_PRESSED);
     lv_obj_add_flag(l, LV_OBJ_FLAG_EVENT_BUBBLE);
   }

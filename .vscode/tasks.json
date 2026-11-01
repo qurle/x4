@@ -281,6 +281,44 @@
       "problemMatcher": [
         "$platformio"
       ]
+    },
+    {
+      "label": "x4: UI simulator: render + compare with Figma",
+      "type": "shell",
+      "command": "python tools/ui_sim/run.py",
+      "options": {
+        "cwd": "${workspaceFolder}/"
+      },
+      "problemMatcher": [],
+      "group": "test"
+    },
+    {
+      "label": "x4: UI simulator: live window",
+      "type": "shell",
+      "command": "python tools/ui_sim/run.py --live",
+      "options": {
+        "cwd": "${workspaceFolder}/"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "x4: regenerate UI images (Figma -> PNG -> C)",
+      "type": "shell",
+      "command": "python tools/gen_figma_assets.py && python tools/gen_assets.py",
+      "options": {
+        "cwd": "${workspaceFolder}/"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "x4: check generated files",
+      "type": "shell",
+      "command": "python tools/gen_docs.py --check && python tools/gen_tokens.py --check && python tools/gen_figma_assets.py --check && python tools/gen_assets.py --check",
+      "options": {
+        "cwd": "${workspaceFolder}/"
+      },
+      "problemMatcher": [],
+      "group": "test"
     }
   ]
 }

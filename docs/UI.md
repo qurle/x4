@@ -118,6 +118,15 @@ editable on the web page).
 | cam delay range 0.2–1 s in the file | 0 + 0.2–1 s | 0 keeps simultaneous capture, the rig's main purpose ([OPEN_QUESTIONS Q18](OPEN_QUESTIONS.md)) |
 | video, media | hidden | not in v1. Media (on-device gallery) is moderate work: decode each 5 MP JPEG at 1/8 scale (≈ 324×243, TJpgDec does this natively) or save a thumbnail per shot. Video is bigger: needs a defined meaning for four cameras and an MJPEG pipeline to the SD |
 
+## Simulator
+
+`tools/ui_sim/` runs this UI code with LVGL 9.6 and the device's `lv_conf.h` on a PC, renders
+each state and compares it with the Figma frame ([DEVELOP §3](DEVELOP.md#3-ui-simulator)).
+First run (2026-11-01): text sits on the computed baselines (0 px vertical offset, ±1 px
+horizontal from Figma's fractional positions); mean difference 3–7 levels per channel on the
+viewfinder, settings, saving and error frames. It found the tap-menu label 3 px too high (fixed:
+`menuLabelY` from the baseline). Still to judge on the panel: speed, colours, touch.
+
 ## Performance
 
 Partial rendering with 2 × 40-line buffers in internal DMA RAM; flush under the SPI lock;

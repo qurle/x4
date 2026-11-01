@@ -56,7 +56,7 @@ constexpr int32_t kGlowY = -25;  // footer glow images top in the footer (72 px 
 constexpr int32_t kFlashGap = 4;  // bolt to charge % gap (Flash Readiness Level 83:1188)
 constexpr int32_t kSdUnitGap = 3;  // gap between SD number and unit (Figma uses a thin space, not in Space Mono)
 constexpr int32_t kMenuH = 80;  // tap menu gradient height (black 80% -> 0)
-constexpr int32_t kMenuPadTop = 6;  // tap menu label top padding
+constexpr int32_t kMenuLabelY = 10;  // tap menu label top (serif 32, box y 6 + ascent = baseline 37.7; LVGL baseline is 28 below the label top)
 constexpr int32_t kSettingsPad = 16;  // settings grid padding
 constexpr int32_t kSettingsGap = 8;  // settings grid gap
 constexpr int32_t kTileW = 140;  // settings tile width
