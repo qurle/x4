@@ -1,4 +1,4 @@
-// Every page of the site that comes from docs/*.md: group, order, short label, route.
+// Every page of the site that comes from docs/*.md: group, order, label, one-line blurb, route.
 // Used by the pages, the navigation and the link rewriter. A doc missing here fails the build
 // (see checkMapped), so new docs can't silently drop off the site.
 
@@ -9,41 +9,41 @@ export const GROUPS = [
   {
     name: 'Build the rig',
     docs: [
-      ['STEPS.md', 'Play-through'],
-      ['BRINGUP.md', 'Bring-up'],
-      ['WIRING.md', 'Wiring'],
-      ['POWER.md', 'Power'],
-      ['HARDWARE.md', 'Hardware'],
-      ['ENCLOSURE.md', 'Enclosure'],
-      ['MEASUREMENTS.md', 'Measurements'],
+      ['STEPS.md', 'Play-through', "From a box of parts to the full rig"],
+      ['BRINGUP.md', 'Bring-up', "Flashing rules and full-firmware tests"],
+      ['WIRING.md', 'Wiring', "Diagram, pins, connectors"],
+      ['POWER.md', 'Power', "Why it won't burn, and the risks"],
+      ['HARDWARE.md', 'Hardware', "Parts, pins, what's verified"],
+      ['ENCLOSURE.md', 'Enclosure', "Foam board now, acrylic later"],
+      ['MEASUREMENTS.md', 'Measurements', "Tables to fill on the bench"],
     ],
   },
   {
     name: 'Code',
     docs: [
-      ['DEVELOP.md', 'Develop'],
-      ['FIRMWARE.md', 'Firmware'],
-      ['UI.md', 'UI'],
-      ['PROTOCOL.md', 'Protocol'],
-      ['CONFIG.md', 'Config'],
-      ['LOGGING.md', 'Logging'],
-      ['COMPANION.md', 'Companion'],
+      ['DEVELOP.md', 'Develop', "Build, test and simulate on a computer"],
+      ['FIRMWARE.md', 'Firmware', "Tasks, states, memory, inputs"],
+      ['UI.md', 'UI', "From Figma to the screen"],
+      ['PROTOCOL.md', 'Protocol', "Trigger, clock sync, HTTP, SD layout"],
+      ['CONFIG.md', 'Config', "Every option and its limits"],
+      ['LOGGING.md', 'Logging', "Log format and error codes"],
+      ['COMPANION.md', 'Companion', "Web page now, app later"],
     ],
   },
   {
     name: 'When something breaks',
     docs: [
-      ['TROUBLESHOOTING.md', 'Troubleshooting'],
-      ['DEBUGGING.md', 'Debugging'],
+      ['TROUBLESHOOTING.md', 'Troubleshooting', "Symptom, cause, check, fix"],
+      ['DEBUGGING.md', 'Debugging', "Serial, diagnostics, measuring skew"],
     ],
   },
   {
     name: 'Background',
     docs: [
-      ['DECISIONS.md', 'Decisions'],
-      ['OPEN_QUESTIONS.md', 'Open questions'],
-      ['RESEARCH.md', 'Research'],
-      ['BRIEF.md', 'Brief'],
+      ['DECISIONS.md', 'Decisions', "What was chosen, and why"],
+      ['OPEN_QUESTIONS.md', 'Open questions', "Still open, with the defaults used"],
+      ['RESEARCH.md', 'Research', "Findings with sources"],
+      ['BRIEF.md', 'Brief', "The original brief"],
     ],
   },
 ]
@@ -53,7 +53,9 @@ const LANDING = 'README.md'
 
 const slugOf = (file) => file.replace(/\.md$/, '').toLowerCase().replace(/_/g, '-')
 
-export const ALL = GROUPS.flatMap((g) => g.docs.map(([file, label]) => ({ file, label, group: g.name, slug: slugOf(file) })))
+export const ALL = GROUPS.flatMap((g) =>
+  g.docs.map(([file, label, blurb]) => ({ file, label, blurb, group: g.name, slug: slugOf(file) })),
+)
 
 export function routeFor(file) {
   if (file === LANDING) return '/'

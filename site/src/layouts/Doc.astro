@@ -24,8 +24,16 @@ const next = ALL[i + 1]
     <article class="prose">
       <slot />
       <footer class="turn">
-        {prev && <a href={`/${prev.slug}/`}>Back to {prev.label}</a>}
-        {next && <a class="next" href={`/${next.slug}/`}>Next: {next.label}</a>}
+        {prev && (
+          <a href={`/${prev.slug}/`} rel="prev">
+            <span class="arrow">←</span> {prev.label}
+          </a>
+        )}
+        {next && (
+          <a class="next" href={`/${next.slug}/`} rel="next">
+            {next.label} <span class="arrow">→</span>
+          </a>
+        )}
       </footer>
       <p class="source">
         This page is <a href={`${REPO}/blob/main/docs/${source}`}>docs/{source}</a> in the repo.
@@ -52,6 +60,8 @@ const next = ALL[i + 1]
   </div>
   <script>
     import { renderDiagrams } from '../scripts/mermaid.js'
+    import { addCopyButtons } from '../scripts/copy.js'
+    addCopyButtons()
     renderDiagrams()
   </script>
 </Base>

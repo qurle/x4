@@ -1,31 +1,13 @@
 ---
-// Landing page. The doc descriptions come from the table in docs/README.md, so they stay
-// written in one place.
-import { getEntry } from 'astro:content'
+// Landing page: what x4cam is, four real device screens, the docs.
 import Base from '../layouts/Base.astro'
-import { ALL, GROUPS, REPO, routeFor } from '../lib/docs.mjs'
-
-const index = await getEntry('docs', 'README.md')
-const about = {}
-for (const line of (index?.body ?? '').split('\n')) {
-  const m = line.match(/^\|\s*\[([A-Z_]+\.md)\]\([^)]*\)\s*\|\s*(.+?)\s*\|\s*$/)
-  if (m) about[m[1]] = m[2]
-}
-
-// The table cells are short Markdown: `code`, **bold**, [links](X.md).
-const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-function inline(md) {
-  return esc(md)
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (m, text, url) => `<a href="${routeFor(url) ?? url}">${text}</a>`)
-}
+import { ALL, GROUPS, REPO } from '../lib/docs.mjs'
 
 const screens = [
-  ['viewfinder', 'Viewfinder', "One camera's live picture fills the screen. Tap it for the menu."],
-  ['settings', 'Settings', 'Orientation, camera delay, style and flash, one tile each.'],
-  ['saving', 'Saving', 'The overlay grows more opaque as each photo reaches the card.'],
-  ['portrait', 'Portrait', 'The centre of the frame stays clear and a faded copy of it fills the sides.'],
+  ['viewfinder', 'Viewfinder', 'Live view from one camera.'],
+  ['settings', 'Settings', 'Orientation, delay, style, flash.'],
+  ['saving', 'Saving', 'Fills in as each photo arrives.'],
+  ['portrait', 'Portrait', 'Centre crop, faded copies at the sides.'],
 ]
 ---
 
@@ -33,44 +15,34 @@ const screens = [
   <main class="landing">
     <section class="hero">
       <h1>x4cam</h1>
-      <p class="lead">
-        Four cameras on one button. Press it and all four take a 5&nbsp;MP photo at the same moment. About
-        five seconds later the photos are on the SD card.
-      </p>
+      <p class="lead">Four cameras that shoot at the same moment.</p>
       <p class="actions">
-        <a class="frame" href="/steps/">Start building</a>
-        <a class="frame" href={REPO}>Source on GitHub</a>
+        <a class="btn primary" href="/steps/">Start building</a>
+        <a class="btn" href={REPO}>GitHub</a>
       </p>
     </section>
 
     <section class="screens" aria-label="The device's screens">
       {
-        screens.map(([file, name, text]) => (
-          <figure>
-            <img src={`/screens/${file}.png`} width="320" height="240" alt={`${name} screen`} loading="lazy" />
+        screens.map(([file, name, text], i) => (
+          <figure style={`--i: ${i}`}>
+            <img src={`/screens/${file}.png`} width="320" height="240" alt={`${name} screen`} />
             <figcaption>
-              <strong>{name}.</strong> {text}
+              <span>{name}</span> {text}
             </figcaption>
           </figure>
         ))
       }
     </section>
 
-    <section class="prose">
+    <section class="about">
       <h2>How it works</h2>
       <p>
-        An M5Stack CoreS3-SE runs the touchscreen and its own WiFi network, and four Unit CamS3-5MP cameras join
-        it. When you press the button, the Core picks a moment 120&nbsp;ms ahead and sends it to every camera;
-        their clocks are synced, so they capture together. The goal is less than 250&nbsp;ms between the first and
-        the last camera. The photos then come back over WiFi, two at a time, to the Core's microSD card. A
-        Flashlight Unit can fire with the shot. A power bank runs all of it, with no phone, router or internet
-        involved.
+        The Core runs the screen and its own WiFi network. The cameras join it, sync their clocks and capture at a
+        moment the Core picks 120&nbsp;ms ahead.
       </p>
       <h2>Where it stands</h2>
-      <p>
-        The firmware is written, and the UI runs in a simulator on a computer that checks it against the Figma
-        design. None of it has run on the real boards yet.
-      </p>
+      <p>The code is written and the UI is checked in a simulator. Nothing has run on the boards yet.</p>
     </section>
 
     <section class="index">
@@ -82,7 +54,7 @@ const screens = [
               {ALL.filter((d) => d.group === g.name).map((d) => (
                 <li>
                   <a href={`/${d.slug}/`}>{d.label}</a>
-                  {about[d.file] && <p set:html={inline(about[d.file])} />}
+                  <span>{d.blurb}</span>
                 </li>
               ))}
             </ul>
@@ -93,8 +65,8 @@ const screens = [
   </main>
   <footer class="bottom">
     <p>
-      Set in <a href="/fonts/OFL-InstrumentSerif.txt">Instrument Serif</a> and
-      <a href="/fonts/OFL-SpaceMono.txt">Space Mono</a>, both under the SIL Open Font License.
+      Set in <a href="/fonts/OFL-InstrumentSerif.txt">Instrument Serif</a>, <a href="/fonts/OFL-Inter.txt">Inter</a> and
+      <a href="/fonts/OFL-SpaceMono.txt">Space Mono</a>, all under the SIL Open Font License.
     </p>
   </footer>
 </Base>

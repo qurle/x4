@@ -24,14 +24,14 @@ for name, scene in SCREENS.items():
         raise SystemExit(f"{src} missing: run tools/ui_sim/run.py {scene} first")
     Image.open(src).convert("RGB").save(out / f"{name}.png", optimize=True)
 
-# Social preview, 1200 x 630: the name in Instrument Serif on the settings grey, the viewfinder
-# at 2x in a black bezel.
-og = Image.new("RGB", (1200, 630), (0xD1, 0xD1, 0xD1))
+# Social preview, 1200 x 630: the name in Instrument Serif on the site's dark background, the
+# viewfinder in a black bezel.
+og = Image.new("RGB", (1200, 630), (0x1E, 0x1E, 0x1E))
 d = ImageDraw.Draw(og)
 serif = ImageFont.truetype(str(ROOT / "ui" / "fonts" / "InstrumentSerif-Regular.ttf"), 210)
-d.text((64, 150), "x4cam", font=serif, fill=(0, 0, 0))
+d.text((64, 150), "x4cam", font=serif, fill=(255, 255, 255))
 small = ImageFont.truetype(str(ROOT / "ui" / "fonts" / "InstrumentSerif-Regular.ttf"), 44)
-d.text((70, 420), "Four cameras, one button.", font=small, fill=(0, 0, 0))
+d.multiline_text((70, 410), "Four cameras that shoot\nat the same moment.", font=small, fill=(209, 209, 209), spacing=6)
 screen = Image.open(out / "viewfinder.png").resize((480, 360), Image.LANCZOS)
 d.rounded_rectangle((640, 127, 640 + 480 + 32, 127 + 360 + 32), radius=14, fill=(0, 0, 0))
 og.paste(screen, (656, 143))

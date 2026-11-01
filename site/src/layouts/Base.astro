@@ -1,6 +1,5 @@
 ---
-// Every page: fonts, colours, favicon, social preview. Fonts and colours are the device UI's
-// (ui/tokens.json): Instrument Serif and Space Mono, ink on #D1D1D1, or #1E1E1E when dark.
+// Every page: fonts, colours, favicon, social preview. Dark, like the device's screen.
 import '../styles/site.css'
 
 interface Props {
@@ -19,10 +18,10 @@ const full = title === site ? site : `${title}, ${site}`
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{full}</title>
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#D1D1D1" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#1E1E1E" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#1E1E1E" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preload" href="/fonts/InstrumentSerif-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/SpaceMono-Regular.woff2" as="font" type="font/woff2" crossorigin />
     <meta property="og:title" content={full} />
     <meta property="og:description" content={description} />

@@ -87,12 +87,14 @@ Runtime XML is paid and removed from open-source LVGL, so XML = compile-time exp
 
 ## ADR-018 Website: own Astro site, no template
 **Decision.** Replace the notes. template with a small Astro site of our own (owner, 2026-11-01):
-a landing page plus every doc. Type and colour are the device UI's (Instrument Serif, Space Mono,
-ink on `#D1D1D1`, `#1E1E1E` dark); no uppercase labels, thin rules or decorative separators.
+a landing page plus every doc. Dark like the device's screen (`#1E1E1E`); Instrument Serif for
+headings, Inter for reading, Space Mono for code and tables; one accent, lime `#DDFF00`, only on
+primary buttons, link underlines, selection and focus; short ease-out motion; no uppercase labels,
+thin rules or decorative separators.
 `docs/*.md` is read in place through an Astro content collection (no copy step); the page list in
 `site/src/lib/docs.mjs` fails the build if a doc is missing from it. Supersedes ADR-017.
 **Dropped with the template:** fuzzy search, keyboard browsing, theme switcher (the browser's
-find and the system colour scheme cover them).
+find covers search; the site is dark only).
 
 ## ADR-017 Manual site from docs/ with the notes. template (superseded by ADR-018)
 **Decision.** `site/` is the owner's notes. Astro template (MIT) minus its demo content and

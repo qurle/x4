@@ -1,5 +1,5 @@
 // Renders ```mermaid blocks (wiring diagram, state machine) as SVG. Mermaid is large, so it is
-// only downloaded on pages that have a diagram. Follows the light / dark colour scheme.
+// only downloaded on pages that have a diagram. Drawn in the site's dark colours.
 // A diagram wider than the column is shown fitted; a click shows it at full size (scrolls sideways).
 function zoomable(host) {
   const svg = host.querySelector('svg')
@@ -30,7 +30,6 @@ export async function renderDiagrams() {
     code.parentElement.replaceWith(host)
     return host
   })
-  const dark = window.matchMedia('(prefers-color-scheme: dark)')
   let run = 0
   async function render() {
     const id = ++run
@@ -39,9 +38,7 @@ export async function renderDiagrams() {
       securityLevel: 'strict',
       theme: 'base',
       fontFamily: 'Space Mono, monospace',
-      themeVariables: dark.matches
-        ? { background: '#1E1E1E', primaryColor: '#1E1E1E', primaryTextColor: '#D1D1D1', primaryBorderColor: '#D1D1D1', lineColor: '#D1D1D1', clusterBkg: 'transparent', clusterBorder: '#D1D1D1', fontSize: '13px' }
-        : { background: '#D1D1D1', primaryColor: '#D1D1D1', primaryTextColor: '#000000', primaryBorderColor: '#000000', lineColor: '#000000', clusterBkg: 'transparent', clusterBorder: '#000000', fontSize: '13px' },
+      themeVariables: { background: '#1E1E1E', primaryColor: '#1E1E1E', primaryTextColor: '#D1D1D1', primaryBorderColor: '#D1D1D1', lineColor: '#D1D1D1', clusterBkg: 'transparent', clusterBorder: '#D1D1D1', fontSize: '13px' },
     })
     for (const [i, host] of hosts.entries()) {
       try {
@@ -55,5 +52,4 @@ export async function renderDiagrams() {
     }
   }
   await render()
-  dark.addEventListener('change', render)
 }
