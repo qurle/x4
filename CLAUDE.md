@@ -81,7 +81,8 @@ diffs. `api.figma.com` is allowed in this environment's network policy. The file
 unpublished, so `components.json` is built from the node responses. The `/images` (renders)
 endpoint can answer 429 with a Retry-After of days (seen 2026-11-01: ~111 h); the script then
 skips renders and keeps the existing PNGs (`--no-renders` skips them on purpose). 135 of 154
-renders are in the repo.
+renders are in the repo. `/nodes` can be rate-limited the same way (seen 2026-11-01, ~109 h);
+`--fills-only` still downloads image fills using the committed node JSON.
 
 ## In flight (update or delete this section as it changes)
 

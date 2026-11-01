@@ -67,6 +67,7 @@ TILE_CHECKS = {
     "settings_tap": {"t1": "83:2169"},  # tapped horzntl -> vertcl
 }
 SETTINGS_BG = (0xD1, 0xD1, 0xD1)
+SCREEN_BG = (0x1E, 0x1E, 0x1E)  # tokens: bg
 
 
 def run(cmd, **kw):
@@ -85,25 +86,44 @@ def build():
     return exe
 
 
-def photo_file():
-    """Figma's 'Photo Example' (fill of 15:70, scale mode FILL) as big-endian RGB565 320x240."""
-    src = FIGMA / "fills" / "15-70.png"
-    dst = BUILD / "photo.rgb565be"
-    if not src.exists():
-        print(f"note: {src.relative_to(ROOT)} missing (run tools/figma_pull.py): no photo", file=sys.stderr)
-        return None
-    im = Image.open(src).convert("RGB")
-    s = max(W / im.width, H / im.height)  # FILL = cover, centred
-    w, h = round(im.width * s), round(im.height * s)
-    im = im.resize((w, h), Image.LANCZOS).crop(((w - W) // 2, (h - H) // 2, (w - W) // 2 + W, (h - H) // 2 + H))
-    out = bytearray()
-    raw = im.tobytes()
-    for i in range(0, len(raw), 3):
-        r, g, b = raw[i], raw[i + 1], raw[i + 2]
-        v = ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3)
-        out += bytes((v >> 8, v & 0xFF))
-    dst.write_bytes(out)
-    return dst
+# Photos under the UI, as big-endian RGB565 320x240 camera frames:
+#   default:  Figma's "Photo Example" (fill of 15:70), FILLed into the whole frame
+#   portrait: the photo Figma's portrait and error frames use (fill of 73:207, 3:4), FILLed into the
+#             centre 180 px (x 70-250): that frame's middle is exactly what Figma shows in the
+#             bright centre and, faded, on the sides. The rest of the frame is black (covered).
+PHOTOS = {"default": ("15-70", (0, W)), "portrait": ("73-207", (70, 250))}
+SCENE_PHOTO = {"preview_portrait": "portrait", "portrait_": "portrait", "error_": "portrait"}
+
+
+def photo_for(scene):
+    for prefix, key in SCENE_PHOTO.items():
+        if scene == prefix or (prefix.endswith("_") and scene.startswith(prefix)):
+            return key
+    return "default"
+
+
+def photo_files():
+    out = {}
+    for key, (fill, (x0, x1)) in PHOTOS.items():
+        src = FIGMA / "fills" / f"{fill}.png"
+        if not src.exists():
+            print(f"note: {src.relative_to(ROOT)} missing (tools/figma_pull.py --fills-only)", file=sys.stderr)
+            continue
+        im = Image.open(src).convert("RGB")
+        bw = x1 - x0
+        s = max(bw / im.width, H / im.height)  # FILL = cover, centred
+        w, h = round(im.width * s), round(im.height * s)
+        im = im.resize((w, h), Image.LANCZOS).crop(((w - bw) // 2, (h - H) // 2, (w - bw) // 2 + bw, (h - H) // 2 + H))
+        frame = Image.new("RGB", (W, H))
+        frame.paste(im, (x0, 0))
+        raw, buf = frame.tobytes(), bytearray()
+        for i in range(0, len(raw), 3):
+            v = ((raw[i] >> 3) << 11) | ((raw[i + 1] >> 2) << 5) | (raw[i + 2] >> 3)
+            buf += bytes((v >> 8, v & 0xFF))
+        dst = BUILD / f"photo-{key}.rgb565be"
+        dst.write_bytes(buf)
+        out[key] = dst
+    return out
 
 
 def scenes(exe):
@@ -133,7 +153,9 @@ def figma_frame(idx, section_png, nid):
         return None
     sb, fb = idx[SECTION]["absoluteBoundingBox"], idx[nid]["absoluteBoundingBox"]
     x, y = round(fb["x"] - sb["x"]), round(fb["y"] - sb["y"])
-    return section_png.crop((x, y, x + W, y + H)).convert("RGB")
+    # Frames can be partly transparent (portrait sides at 30 %): show them over the screen's
+    # background, as the device does.
+    return flatten(section_png.crop((x, y, x + W, y + H)), SCREEN_BG)
 
 
 def compare(a, b):
@@ -145,6 +167,40 @@ def compare(a, b):
     big = sum(1 for i in range(0, len(raw), 3) if max(raw[i], raw[i + 1], raw[i + 2]) > 24) / n
     heat = d.point(lambda v: min(255, v * 4))
     return mean, big, heat
+
+
+# Behaviour checks: (scene, reference scene, region, what must hold). These fail the run (and CI),
+# unlike the Figma comparison.
+MENU = (110, 0, 215, 45)       # the tap menu's "settings" label area
+LEFT_SIDE = (0, 0, 70, 190)    # portrait: the left faded copy, above the footer
+EXPECT = [
+    ("tap_footer", "preview_photo", MENU, "darker", "a tap on the footer opens the menu"),
+    ("portrait_tap_side", "preview_portrait", MENU, "darker", "a tap on a faded side opens the menu"),
+    ("portrait_new_frame", "preview_portrait", LEFT_SIDE, "changed", "a new camera frame reaches the side copies"),
+]
+
+
+def brightness(img, box):
+    raw = img.convert("L").crop(box).tobytes()
+    return sum(raw) / len(raw)
+
+
+def check_expectations(rendered):
+    bad = []
+    for scene, ref, box, want, what in EXPECT:
+        if scene not in rendered or ref not in rendered:
+            continue  # not part of this run
+        if want == "darker":  # mean luminance drops by a quarter or more
+            a, b = brightness(rendered[scene], box), brightness(rendered[ref], box)
+            ok, detail = a < b * 0.75, f"brightness {a:.0f} vs {b:.0f}"
+        else:  # "changed": the pixels differ, on average by more than 10 levels
+            d = ImageChops.difference(rendered[scene].crop(box), rendered[ref].crop(box)).convert("L").tobytes()
+            mean = sum(d) / len(d)
+            ok, detail = mean > 10, f"mean pixel difference {mean:.0f}"
+        print(f"{'ok  ' if ok else 'FAIL'} {what} ({scene} vs {ref}: {detail})")
+        if not ok:
+            bad.append(what)
+    return bad
 
 
 def flatten(rgba, bg):
@@ -162,7 +218,8 @@ def main():
     args = ap.parse_args()
 
     exe = build()
-    photo = photo_file()
+    photos = photo_files()
+    photo = photos.get("default")
     if args.live:
         # --ppi is remembered (build/live.json), so the real-size calibration is done once.
         saved = BUILD / "live.json"
@@ -193,16 +250,21 @@ def main():
             "<style>body{font:14px system-ui;background:#222;color:#eee}img{image-rendering:pixelated;"
             "width:480px;margin:2px}td{vertical-align:top;padding:4px}</style>",
             "<h1>x4cam UI simulator vs Figma</h1><p>simulator · Figma · difference ×4</p><table>"]
-    failed = []
+    failed, rendered = [], {}
+    if args.only:  # behaviour checks need their reference scenes
+        refs = {r for sc, r, *_ in EXPECT if any(t["name"] == sc for t in table)}
+        table += [t for t in scenes(exe) if t["name"] in refs and t not in table]
     for s in table:
         name = s["name"]
         bmp = BUILD / f"{name}.bmp"
-        cmd = [exe, "--scene", name, "--out", bmp] + (["--photo", photo] if photo else [])
+        ph = photos.get(photo_for(name), photo)
+        cmd = [exe, "--scene", name, "--out", bmp] + (["--photo", ph] if ph else [])
         if subprocess.call(cmd) != 0 or not bmp.exists():
             failed.append(name)
             continue
         sim = Image.open(bmp).convert("RGB")
         sim.save(OUT / f"{name}.png")
+        rendered[name] = sim
         row, cells = f"| `{name}` | {s['figma']} | – | – | {s['what']} |", [f"{name}.png"]
         ref = figma_frame(idx, section, s["figma"]) if s["figma"] != "-" else None
         if ref is not None:
@@ -235,10 +297,13 @@ def main():
     (OUT / "report.md").write_text("\n".join(report) + "\n")
     print("\n".join(report))
     print(f"\nopen {(OUT / 'index.html').relative_to(ROOT)} in a browser")
+    print()
+    broken = check_expectations(rendered)
     if failed:
         print("scenes that did not render: " + ", ".join(failed), file=sys.stderr)
-        return 1
-    return 0
+    if broken:
+        print("behaviour checks failed: " + "; ".join(broken), file=sys.stderr)
+    return 1 if failed or broken else 0
 
 
 if __name__ == "__main__":

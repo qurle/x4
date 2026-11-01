@@ -165,6 +165,18 @@ void tapScreen() {
 }
 void openSettings() { x4ui::show(x4ui::Screen::Settings); }
 void openDiag() { x4ui::show(x4ui::Screen::Diagnostics); }
+// Portrait: a new camera frame must reach the faded side copies too (they share the buffer).
+// The second frame is the first one inverted, so a stale side is easy to see.
+void newFrame() {
+  std::vector<uint8_t> inv(g_photo);
+  for (auto& b : inv) b = (uint8_t)~b;
+  x4ui::setPreviewJpeg(inv.data(), (uint32_t)inv.size());
+}
+// Portrait: a tap on a faded side must still reach the viewfinder (opens the menu).
+void tapSide() { g_ptr = {true, 30, 140}; }
+// A tap on the footer area is a tap on the photo too: the menu must open.
+void tapFooter() { g_ptr = {true, 160, 225}; }
+
 // Real touch on the orientation tile: exercises touch -> app::setOption -> status -> redraw.
 void tapOrientTile() {
   openSettings();
@@ -191,9 +203,14 @@ const Scene kScenes[] = {
      nullptr},
     {"preview_dithered", "73:222", "style dithered (device dithers the live photo itself)",
      [](x4core::Status& s) { s.uiEffect = 1; }, nullptr},
-    {"preview_portrait", "73:206", "orientation vertcl (Figma mocks three photos)",
+    {"preview_portrait", "73:206", "orientation vertcl: centre crop + faded copies of the middle on the sides",
      [](x4core::Status& s) { s.uiOrient = 1; }, nullptr},
+    {"portrait_new_frame", "-", "vertcl after a second (inverted) camera frame: the sides must follow",
+     [](x4core::Status& s) { s.uiOrient = 1; }, newFrame},
+    {"portrait_tap_side", "-", "vertcl, tap on the left side: the menu must open",
+     [](x4core::Status& s) { s.uiOrient = 1; }, tapSide},
     {"tap_menu", "73:166", "tap menu (video and media hidden in v1)", [](x4core::Status&) {}, tapScreen},
+    {"tap_footer", "-", "tap on the footer area: the menu must open", [](x4core::Status&) {}, tapFooter},
     {"settings", "73:254", "settings: horzntl, 0 s, normal, no flash", [](x4core::Status&) {}, openSettings},
     {"settings_b", "-", "settings: vertcl, 0.8 s, dithered, flash",
      [](x4core::Status& s) {
