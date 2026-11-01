@@ -1,0 +1,57 @@
+---
+// A docs/*.md page: the article, the page list (beside it on wide screens, after it on narrow
+// ones) and the next / previous page in reading order.
+import Base from './Base.astro'
+import { ALL, GROUPS, REPO } from '../lib/docs.mjs'
+
+interface Props {
+  title: string
+  slug: string
+  source: string
+}
+const { title, slug, source } = Astro.props
+const i = ALL.findIndex((d) => d.slug === slug)
+const prev = ALL[i - 1]
+const next = ALL[i + 1]
+---
+
+<Base title={title}>
+  <header class="top">
+    <a class="name" href="/">x4cam</a>
+    <a class="jump" href="#pages">Pages</a>
+  </header>
+  <div class="doc">
+    <article class="prose">
+      <slot />
+      <footer class="turn">
+        {prev && <a href={`/${prev.slug}/`}>Back to {prev.label}</a>}
+        {next && <a class="next" href={`/${next.slug}/`}>Next: {next.label}</a>}
+      </footer>
+      <p class="source">
+        This page is <a href={`${REPO}/blob/main/docs/${source}`}>docs/{source}</a> in the repo.
+      </p>
+    </article>
+    <nav id="pages" aria-label="Pages">
+      {
+        GROUPS.map((g) => (
+          <section>
+            <h2>{g.name}</h2>
+            <ul>
+              {ALL.filter((d) => d.group === g.name).map((d) => (
+                <li>
+                  <a href={`/${d.slug}/`} aria-current={d.slug === slug ? 'page' : undefined}>
+                    {d.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </nav>
+  </div>
+  <script>
+    import { renderDiagrams } from '../scripts/mermaid.js'
+    renderDiagrams()
+  </script>
+</Base>

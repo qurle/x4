@@ -1,45 +1,42 @@
-# x4cam manual (site/)
+# x4cam website (site/)
 
-The docs in `../docs/*.md` rendered as a small static site, built on
-[notes.](https://github.com/qurle/notes) (Astro, MIT). Keyboard browsing, fuzzy search,
-serif / mono / sans fonts and light / dark / digital themes come from the template.
+A landing page plus every `docs/*.md`, rendered with [Astro](https://astro.build). The fonts and
+colours are the device UI's (`ui/tokens.json`): Instrument Serif and Space Mono, ink on `#D1D1D1`,
+and `#1E1E1E` in dark mode.
 
-**`docs/` stays the source of truth.** Edit the Markdown there (it also reads fine on GitHub);
-the site is generated from it:
+**`docs/` stays the source of truth.** The site reads the Markdown where it is
+(`src/content.config.ts`) and nothing is copied. Edit the docs; the site follows.
 
-- `scripts/sync-docs.mjs` copies each doc into `src/pages/<folder>/<page>.md` (gitignored) and adds
-  a frontmatter title. The folder for each file is in `scripts/doc-map.mjs`:
-  `rig/` (bring-up, wiring, power, hardware, measurements, enclosure), `firmware/` (overview,
-  protocol, config, logging, ui, companion), `help/` (troubleshooting, debugging), `project/`
-  (research, decisions, open questions, brief). The root page *start here* is the repo README
-  plus the docs index.
-- `src/remark-plugins/rewrite-doc-links.mjs` rewrites links at render time: `POWER.md#x` →
-  `/rig/power#x` (label `power.md`), and repo paths like `../core/src/hw/flash.h` → GitHub.
-- ```` ```mermaid ```` blocks render as diagrams (`src/scripts/mermaid.ts`, loaded only on pages
-  that have one, re-rendered when the theme changes).
-- Wide tables scroll sideways (`src/styles/manual.sass`).
+| file | what it does |
+|---|---|
+| `src/lib/docs.mjs` | the page list: groups, order, labels, routes (`STEPS.md` → `/steps/`). A doc missing here fails the build |
+| `src/lib/rewrite-links.mjs` | links between docs → site routes; links to repo files → GitHub; a link reading `WIRING.md` → "Wiring" |
+| `src/pages/index.astro` | the landing page; each doc's one-line description comes from the table in `docs/README.md` |
+| `src/pages/[slug].astro`, `src/layouts/` | doc pages: article, page list, next / previous |
+| `src/styles/site.css` | all styling |
+| `src/scripts/mermaid.js` | `mermaid` blocks as diagrams, loaded only on pages that have one; wide ones fit the column and open full size on click |
+| `public/screens/`, `public/og.png` | the device screens on the landing page, rendered by the UI simulator. Refresh: `python tools/ui_sim/run.py preview_photo settings saving_3of4 preview_portrait`, then `python site/scripts/images.py` |
+| `public/fonts/` | the two fonts as WOFF2, with their SIL Open Font License files |
 
-Adding a doc: create `docs/NEW.md`, add it to `scripts/doc-map.mjs`, link it from `docs/README.md`.
+Adding a doc: create `docs/NEW.md`, add it to `src/lib/docs.mjs`, and give it a row in
+`docs/README.md` (that row becomes its description on the landing page).
 
 ## Commands
 
 Node ≥ 22.12.
 
 ```bash
-cd site && npm i
+cd site
+```
+```bash
+npm ci
 ```
 ```bash
 npm run dev
 ```
-```bash
-npm run build
-```
-
-`dev` and `build` run the sync first. Output goes to `site/dist/`. CI builds it on every push.
+`npm run build` writes `site/dist/`; CI builds it on every push.
 
 ## Deploy
 
-Static output. On Vercel: import the repo, set **Root Directory = `site`**, framework Astro
-(the sync script reads `../docs`, which is part of the same checkout). Site name, description,
-default theme and footer are in `notes.settings.jsonc`; `indexable` is `false` by default.
-The OG images and favicons in `public/` are still the notes. ones: replace them if you publish.
+Static output. On Vercel: import the repo with **Root Directory = `site`** and framework Astro.
+The site reads `../docs`, which is in the same checkout.

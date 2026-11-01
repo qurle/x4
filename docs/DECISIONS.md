@@ -85,7 +85,16 @@ Runtime XML is paid and removed from open-source LVGL, so XML = compile-time exp
 **Context.** The Figma MCP returned "no access to this file" (connector on the work account).
 **Decision.** Build on placeholder tokens; ask the owner. Superseded once access worked.
 
-## ADR-017 Manual site from docs/ with the notes. template
+## ADR-018 Website: own Astro site, no template
+**Decision.** Replace the notes. template with a small Astro site of our own (owner, 2026-11-01):
+a landing page plus every doc. Type and colour are the device UI's (Instrument Serif, Space Mono,
+ink on `#D1D1D1`, `#1E1E1E` dark); no uppercase labels, thin rules or decorative separators.
+`docs/*.md` is read in place through an Astro content collection (no copy step); the page list in
+`site/src/lib/docs.mjs` fails the build if a doc is missing from it. Supersedes ADR-017.
+**Dropped with the template:** fuzzy search, keyboard browsing, theme switcher (the browser's
+find and the system colour scheme cover them).
+
+## ADR-017 Manual site from docs/ with the notes. template (superseded by ADR-018)
 **Decision.** `site/` is the owner's notes. Astro template (MIT) minus its demo content and
 framework islands. `docs/*.md` stays the only source: a sync script copies it into
 `site/src/pages/` (gitignored) and a remark plugin rewrites links between docs and to repo files.

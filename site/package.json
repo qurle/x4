@@ -1,5 +1,5 @@
 {
-  "name": "x4cam-manual",
+  "name": "x4cam-site",
   "type": "module",
   "version": "0.1.0",
   "engines": {
@@ -17,31 +17,19 @@
   "homepage": "https://github.com/qurle/x4",
   "license": "MIT",
   "keywords": [
-    "x4",
-    "manual",
+    "x4cam",
+    "docs",
     "astro"
   ],
   "scripts": {
-    "sync": "node scripts/sync-docs.mjs",
-    "predev": "node scripts/sync-docs.mjs",
     "dev": "astro dev",
-    "prebuild": "node scripts/sync-docs.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/mdx": "^6.0.3",
-    "@iconify-json/material-symbols": "^1.2.77",
     "astro": "^6.4.6",
-    "astro-icon": "^1.1.5",
-    "fuzzysort": "^3.1.0",
-    "mermaid": "^11.17.2",
-    "typescript": "^6.0.3"
+    "mermaid": "^11.17.2"
   },
-  "devDependencies": {
-    "sass-embedded": "^1.100.0",
-    "vite-plugin-json5": "^1.4.4"
-  },
-  "description": "x4 manual: docs/*.md rendered with the notes. template"
+  "description": "x4cam website: a landing page and docs/*.md rendered with Astro"
 }
