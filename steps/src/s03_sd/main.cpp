@@ -1,5 +1,5 @@
 // Step 3: microSD. Write 1 MB, read it back, compare, report speed.
-// Wiring: Core on USB, a FAT32 microSD in the slot (<= 32 GB is the safe choice).
+// Wiring: Core on USB, a FAT32 microSD in the slot (<= 16 GB: the CoreS3 maximum per M5 docs).
 // Pass: "verify ok" and write/read speeds on screen; /x4cam_step3.bin exists on the card.
 #include <SD.h>
 #include <SPI.h>
