@@ -1,0 +1,266 @@
+{
+  "components": [
+    {
+      "id": "15:64",
+      "name": "full",
+      "published": false,
+      "set": null
+    },
+    {
+      "id": "16:172",
+      "name": "Property 1=Variant2",
+      "published": false,
+      "set": "Photo Example"
+    },
+    {
+      "id": "16:182",
+      "name": "Property 1=Variant3",
+      "published": false,
+      "set": "Photo Example"
+    },
+    {
+      "id": "18:523",
+      "name": "Position=Bottom Left ↙",
+      "published": false,
+      "set": "Overlay Element"
+    },
+    {
+      "id": "18:588",
+      "name": "Position=Bottom Right ↘",
+      "published": false,
+      "set": "Overlay Element"
+    },
+    {
+      "id": "18:593",
+      "name": "Position=Top Right ↗",
+      "published": false,
+      "set": "Overlay Element"
+    },
+    {
+      "id": "18:595",
+      "name": "Position=Top Left ↖",
+      "published": false,
+      "set": "Overlay Element"
+    },
+    {
+      "id": "18:615",
+      "name": "Recording=False",
+      "published": false,
+      "set": "Rec Timer"
+    },
+    {
+      "id": "18:782",
+      "name": "SD Level",
+      "published": false,
+      "set": null
+    },
+    {
+      "id": "18:783",
+      "name": "Battery Level",
+      "published": false,
+      "set": null
+    },
+    {
+      "id": "18:830",
+      "name": "Footer",
+      "published": false,
+      "set": null
+    },
+    {
+      "id": "6:3",
+      "name": "Property 1=Default",
+      "published": false,
+      "set": "Photo Example"
+    },
+    {
+      "id": "83:1188",
+      "name": "Flash Readiness Level",
+      "published": false,
+      "set": null
+    },
+    {
+      "id": "83:1866",
+      "name": "flash (compact)",
+      "published": false,
+      "set": null
+    },
+    {
+      "id": "83:1904",
+      "name": "State=Default",
+      "published": false,
+      "set": "Footer States"
+    },
+    {
+      "id": "83:1926",
+      "name": "State=Video",
+      "published": false,
+      "set": "Footer States"
+    },
+    {
+      "id": "83:1946",
+      "name": "State=Flash Recharge",
+      "published": false,
+      "set": "Footer States"
+    },
+    {
+      "id": "83:2131",
+      "name": "style=normal",
+      "published": false,
+      "set": "style: normal, dithered, etc"
+    },
+    {
+      "id": "83:2132",
+      "name": "slider=0%",
+      "published": false,
+      "set": "cam delay: 0s to 1s"
+    },
+    {
+      "id": "83:2133",
+      "name": "flash=false",
+      "published": false,
+      "set": "flashlight: flash, no flash"
+    },
+    {
+      "id": "83:2134",
+      "name": "State=Default",
+      "published": false,
+      "set": "orientation: portrait, hrzntl"
+    },
+    {
+      "id": "83:2169",
+      "name": "State=Variant2",
+      "published": false,
+      "set": "orientation: portrait, hrzntl"
+    },
+    {
+      "id": "83:2174",
+      "name": "slider=20%",
+      "published": false,
+      "set": "cam delay: 0s to 1s"
+    },
+    {
+      "id": "83:2179",
+      "name": "slider=80%",
+      "published": false,
+      "set": "cam delay: 0s to 1s"
+    },
+    {
+      "id": "83:2212",
+      "name": "slider=1",
+      "published": false,
+      "set": "cam delay: 0s to 1s"
+    },
+    {
+      "id": "83:2216",
+      "name": "style=dithered",
+      "published": false,
+      "set": "style: normal, dithered, etc"
+    },
+    {
+      "id": "83:2220",
+      "name": "flash=true",
+      "published": false,
+      "set": "flashlight: flash, no flash"
+    },
+    {
+      "id": "83:2222",
+      "name": "progress=1 of 4",
+      "published": false,
+      "set": "saving overlay"
+    },
+    {
+      "id": "83:2229",
+      "name": "progress=2 of 4",
+      "published": false,
+      "set": "saving overlay"
+    },
+    {
+      "id": "83:2234",
+      "name": "progress=3 of 4",
+      "published": false,
+      "set": "saving overlay"
+    },
+    {
+      "id": "83:2239",
+      "name": "progress=4 of 4",
+      "published": false,
+      "set": "saving overlay"
+    },
+    {
+      "id": "83:2282",
+      "name": "unknown=false",
+      "published": false,
+      "set": "error overlay"
+    },
+    {
+      "id": "83:2287",
+      "name": "unknown=true",
+      "published": false,
+      "set": "error overlay"
+    },
+    {
+      "id": "83:867",
+      "name": "Recording=True",
+      "published": false,
+      "set": "Rec Timer"
+    },
+    {
+      "id": "83:874",
+      "name": "Position=Bottom Middle ↓",
+      "published": false,
+      "set": "Overlay Element"
+    }
+  ],
+  "component_sets": [
+    {
+      "id": "16:171",
+      "name": "Photo Example",
+      "published": false
+    },
+    {
+      "id": "18:587",
+      "name": "Overlay Element",
+      "published": false
+    },
+    {
+      "id": "83:1905",
+      "name": "Footer States",
+      "published": false
+    },
+    {
+      "id": "83:2168",
+      "name": "orientation: portrait, hrzntl",
+      "published": false
+    },
+    {
+      "id": "83:2173",
+      "name": "cam delay: 0s to 1s",
+      "published": false
+    },
+    {
+      "id": "83:2215",
+      "name": "style: normal, dithered, etc",
+      "published": false
+    },
+    {
+      "id": "83:2219",
+      "name": "flashlight: flash, no flash",
+      "published": false
+    },
+    {
+      "id": "83:2228",
+      "name": "saving overlay",
+      "published": false
+    },
+    {
+      "id": "83:2286",
+      "name": "error overlay",
+      "published": false
+    },
+    {
+      "id": "83:866",
+      "name": "Rec Timer",
+      "published": false
+    }
+  ]
+}

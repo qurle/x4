@@ -3,11 +3,13 @@
 
     FIGMA_TOKEN=... python tools/figma_pull.py                 # default nodes
     FIGMA_TOKEN=... python tools/figma_pull.py 83:2147 73:368  # specific nodes
-    FIGMA_TOKEN=... python tools/figma_pull.py --components    # list components only
+    FIGMA_TOKEN=... python tools/figma_pull.py --components    # list published components only
+    FIGMA_TOKEN=... python tools/figma_pull.py --no-renders    # node JSON only, keep existing PNGs
 
 Writes (all committed, so design changes show up as diffs):
     ui/figma/components.json        every component / component set in the file (id, name, page)
     ui/figma/nodes/<id>.json        raw node trees: geometry, fills, strokes, effects, text styles
+    ui/figma/fills/<id>.png         source image fills of FILL_NODES (input of gen_figma_assets.py)
     ui/figma/export/<id>.png        1x renders of each requested node and each component variant
                                     (reference only; assets for the firmware still go through
                                     tools/gen_assets.py)
@@ -31,7 +33,13 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / "ui" / "figma"
 # 73:368 = "states" section (viewfinder, menu, settings, saving, error)
 # 83:2147 = "settings states" (tile components with their variants)
-DEFAULT_NODES = ["73:368", "83:2147"]
+# The rest are component sets used by "states" that live elsewhere in the file:
+# 83:1905 Footer States, 83:2228 saving overlay, 83:2286 error overlay, 83:866 Rec Timer,
+# 18:587 Overlay Element (footer corners)
+DEFAULT_NODES = ["73:368", "83:2147", "83:1905", "83:2228", "83:2286", "83:866", "18:587"]
+# Nodes whose image fills tools/gen_figma_assets.py needs (saved as ui/figma/fills/<id>.png):
+# saving overlay image, error overlay image, dither strip.
+FILL_NODES = ["83:2240", "83:2288", "83:2217"]
 
 
 def token():
@@ -39,6 +47,13 @@ def token():
     if not t:
         sys.exit("FIGMA_TOKEN is not set (Figma personal access token, scope file_content:read)")
     return t
+
+
+MAX_WAIT = 120  # s; Figma sometimes answers 429 with Retry-After of days (seen 2026-11-01 on /images)
+
+
+class RateLimited(Exception):
+    pass
 
 
 def get(path, params=None, tries=4):
@@ -53,6 +68,8 @@ def get(path, params=None, tries=4):
         except urllib.error.HTTPError as e:
             if e.code == 429 and attempt < tries - 1:  # rate limited: back off
                 wait = int(e.headers.get("Retry-After", 2 ** (attempt + 2)))
+                if wait > MAX_WAIT:
+                    raise RateLimited(f"GET {path}: rate limited, Retry-After {wait} s ({wait / 3600:.1f} h)")
                 print(f"rate limited, waiting {wait} s", file=sys.stderr)
                 time.sleep(wait)
                 continue
@@ -77,24 +94,68 @@ def collect_variants(node, acc):
         collect_variants(ch, acc)
 
 
+def find(n, nid):
+    if n.get("id") == nid:
+        return n
+    for ch in n.get("children", []):
+        r = find(ch, nid)
+        if r:
+            return r
+    return None
+
+
+def pull_fills(data):
+    refs = {}
+    for nid in FILL_NODES:
+        for entry in data.get("nodes", {}).values():
+            n = find(entry["document"], nid)
+            if n:
+                img = [f for f in n.get("fills", []) if f.get("type") == "IMAGE" and f.get("visible", True)]
+                if img:
+                    refs[nid] = img[0]["imageRef"]
+                break
+    if not refs:
+        return
+    try:
+        urls = get(f"/files/{FILE_KEY}/images").get("meta", {}).get("images", {})
+    except RateLimited as e:
+        print(f"{e}; image fills skipped", file=sys.stderr)
+        return
+    (OUT / "fills").mkdir(exist_ok=True)
+    for nid, ref in refs.items():
+        if ref in urls:
+            download(urls[ref], OUT / "fills" / f"{safe(nid)}.png")
+            print(f"fill {nid} saved")
+
+
 def main(argv):
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "nodes").mkdir(exist_ok=True)
     (OUT / "export").mkdir(exist_ok=True)
 
+    # Published components only (empty while the file has no published library). Local components
+    # are taken from the /nodes responses below and merged in.
     comps = get(f"/files/{FILE_KEY}/components").get("meta", {}).get("components", [])
     sets = get(f"/files/{FILE_KEY}/component_sets").get("meta", {}).get("component_sets", [])
     listing = {
-        "components": [
-            {"id": c["node_id"], "name": c["name"], "set": (c.get("containing_frame") or {}).get("containingComponentSet", {}).get("name"),
-             "frame": (c.get("containing_frame") or {}).get("name")}
+        "components": {
+            c["node_id"]: {"name": c["name"], "published": True,
+                           "set": (c.get("containing_frame") or {}).get("containingComponentSet", {}).get("name")}
             for c in comps
-        ],
-        "component_sets": [{"id": s["node_id"], "name": s["name"]} for s in sets],
+        },
+        "component_sets": {s["node_id"]: {"name": s["name"], "published": True} for s in sets},
     }
-    (OUT / "components.json").write_text(json.dumps(listing, indent=2, ensure_ascii=False) + "\n")
-    print(f"components: {len(listing['components'])}, sets: {len(listing['component_sets'])}")
+
+    def write_listing():
+        out = {
+            "components": [{"id": k, **v} for k, v in sorted(listing["components"].items())],
+            "component_sets": [{"id": k, **v} for k, v in sorted(listing["component_sets"].items())],
+        }
+        (OUT / "components.json").write_text(json.dumps(out, indent=2, ensure_ascii=False) + "\n")
+        print(f"components: {len(out['components'])}, sets: {len(out['component_sets'])}")
+
     if "--components" in argv:
+        write_listing()
         return
 
     ids = [a for a in argv if re.fullmatch(r"\d+[:-]\d+", a)] or DEFAULT_NODES
@@ -106,7 +167,16 @@ def main(argv):
         (OUT / "nodes" / f"{safe(nid)}.json").write_text(json.dumps(entry, indent=1, ensure_ascii=False) + "\n")
         print(f"node {nid} '{doc.get('name')}' saved")
         render.append((nid, doc.get("name", "")))
+        set_names = {k: v.get("name") for k, v in entry.get("componentSets", {}).items()}
+        for k, v in entry.get("componentSets", {}).items():
+            listing["component_sets"].setdefault(k, {"name": v.get("name"), "published": False})
+        for k, v in entry.get("components", {}).items():
+            listing["components"].setdefault(
+                k, {"name": v.get("name"), "published": False, "set": set_names.get(v.get("componentSetId"))})
         collect_variants(doc, render)
+
+    write_listing()
+    pull_fills(data)
 
     # Renders: requested nodes + every component/variant inside them, 1x (device pixels).
     seen, todo = set(), []
@@ -114,16 +184,22 @@ def main(argv):
         if nid not in seen:
             seen.add(nid)
             todo.append((nid, name))
-    for i in range(0, len(todo), 50):
-        chunk = todo[i : i + 50]
-        imgs = get(f"/images/{FILE_KEY}", {"ids": ",".join(n for n, _ in chunk), "format": "png", "scale": 1})
-        for nid, name in chunk:
-            url = (imgs.get("images") or {}).get(nid)
-            if url:
-                download(url, OUT / "export" / f"{safe(nid)}.png")
-    index = [{"id": n, "name": nm, "png": f"export/{safe(n)}.png"} for n, nm in todo]
+    # Existing PNGs are kept when the images endpoint is rate limited (they are reference only).
+    if "--no-renders" not in argv:
+        try:
+            for i in range(0, len(todo), 50):
+                chunk = todo[i : i + 50]
+                imgs = get(f"/images/{FILE_KEY}", {"ids": ",".join(n for n, _ in chunk), "format": "png", "scale": 1})
+                for nid, name in chunk:
+                    url = (imgs.get("images") or {}).get(nid)
+                    if url:
+                        download(url, OUT / "export" / f"{safe(nid)}.png")
+        except RateLimited as e:
+            print(f"{e}; renders skipped, existing PNGs kept", file=sys.stderr)
+    index = [{"id": n, "name": nm, "png": f"export/{safe(n)}.png"} for n, nm in todo
+             if (OUT / "export" / f"{safe(n)}.png").exists()]
     (OUT / "export" / "index.json").write_text(json.dumps(index, indent=2, ensure_ascii=False) + "\n")
-    print(f"renders: {len(todo)} in ui/figma/export/")
+    print(f"renders: {len(index)} of {len(todo)} in ui/figma/export/")
 
 
 if __name__ == "__main__":

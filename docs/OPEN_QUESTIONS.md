@@ -22,7 +22,7 @@ Items marked ⚠ could cost a component if the default is wrong; their default i
 | Q15 | Should shooting require all four cameras? | `shoot_min_cams=1` (shoot with what's online, mark missing) | owner; set 4 to refuse | no |
 | Q16 | Do you want an RTC clock set (phone → web page) so files carry real timestamps? | counter-based names, RTC field empty | owner | no |
 
-| Q17 | ~~Footer left slot~~ **answered 2026-11-01 (revised)**: record state (dot + `-:--` / timer). The battery estimate was removed; use the bank's indicator | – | – | closed |
+| Q17 | ~~Footer left slot~~ **answered 2026-11-01 (revised)**: record state (dot + `-:--` / timer), shown only in video mode as in Figma's Footer State "Video" (owner, 2026-11-01). The battery estimate was removed; use the bank's indicator | – | – | closed |
 | Q18 | Cam delay = **between cameras** (owner). Is 0 (all four at once) allowed? Owner worried about data/current bursts | 0 kept as an option and default: capture happens into each camera's own PSRAM (sensors already run continuously), uploads are staggered by `xfer_parallel`, so 0 adds no data burst and little current; the flash is the real peak | measure rail sag on a 0-delay shot with flash (bring-up step 5/7); if it dips, make 0.2 s the minimum | no |
 | Q19 | ~~video / media~~ **answered 2026-11-01**: hidden in v1 | – | – | closed |
 | Q20 | Breakout CC2 read 9.2 kΩ, but measured with the bank connected (invalid for an ohm reading) | CC1 ≈ 5 kΩ OK; re-measure CC2 unplugged | owner, 1 minute with the meter | no |

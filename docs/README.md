@@ -2,7 +2,7 @@
 
 | doc | what's in it |
 |---|---|
-| [STEPS.md](STEPS.md) | **start here when the boards arrive**: 13 small steps from "it boots" to the full rig, one tiny firmware each |
+| [STEPS.md](STEPS.md) | **start here when the boards arrive**: a play-through from tools and first flash (GUI + CLI) to the full rig: 13 small steps with one tiny firmware each, workshops for the rail and leads, meter checks, what to read in the logs |
 | [BRINGUP.md](BRINGUP.md) | flashing without breaking the power rules; full-firmware tests (flash stress, WiFi, skew, soak) |
 | [WIRING.md](WIRING.md) | diagram, pin table, colours, connectors, spare ports, printable pre-power checklist |
 | [POWER.md](POWER.md) | power architecture, why Port A back-feeding is OK, risks, firmware safety rules |

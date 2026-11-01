@@ -48,7 +48,9 @@ struct Status {
   bool flashEnabled, flashArmed, flashReady;
   uint32_t flashReadyInMs, flashPulses;
   uint8_t flashChargePct;  // 0..100 through the cooldown, 100 = ready (footer animates it)
-  // video (not implemented yet: always false; the footer already shows the state)
+  // video (not implemented yet: always false). The footer's record block (Figma Footer State
+  // "Video") shows only in video mode, as "-:--" until recording starts.
+  bool videoMode;
   bool recording;
   uint32_t recordMs;
   // power / system
