@@ -4,7 +4,9 @@ and compares each one with the Figma frame it should match.
 
     python tools/ui_sim/run.py                 build, render all scenes, compare, write the report
     python tools/ui_sim/run.py preview_photo   only the scenes named (prefixes work: settings)
-    python tools/ui_sim/run.py --live          open a window you can click (needs SDL2)
+    python tools/ui_sim/run.py --live          open a window you can click (needs SDL2), real screen size
+    python tools/ui_sim/run.py --live --scale 2    fixed size instead: 2 window pixels per screen pixel
+    python tools/ui_sim/run.py --live --ppi 127    real size, with your monitor's points per inch
     python tools/ui_sim/run.py --list          scene names
 
 Output: tools/ui_sim/out/ (git-ignored): <scene>.png (simulator), <scene>.figma.png, <scene>.diff.png,
@@ -154,13 +156,23 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("only", nargs="*", help="scene names or prefixes")
     ap.add_argument("--live", action="store_true", help="interactive window (needs SDL2)")
+    ap.add_argument("--scale", type=float, help="live: window pixels per screen pixel (default: real size)")
+    ap.add_argument("--ppi", type=float, help="live: your monitor's points per inch, for real size")
     ap.add_argument("--list", action="store_true", help="list scenes")
     args = ap.parse_args()
 
     exe = build()
     photo = photo_file()
     if args.live:
-        return subprocess.call([exe, "--live"] + (["--photo", photo] if photo else []))
+        # --ppi is remembered (build/live.json), so the real-size calibration is done once.
+        saved = BUILD / "live.json"
+        if args.ppi:
+            saved.write_text(json.dumps({"ppi": args.ppi}))
+        elif not args.scale and saved.exists():
+            args.ppi = json.loads(saved.read_text()).get("ppi")
+            print(f"using your saved --ppi {args.ppi:g} (delete {saved.relative_to(ROOT)} to forget it)", flush=True)
+        size = (["--scale", str(args.scale)] if args.scale else []) + (["--ppi", str(args.ppi)] if args.ppi else [])
+        return subprocess.call([exe, "--live"] + (["--photo", photo] if photo else []) + size)
     table = scenes(exe)
     if args.list:
         for s in table:

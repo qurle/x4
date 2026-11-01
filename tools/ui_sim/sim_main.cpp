@@ -4,7 +4,8 @@
 //
 //   ui_sim --list                                       scene table (name, figma frame, what)
 //   ui_sim --scene <name> --photo <file> --out <bmp>     render one scene, headless
-//   ui_sim --live --photo <file>                         window you can click (needs SDL2)
+//   ui_sim --live --photo <file> [--scale N | --ppi N]   window you can click (needs SDL2);
+//                                                        real screen size by default
 //
 // --photo is the "Photo Example" from Figma as raw big-endian RGB565, 320x240 (run.py makes it).
 #include <stdarg.h>
@@ -39,6 +40,13 @@ struct {
   int16_t x = 0, y = 0;
 } g_ptr;
 bool g_live = false;
+
+// Live window size. The CoreS3-SE screen is 2.0" at 320x240 (VERIFIED: M5 CoreS3-SE spec table),
+// so 400 px on the diagonal = 200 px per inch and the picture is 1.6 x 1.2 in (40.6 x 30.5 mm,
+// ASSUMPTION: the 2.0" is the visible area's diagonal). "Real size" = 1.6 in wide on your monitor.
+constexpr float kDeviceWidthIn = 320.0f / 200.0f;
+float g_scale = 0;  // --scale: window pixels per device pixel; 0 = real size
+float g_ppi = 0;    // --ppi: your monitor's points (window units) per inch; 0 = ask SDL
 
 // Fake shot / flash progress for the live mode.
 struct {
@@ -375,21 +383,56 @@ int live() {
   baseStatus(g_st);
   initLvgl();
   bootUi();
+  SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");  // smooth at non-integer sizes, like a real panel
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     fprintf(stderr, "SDL_Init: %s\n", SDL_GetError());
     return 1;
   }
-  const int scale = 3;
-  SDL_Window* win = SDL_CreateWindow("x4cam UI sim", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, kW * scale,
-                                     kH * scale, 0);
+  SDL_Window* win = SDL_CreateWindow("x4cam UI sim", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, kW, kH,
+                                     SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE);
   SDL_Renderer* ren = SDL_CreateRenderer(win, -1, 0);
   SDL_Texture* tex = SDL_CreateTexture(ren, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STREAMING, kW, kH);
-  SDL_RenderSetLogicalSize(ren, kW, kH);
+  SDL_RenderSetLogicalSize(ren, kW, kH);  // keeps 4:3 and maps the mouse at any window size
+
+  // Window size in window units (points on macOS). Real size needs the monitor's points per inch:
+  // --ppi, else SDL's estimate. SDL reports DPI in pixels; on a HiDPI/Retina screen a point is
+  // several pixels, so divide by that ratio (Not sure SDL's number is right on every system:
+  // measure the window and pass --ppi if it isn't 40.6 mm wide).
+  int ww = 0, wh = 0, pw = 0, ph = 0;
+  SDL_GetWindowSize(win, &ww, &wh);
+  SDL_GetRendererOutputSize(ren, &pw, &ph);
+  float pixelsPerPoint = ww > 0 && pw > 0 ? (float)pw / ww : 1.0f;
+  float ppi = g_ppi;
+  const char* ppiFrom = "--ppi";
+  if (ppi <= 0) {
+    float hdpi = 0;
+    if (SDL_GetDisplayDPI(0, nullptr, &hdpi, nullptr) == 0 && hdpi > 40 && hdpi < 1200) {
+      ppi = hdpi / pixelsPerPoint;
+      ppiFrom = "SDL";
+    }
+  }
+  float realW = ppi > 0 ? kDeviceWidthIn * ppi : 0;
+  auto setWidth = [&](float w) {
+    if (w < 160) w = 160;
+    SDL_SetWindowSize(win, (int)(w + 0.5f), (int)(w * kH / kW + 0.5f));
+    SDL_SetWindowPosition(win, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+  };
+  float startW = g_scale > 0 ? kW * g_scale : realW > 0 ? realW : kW;
+  setWidth(startW);
+  if (g_scale > 0)
+    printf("window: %.0f x %.0f (--scale %.2f)\n", startW, startW * kH / kW, g_scale);
+  else if (realW > 0)
+    printf("window: %.0f x %.0f = real size, 40.6 x 30.5 mm at %.0f points/inch (from %s).\n"
+           "  Check with a ruler. If the width isn't 40.6 mm, run again with --ppi %.0f x 40.6 / <measured mm>.\n",
+           realW, realW * kH / kW, ppi, ppiFrom, ppi);
+  else
+    printf("window: 320 x 240 (monitor size unknown: pass --ppi for real size)\n");
   printf(
       "x4cam UI sim. Mouse = touch. Keys:\n"
       "  space shutter   f flash arm/disarm   e cycle errors   c cycle SD (820 MB / 12.3 GB / none)\n"
       "  v video mode    r recording          p preview on/off\n"
-      "  m menu action   d diagnostics        esc back         s screenshot   q quit\n");
+      "  m menu action   d diagnostics        esc back         s screenshot   q quit\n"
+      "  + / - bigger / smaller   0 back to the start size (or drag the window corner)\n");
   int errorStep = 0, sdStep = 0, shots = 0;
   uint32_t last = SDL_GetTicks();
   bool run = true;
@@ -407,6 +450,19 @@ int live() {
       if (ev.type != SDL_KEYDOWN) continue;
       switch (ev.key.keysym.sym) {
         case SDLK_q: run = false; break;
+        case SDLK_EQUALS:
+        case SDLK_PLUS:
+        case SDLK_KP_PLUS:
+        case SDLK_MINUS:
+        case SDLK_KP_MINUS: {
+          bool up = ev.key.keysym.sym != SDLK_MINUS && ev.key.keysym.sym != SDLK_KP_MINUS;
+          SDL_GetWindowSize(win, &ww, &wh);
+          setWidth(ww * (up ? 1.1f : 1 / 1.1f));
+          SDL_GetWindowSize(win, &ww, &wh);
+          printf("window: %d x %d (%.2fx real size)\n", ww, wh, realW > 0 ? ww / realW : 0.0f);
+          break;
+        }
+        case SDLK_0: setWidth(startW); break;
         case SDLK_SPACE: x4core::app::request(x4core::app::Request::Shutter); break;
         case SDLK_f:
           x4core::app::request(g_st.flashArmed ? x4core::app::Request::FlashDisarm
@@ -460,6 +516,7 @@ int live() {
 }  // namespace
 
 int main(int argc, char** argv) {
+  setvbuf(stdout, nullptr, _IOLBF, 0);  // log lines show up at once, even through a pipe
   const char *scene = nullptr, *out = nullptr, *photo = nullptr;
   bool list = false, liveMode = false;
   for (int i = 1; i < argc; i++) {
@@ -468,6 +525,8 @@ int main(int argc, char** argv) {
     else if (!strcmp(argv[i], "--scene") && i + 1 < argc) scene = argv[++i];
     else if (!strcmp(argv[i], "--out") && i + 1 < argc) out = argv[++i];
     else if (!strcmp(argv[i], "--photo") && i + 1 < argc) photo = argv[++i];
+    else if (!strcmp(argv[i], "--scale") && i + 1 < argc) g_scale = (float)atof(argv[++i]);
+    else if (!strcmp(argv[i], "--ppi") && i + 1 < argc) g_ppi = (float)atof(argv[++i]);
   }
   if (list) {
     for (const Scene& s : kScenes) printf("%s\t%s\t%s\n", s.name, s.figma, s.what);
@@ -483,7 +542,7 @@ int main(int argc, char** argv) {
 #endif
   }
   if (!scene || !out) {
-    fprintf(stderr, "usage: ui_sim --list | --scene <name> --photo <file> --out <file.bmp> | --live --photo <file>\n");
+    fprintf(stderr, "usage: ui_sim --list | --scene <name> --photo <file> --out <file.bmp> | --live --photo <file> [--scale N | --ppi N]\n");
     return 2;
   }
   return renderScene(scene, out);
