@@ -84,7 +84,5 @@ renders are in the repo.
 1. Video is not implemented; `Status.videoMode` and `Status.recording` are always false. The
    footer's record block (dot + `-:--` / timer) shows only in video mode, as in Figma's Footer
    State "Video" (owner, 2026-11-01: Figma is the truth), so it is hidden in v1.
-2. Open design question (*Not sure*): Figma puts the footer's centre glow on the Middle frame's
-   left edge (x ≈ 135); the code centres it under the flash group. Ask the owner.
-3. Measure the UI on the panel: the label positions are computed from font metrics, not seen.
-4. Optional: split the CI `steps / all` job into parallel jobs (it takes ~10 of the 10.5 min).
+2. Measure the UI on the panel: the label positions are computed from font metrics, not seen.
+3. Optional: split the CI `steps / all` job into parallel jobs (it takes ~10 of the 10.5 min).

@@ -1607,7 +1607,7 @@
             "strokeAlign": "INSIDE",
             "strokeGeometry": [],
             "absoluteBoundingBox": {
-             "x": 4094.66650390625,
+             "x": 4119.66650390625,
              "y": 3874.0,
              "width": 80.0,
              "height": 80.0
@@ -1619,13 +1619,13 @@
             },
             "constraints": {
              "vertical": "BOTTOM",
-             "horizontal": "LEFT"
+             "horizontal": "CENTER"
             },
             "relativeTransform": [
              [
               1.0,
               0.0,
-              -40.0
+              -15.0
              ],
              [
               0.0,
@@ -4796,13 +4796,13 @@
             "strokeAlign": "INSIDE",
             "strokeGeometry": [],
             "absoluteBoundingBox": {
-             "x": 4438.66650390625,
+             "x": 4463.66650390625,
              "y": 3586.0,
              "width": 80.0,
              "height": 80.0
             },
             "absoluteRenderBounds": {
-             "x": 4406.66650390625,
+             "x": 4431.66650390625,
              "y": 3554.0,
              "width": 144.0,
              "height": 72.0
@@ -4813,13 +4813,13 @@
             },
             "constraints": {
              "vertical": "BOTTOM",
-             "horizontal": "LEFT"
+             "horizontal": "CENTER"
             },
             "relativeTransform": [
              [
               1.0,
               0.0,
-              -40.0
+              -15.0
              ],
              [
               0.0,
@@ -6461,7 +6461,7 @@
            "height": 47.0
           },
           "absoluteRenderBounds": {
-           "x": 4406.66650390625,
+           "x": 4431.66650390625,
            "y": 3554.0,
            "width": 144.0,
            "height": 72.0
@@ -8016,7 +8016,7 @@
             "strokeAlign": "INSIDE",
             "strokeGeometry": [],
             "absoluteBoundingBox": {
-             "x": 5126.66650390625,
+             "x": 5151.66650390625,
              "y": 3586.0,
              "width": 80.0,
              "height": 80.0
@@ -8028,13 +8028,13 @@
             },
             "constraints": {
              "vertical": "BOTTOM",
-             "horizontal": "LEFT"
+             "horizontal": "CENTER"
             },
             "relativeTransform": [
              [
               1.0,
               0.0,
-              -40.0
+              -15.0
              ],
              [
               0.0,
@@ -11243,7 +11243,7 @@
             "strokeAlign": "INSIDE",
             "strokeGeometry": [],
             "absoluteBoundingBox": {
-             "x": 5470.66650390625,
+             "x": 5495.66650390625,
              "y": 3586.0,
              "width": 80.0,
              "height": 80.0
@@ -11255,13 +11255,13 @@
             },
             "constraints": {
              "vertical": "BOTTOM",
-             "horizontal": "LEFT"
+             "horizontal": "CENTER"
             },
             "relativeTransform": [
              [
               1.0,
               0.0,
-              -40.0
+              -15.0
              ],
              [
               0.0,
@@ -14480,7 +14480,7 @@
             "strokeAlign": "INSIDE",
             "strokeGeometry": [],
             "absoluteBoundingBox": {
-             "x": 4782.66650390625,
+             "x": 4807.66650390625,
              "y": 3586.0,
              "width": 80.0,
              "height": 80.0
@@ -14492,13 +14492,13 @@
             },
             "constraints": {
              "vertical": "BOTTOM",
-             "horizontal": "LEFT"
+             "horizontal": "CENTER"
             },
             "relativeTransform": [
              [
               1.0,
               0.0,
-              -40.0
+              -15.0
              ],
              [
               0.0,
@@ -17964,7 +17964,7 @@
             "strokeAlign": "INSIDE",
             "strokeGeometry": [],
             "absoluteBoundingBox": {
-             "x": 5814.66650390625,
+             "x": 5839.66650390625,
              "y": 3586.0,
              "width": 80.0,
              "height": 80.0
@@ -17976,13 +17976,13 @@
             },
             "constraints": {
              "vertical": "BOTTOM",
-             "horizontal": "LEFT"
+             "horizontal": "CENTER"
             },
             "relativeTransform": [
              [
               1.0,
               0.0,
-              -40.0
+              -15.0
              ],
              [
               0.0,
@@ -24981,7 +24981,7 @@
             "strokeAlign": "INSIDE",
             "strokeGeometry": [],
             "absoluteBoundingBox": {
-             "x": 4094.66650390625,
+             "x": 4119.66650390625,
              "y": 3586.0,
              "width": 80.0,
              "height": 80.0
@@ -24993,13 +24993,13 @@
             },
             "constraints": {
              "vertical": "BOTTOM",
-             "horizontal": "LEFT"
+             "horizontal": "CENTER"
             },
             "relativeTransform": [
              [
               1.0,
               0.0,
-              -40.0
+              -15.0
              ],
              [
               0.0,

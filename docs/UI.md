@@ -107,7 +107,6 @@ editable on the web page).
 |---|---|---|
 | tap-menu gradient with eased stops (16 stops) | LVGL linear 2-stop gradient, 80 % → 0 | LVGL draws 2-stop gradients cheaply; visually close at 80 px |
 | footer corner glows = blurred SVG ellipses | pre-rendered gaussian alpha images (σ = 0.42 × Figma blur radius, fitted) | no runtime blur on the MCU |
-| centre glow sits on the Middle frame's left edge (x ≈ 135), apparently copied from Bottom Left | centred under the flash group (x 160) | *Not sure* which is intended; one line in `ui.cpp` (`g.glowMid` position) |
 | `820 MB` uses a thin space (U+2009), missing in Space Mono (Figma falls back to another font) | number and unit as two labels, 3 px apart | same width as the design |
 | cam delay value: white text with EXCLUSION blend | two labels: `#2E2E2E` on the grey, white inside the fill (which clips it) | LVGL has no exclusion blend; same pixels for these two backgrounds |
 | error example text "SD is full" | sentence-case reasons in the same style | only SD full is drawn in the file |

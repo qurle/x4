@@ -694,7 +694,7 @@
           "strokeAlign": "INSIDE",
           "strokeGeometry": [],
           "absoluteBoundingBox": {
-           "x": 1247.6666259765625,
+           "x": 1272.6666259765625,
            "y": -3123.0,
            "width": 80.0,
            "height": 80.0
@@ -706,13 +706,13 @@
           },
           "constraints": {
            "vertical": "BOTTOM",
-           "horizontal": "LEFT"
+           "horizontal": "CENTER"
           },
           "relativeTransform": [
            [
             1.0,
             0.0,
-            -40.0
+            -15.0
            ],
            [
             0.0,
@@ -3679,7 +3679,7 @@
           "strokeAlign": "INSIDE",
           "strokeGeometry": [],
           "absoluteBoundingBox": {
-           "x": 1247.6666259765625,
+           "x": 1272.6666259765625,
            "y": -3060.0,
            "width": 80.0,
            "height": 80.0
@@ -3691,13 +3691,13 @@
           },
           "constraints": {
            "vertical": "BOTTOM",
-           "horizontal": "LEFT"
+           "horizontal": "CENTER"
           },
           "relativeTransform": [
            [
             1.0,
             0.0,
-            -40.0
+            -15.0
            ],
            [
             0.0,
@@ -6687,13 +6687,13 @@
           "strokeAlign": "INSIDE",
           "strokeGeometry": [],
           "absoluteBoundingBox": {
-           "x": 1247.6666259765625,
+           "x": 1272.6666259765625,
            "y": -2997.0,
            "width": 80.0,
            "height": 80.0
           },
           "absoluteRenderBounds": {
-           "x": 1215.6666259765625,
+           "x": 1240.6666259765625,
            "y": -3029.0,
            "width": 144.0,
            "height": 88.0
@@ -6704,13 +6704,13 @@
           },
           "constraints": {
            "vertical": "BOTTOM",
-           "horizontal": "LEFT"
+           "horizontal": "CENTER"
           },
           "relativeTransform": [
            [
             1.0,
             0.0,
-            -40.0
+            -15.0
            ],
            [
             0.0,
@@ -8352,7 +8352,7 @@
          "height": 47.0
         },
         "absoluteRenderBounds": {
-         "x": 1215.6666259765625,
+         "x": 1240.6666259765625,
          "y": -3029.0,
          "width": 144.0,
          "height": 88.0

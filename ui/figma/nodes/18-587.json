@@ -4262,7 +4262,7 @@
       "strokeAlign": "INSIDE",
       "strokeGeometry": [],
       "absoluteBoundingBox": {
-       "x": 829.0,
+       "x": 849.0,
        "y": -2472.0,
        "width": 80.0,
        "height": 80.0
@@ -4270,7 +4270,7 @@
       "absoluteRenderBounds": {
        "x": 852.0,
        "y": -2504.0,
-       "width": 89.0,
+       "width": 96.0,
        "height": 89.0
       },
       "targetAspectRatio": {
@@ -4279,13 +4279,13 @@
       },
       "constraints": {
        "vertical": "BOTTOM",
-       "horizontal": "LEFT"
+       "horizontal": "CENTER"
       },
       "relativeTransform": [
        [
         1.0,
         0.0,
-        -40.0
+        -20.0
        ],
        [
         0.0,
@@ -5210,7 +5210,7 @@
     "absoluteRenderBounds": {
      "x": 852.0,
      "y": -2504.0,
-     "width": 89.0,
+     "width": 96.0,
      "height": 89.0
     },
     "constraints": {
