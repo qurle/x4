@@ -132,10 +132,18 @@ python tools/ui_sim/run.py settings
 ```
 Scene list (`--list`): viewfinder (photo, flash recharge, video, recording, dithered, portrait),
 tap menu, settings (all tile states, plus one real tap on a tile), saving 1 and 3 of 4, errors
-known and unknown, diagnostics.
+known and unknown, diagnostics. Scenes whose Figma frame uses another photo (portrait, errors)
+get that photo, so they compare 1:1.
 
-The run fails only if the simulator doesn't build or a scene doesn't render. Differences are for
-you to judge. CI runs the same and attaches `out/` as the **ui-sim** artifact, with the table in
+Some scenes check **behaviour**, and those do fail the run:
+```
+ok   a tap on the footer opens the menu (tap_footer vs preview_photo: brightness 95 vs 197)
+ok   a tap on a faded side opens the menu (portrait_tap_side vs preview_portrait: brightness 59 vs 89)
+ok   a new camera frame reaches the side copies (portrait_new_frame vs preview_portrait: mean pixel difference 43)
+```
+
+The run fails if the simulator doesn't build, a scene doesn't render, or a behaviour check fails.
+Differences from Figma are for you to judge. CI runs the same and attaches `out/` as the **ui-sim** artifact, with the table in
 the job summary.
 
 ### Click through it live

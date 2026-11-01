@@ -5,6 +5,8 @@
     FIGMA_TOKEN=... python tools/figma_pull.py 83:2147 73:368  # specific nodes
     FIGMA_TOKEN=... python tools/figma_pull.py --components    # list published components only
     FIGMA_TOKEN=... python tools/figma_pull.py --no-renders    # node JSON only, keep existing PNGs
+    FIGMA_TOKEN=... python tools/figma_pull.py --fills-only    # image fills only, from the committed
+                                                               # node JSON (when /nodes is rate limited)
 
 Writes (all committed, so design changes show up as diffs):
     ui/figma/components.json        every component / component set in the file (id, name, page)
@@ -38,9 +40,10 @@ OUT = ROOT / "ui" / "figma"
 # 18:587 Overlay Element (footer corners)
 DEFAULT_NODES = ["73:368", "83:2147", "83:1905", "83:2228", "83:2286", "83:866", "18:587"]
 # Nodes whose image fills tools/gen_figma_assets.py needs (saved as ui/figma/fills/<id>.png):
-# saving overlay image, error overlay image, dither strip; and the "Photo Example" photo (15:70)
-# that tools/ui_sim/ puts under the UI so its screens compare 1:1 with the Figma frames.
-FILL_NODES = ["83:2240", "83:2288", "83:2217", "15:70"]
+# saving overlay image, error overlay image, dither strip; and the two photos tools/ui_sim/ puts
+# under the UI so its screens compare 1:1 with the Figma frames: "Photo Example" (15:70) and the
+# one the portrait and error frames use (73:207).
+FILL_NODES = ["83:2240", "83:2288", "83:2217", "15:70", "73:207"]
 
 
 def token():
@@ -133,6 +136,10 @@ def main(argv):
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "nodes").mkdir(exist_ok=True)
     (OUT / "export").mkdir(exist_ok=True)
+    if "--fills-only" in argv:
+        local = {"nodes": {f.stem: json.loads(f.read_text()) for f in sorted((OUT / "nodes").glob("*.json"))}}
+        pull_fills(local)
+        return
 
     # Published components only (empty while the file has no published library). Local components
     # are taken from the /nodes responses below and merged in.
@@ -161,7 +168,10 @@ def main(argv):
 
     ids = [a for a in argv if re.fullmatch(r"\d+[:-]\d+", a)] or DEFAULT_NODES
     ids = [i.replace("-", ":") for i in ids]
-    data = get(f"/files/{FILE_KEY}/nodes", {"ids": ",".join(ids), "geometry": "paths"})
+    try:
+        data = get(f"/files/{FILE_KEY}/nodes", {"ids": ",".join(ids), "geometry": "paths"})
+    except RateLimited as e:
+        sys.exit(f"{e}. Nothing changed. Image fills alone may still work: --fills-only")
     render = []
     for nid, entry in data.get("nodes", {}).items():
         doc = entry["document"]
