@@ -144,8 +144,27 @@ the job summary.
 ```bash
 python tools/ui_sim/run.py --live
 ```
-A 3× window opens with the viewfinder. The mouse is your finger: tap the photo for the menu, open
-settings, toggle the tiles, drag across the cam delay tile. Keys:
+A window opens with the viewfinder at the **real screen size**: 40.6 × 30.5 mm, like the
+CoreS3-SE's 2.0" panel (320×240 at 200 pixels per inch: **VERIFIED** 2.0"/320×240 from M5's
+CoreS3-SE spec; the mm assume the 2.0" is the visible diagonal). The mouse is your finger: tap the
+photo for the menu, open settings, toggle the tiles, drag across the cam delay tile.
+
+**Getting the size right.** Real size needs your monitor's points per inch. The simulator asks
+SDL, which isn't reliable everywhere (**Not sure** about every Mac), and prints what it used:
+```
+window: 203 x 152 = real size, 40.6 x 30.5 mm at 127 points/inch (from SDL).
+```
+Hold a ruler (or the real device) against the window. If it isn't 40.6 mm wide, run once with
+the corrected value, `--ppi <used × 40.6 / measured mm>`:
+```bash
+python tools/ui_sim/run.py --live --ppi 127
+```
+`run.py` remembers it (in `tools/ui_sim/build/live.json`), so plain `--live` uses it from then
+on. If SDL can't tell at all, the window opens at 320×240 and says so. A fixed size instead of
+real size: `--scale 2` (2 window pixels per screen pixel). You can also drag the window corner or
+press `+` / `-`; `0` goes back to the start size.
+
+Keys:
 
 | key | does |
 |---|---|
@@ -157,6 +176,7 @@ settings, toggle the tiles, drag across the cam delay tile. Keys:
 | p | preview on / off |
 | m / d / esc | menu action / diagnostics / back |
 | s | screenshot to `ui_sim_NN.bmp` in the current folder |
+| + / - / 0 | bigger / smaller / back to the start size |
 | q | quit |
 
 The terminal shows the UI's log lines, in the same format as the device.
