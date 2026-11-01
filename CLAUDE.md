@@ -28,7 +28,9 @@ Mini Button, powered by an Anker power bank through a USB-C breakout rail. Start
   verified).
 - Don't force-push or rewrite pushed history. After a PR is merged, fast-forward the branch to
   `origin/main` before new work.
-- Create PRs only when asked.
+- When work is ready, **open a PR and send the owner the link**; follow-up fixes go on as new
+  commits to the same PR. The owner merges (owner, 2026-11-01). After a merge, start the next
+  work from `origin/main`.
 
 ## Build and checks (run what you touched before pushing)
 
@@ -37,6 +39,7 @@ cd core && pio run && pio test -e native        # core, core-hello, hello-ui + 3
 cd camera && pio run                             # cam1..cam4, cam-hello
 cd steps && pio run                              # 15 bring-up envs (slow, ~5 min)
 python tools/gen_docs.py --check && python tools/gen_tokens.py --check && python tools/gen_figma_assets.py --check && python tools/gen_assets.py --check
+python tools/ui_sim/run.py                       # UI on the PC vs Figma: look at tools/ui_sim/out/index.html
 cd site && npm ci && npm run build               # manual site from docs/
 ```
 
@@ -85,5 +88,6 @@ renders are in the repo.
 1. Video is not implemented; `Status.videoMode` and `Status.recording` are always false. The
    footer's record block (dot + `-:--` / timer) shows only in video mode, as in Figma's Footer
    State "Video" (owner, 2026-11-01: Figma is the truth), so it is hidden in v1.
-2. Measure the UI on the panel: the label positions are computed from font metrics, not seen.
+2. UI positions are checked against Figma in the simulator (`tools/ui_sim`, docs/DEVELOP.md §3).
+   Still to do on the panel: speed, colours, touch feel.
 3. Optional: split the CI `steps / all` job into parallel jobs (it takes ~10 of the 10.5 min).

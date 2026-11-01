@@ -192,8 +192,12 @@ WiFi instead of the Core.
 
 ## Tests
 
-`cd core && pio test -e native` — 31 host tests: log format/levels/rate limit/ring, config
+`cd core && pio test -e native` — 32 host tests: log format/levels/rate limit/ring, config
 validation + tighten-only + schema-vs-safety limits, flash guard, protocol round-trips + garbage,
 clock sync, input map + debouncer + swipes, shooting FSM (happy path, timeouts, retries, faults,
 stale ACKs), storage paths + sidecar, dithering. CI also checks that generated tokens/docs are
 fresh and builds all 8 firmware environments.
+
+The UI also runs on a PC: `python tools/ui_sim/run.py` renders every screen with the real UI
+code and compares it with Figma; `--live` opens a window you can click
+([DEVELOP §3](DEVELOP.md#3-ui-simulator)).

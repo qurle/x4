@@ -38,8 +38,9 @@ OUT = ROOT / "ui" / "figma"
 # 18:587 Overlay Element (footer corners)
 DEFAULT_NODES = ["73:368", "83:2147", "83:1905", "83:2228", "83:2286", "83:866", "18:587"]
 # Nodes whose image fills tools/gen_figma_assets.py needs (saved as ui/figma/fills/<id>.png):
-# saving overlay image, error overlay image, dither strip.
-FILL_NODES = ["83:2240", "83:2288", "83:2217"]
+# saving overlay image, error overlay image, dither strip; and the "Photo Example" photo (15:70)
+# that tools/ui_sim/ puts under the UI so its screens compare 1:1 with the Figma frames.
+FILL_NODES = ["83:2240", "83:2288", "83:2217", "15:70"]
 
 
 def token():

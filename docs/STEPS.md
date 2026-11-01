@@ -109,6 +109,9 @@ pio run
 **Pass:** every environment ends with `SUCCESS`. If one fails here, it's the toolchain or the
 network, not your hardware ([FIRMWARE: pinned versions](FIRMWARE.md#toolchain-and-pinned-versions)).
 
+While you wait for parts: [DEVELOP.md](DEVELOP.md) covers building, the host tests and the **UI
+simulator**, where you can click through the real UI on your computer.
+
 > ⚠ `pio run` with no `-e` builds **every** environment, which is fine. But `pio run -t upload`
 > with no `-e` (or the GUI's Upload with the *Default* environment selected) **uploads every
 > environment one after another**, camera firmware included, to whatever board is plugged in.

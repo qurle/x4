@@ -29,6 +29,30 @@ jobs:
         working-directory: core
         run: pio test -e native
 
+  ui-sim:
+    name: UI simulator vs Figma
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Tools (SDL2 so the --live window also compiles)
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q ninja-build libsdl2-dev
+          pip install pillow==13.0.0
+      - name: Render every UI scene and compare with Figma
+        run: python tools/ui_sim/run.py
+      - name: Report in the job summary
+        if: always()
+        run: cat tools/ui_sim/out/report.md >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ui-sim
+          path: tools/ui_sim/out
+
   site:
     name: manual site
     runs-on: ubuntu-latest
