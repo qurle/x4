@@ -173,7 +173,19 @@ def compare(a, b):
 # unlike the Figma comparison.
 MENU = (110, 0, 215, 45)       # the tap menu's "settings" label area
 LEFT_SIDE = (0, 0, 70, 190)    # portrait: the left faded copy, above the footer
+FULL = (0, 0, W, H)
+TILE1 = (16, 16, 156, 116)     # settings: orientation tile
+UNDER_SHEET = (0, 165, W, 190)  # below a sheet swiped 80 px up (it ends at y 160)
+TILE2 = (164, 16, 304, 116)    # settings: cam delay tile
+LOWER_TILES = (16, 124, 304, 224)
 EXPECT = [
+    ("settings_delay_drag", "settings", TILE2, "changed", "a sideways drag on the cam delay tile changes the delay"),
+    ("settings_delay_drag", "settings", LOWER_TILES, "same", "a sideways drag doesn't move the settings sheet"),
+    ("settings_hold_tile", "settings", TILE1, "same", "holding a settings tile shows no press effect"),
+    ("settings_swipe_half", "preview_photo", UNDER_SHEET, "same", "a swipe up shows the viewfinder under the sheet"),
+    ("settings_swipe_away", "preview_photo", FULL, "same", "a long swipe up sends settings away"),
+    ("settings_flick", "preview_photo", FULL, "same", "a quick flick up sends settings away"),
+    ("settings_swipe_short", "settings", FULL, "same", "a short slow swipe springs back"),
     ("tap_footer", "preview_photo", MENU, "darker", "a tap on the footer opens the menu"),
     ("portrait_tap_side", "preview_portrait", MENU, "darker", "a tap on a faded side opens the menu"),
     ("portrait_new_frame", "preview_portrait", LEFT_SIDE, "changed", "a new camera frame reaches the side copies"),
@@ -193,10 +205,11 @@ def check_expectations(rendered):
         if want == "darker":  # mean luminance drops by a quarter or more
             a, b = brightness(rendered[scene], box), brightness(rendered[ref], box)
             ok, detail = a < b * 0.75, f"brightness {a:.0f} vs {b:.0f}"
-        else:  # "changed": the pixels differ, on average by more than 10 levels
+        else:  # "changed" / "same": mean pixel difference above 10 / below 3 levels
             d = ImageChops.difference(rendered[scene].crop(box), rendered[ref].crop(box)).convert("L").tobytes()
             mean = sum(d) / len(d)
-            ok, detail = mean > 10, f"mean pixel difference {mean:.0f}"
+            ok = mean > 10 if want == "changed" else mean < 3
+            detail = f"mean pixel difference {mean:.1f}"
         print(f"{'ok  ' if ok else 'FAIL'} {what} ({scene} vs {ref}: {detail})")
         if not ok:
             bad.append(what)
