@@ -7,6 +7,7 @@ export const REPO_BLOB = 'https://github.com/qurle/x4/blob/main/'
 
 export const DOCS = {
   'README.md': 'start here', // root page
+  'STEPS.md': 'rig/steps',
   'BRINGUP.md': 'rig/bringup',
   'WIRING.md': 'rig/wiring',
   'POWER.md': 'rig/power',

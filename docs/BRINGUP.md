@@ -1,5 +1,9 @@
 # Bring-up: first flash and test ladder
 
+New boards? Go through [STEPS.md](STEPS.md) first. It checks one thing at a time with tiny
+test firmware. This page holds the flashing rules those steps rely on, and the tests of the
+**full** firmware (step 13 there continues at step 5 here).
+
 Do the steps in order. Each has an **expected result** and an **if it fails** link. Write the
 numbers into [MEASUREMENTS.md](MEASUREMENTS.md) as you go.
 

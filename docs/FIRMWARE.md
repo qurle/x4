@@ -43,6 +43,8 @@ x4/
 │  ├─ src/hello_ui/         the hello-ui smoke test
 │  └─ test/test_shared/     native unit tests
 ├─ camera/                  PlatformIO project, Unit CamS3-5MP: envs cam1..cam4, cam-hello
+├─ steps/                   bring-up ladder (docs/STEPS.md): one short main.cpp per step,
+│                           M5Unified + plain Arduino only, Core and camera envs in one project
 ├─ shared/                  library used by both (symlink://../shared): log, config schema,
 │                           safety, protocol, input, shooting FSM, storage layout, dither
 ├─ ui/                      design source: tokens.json, fonts (TTF + OFL), assets

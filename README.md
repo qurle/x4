@@ -43,15 +43,17 @@ no router, no phone needed.
    ```bash
    cd camera && pio run
    ```
-4. When the boards arrive: **[docs/BRINGUP.md](docs/BRINGUP.md)**. Read the one-5V-source rule
-   at the top of [docs/WIRING.md](docs/WIRING.md) before you plug anything in.
+4. When the boards arrive: **[docs/STEPS.md](docs/STEPS.md)**: 13 small steps, each with its
+   own tiny firmware in `steps/`, from "the Core boots" to the full rig. Read the one-5V-source
+   rule at the top of [docs/WIRING.md](docs/WIRING.md) before you plug anything in.
 
 Firmware environments: Core `core`, `core-hello`, `hello-ui`; cameras `cam1`…`cam4`,
-`cam-hello`; tests `native`. CI builds all of them.
+`cam-hello`; tests `native`; step-by-step bring-up `s01-hello` … `s10-camN` in `steps/`.
+CI builds all of them.
 
 ## Layout
 
-`core/` Core firmware · `camera/` camera firmware · `shared/` code both use (logging, config,
+`steps/` small bring-up firmware, one per step · `core/` Core firmware · `camera/` camera firmware · `shared/` code both use (logging, config,
 safety, protocol, state machine) · `ui/` design tokens + fonts · `tools/` generators + log tool ·
 `app/` companion (later) · `docs/` everything else ([index](docs/README.md)) · `site/` the docs
 as a browsable manual (notes. template, `cd site && npm i && npm run dev`).
