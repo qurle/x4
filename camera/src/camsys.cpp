@@ -124,7 +124,7 @@ void banner() {
   esp_chip_info(&ci);
   uint8_t mac[6];
   esp_read_mac(mac, ESP_MAC_WIFI_STA);
-  X4_LOGI("boot", "banner", "app=camera fw=%s git=%s built=\"%s\" proto=%d cam_id=%u hello=%d", X4_FW_VERSION, X4_GIT_HASH,
+  X4_LOGI("boot", "banner", "app=camera name=" X4_PROJECT_NAME " fw=%s git=%s built=\"%s\" proto=%d cam_id=%u hello=%d", X4_FW_VERSION, X4_GIT_HASH,
           X4_BUILD_TIME, X4_PROTOCOL_VERSION, g_id,
 #if X4_CAM_HELLO
           1

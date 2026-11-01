@@ -1,10 +1,10 @@
 {
 	// Root folder name — the first heading you see in notes
-	"rootTitle": "x4.",
+	"rootTitle": "x4cam.",
 	// Site name — shown in the browser tab and as the title suffix
-	"title": "x4 manual",
+	"title": "x4cam manual",
 	// Default description — used for the meta description and link previews
-	"description": "Four Eyes: a four-camera rig on M5Stack. Build, wiring, power, firmware and design manual.",
+	"description": "x4cam: a four-camera rig on M5Stack. Build, wiring, power, firmware and design manual.",
 	// Default look, and whether visitors can switch it
 	"appearance": {
 		"theme": {

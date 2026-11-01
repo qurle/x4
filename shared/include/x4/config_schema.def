@@ -86,7 +86,7 @@ X4_CFG(btn_double_ms,   0,     0,     600,   ms,    CORE, 0,        "Double-clic
 X4_CFG(ui_brightness,   160,   10,    255,   level, CORE, 0,        "Backlight brightness.")
 X4_CFG(ui_sound,        1,     0,     1,     bool,  CORE, 0,        "Shutter sound through the Core speaker.")
 X4_CFG(ui_volume,       96,    0,     255,   level, CORE, 0,        "Speaker volume.")
-X4_CFG(ui_mode,         1,     0,     1,     enum,  CORE, 0,        "Settings tile 'ui': 0 = minml (photo only + flash recharge indicator), 1 = full (footer with eyes online and SD free).")
+X4_CFG(ui_mode,         1,     0,     1,     enum,  CORE, 0,        "Settings tile 'ui': 0 = minml (photo only + flash recharge indicator), 1 = full (footer with cameras online and SD free).")
 X4_CFG(ui_orient,       0,     0,     1,     enum,  CORE, 0,        "Settings tile 'orientation': 0 = horzntl, 1 = portrait (preview dims the sides to a 180 px crop; recorded in shot.json for the companion to crop).")
 X4_CFG(ui_effect,       0,     0,     1,     enum,  CORE, 0,        "Settings tile 'effect': 0 = normal, 1 = dithered (applied to the live preview; photos stay original, the choice is recorded in shot.json).")
 X4_CFG(ui_show_fps,     0,     0,     1,     bool,  CORE, 0,        "FPS overlay in the corner.")

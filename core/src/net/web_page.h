@@ -3,11 +3,12 @@
 // /config, lists photos, triggers the shutter. Spec: docs/COMPANION.md "Web debug page".
 #pragma once
 #include <pgmspace.h>
+#include "x4/version.h"
 
 static const char kWebPage[] PROGMEM = R"HTML(<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>x4 · debug</title>
+<title>)HTML" X4_PROJECT_NAME R"HTML( · debug</title>
 <style>
 :root{--bg:#000;--sf:#141414;--ln:#2e2e2e;--fg:#f2efe8;--mu:#8c877e;--ac:#ff4a1c;--ok:#7bd88f;--wa:#ffb020;--er:#ff5a4f;
 --serif:"Instrument Serif",Georgia,"Times New Roman",serif;--mono:"Space Mono",ui-monospace,Menlo,Consolas,monospace}
@@ -28,7 +29,7 @@ input{font:inherit;background:#000;color:var(--fg);border:1px solid var(--ln);bo
 .grid4{display:grid;grid-template-columns:1fr 1fr;gap:6px}.big{font:400 40px/1 var(--serif)}
 .bar{height:4px;background:var(--ln);border-radius:2px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ok);width:0}
 </style></head><body>
-<header><h1>Four Eyes</h1><span class="mu" id="hdr">connecting…</span></header>
+<header><h1>)HTML" X4_PROJECT_NAME R"HTML(</h1><span class="mu" id="hdr">connecting…</span></header>
 <main>
 <section><h2>Rig</h2>
 <div class="row" style="justify-content:space-between"><div><div class="big" id="state">–</div><div class="mu" id="faults"></div></div>

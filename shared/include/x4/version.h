@@ -9,6 +9,10 @@
 #define X4_GIT_HASH "nogit"
 #endif
 
+// Project name. Shown on the splash, the web page and the boot banner; also the default AP SSID
+// (secrets.h.example) and the prefix of the OTA hostnames (x4cam-core, x4cam-cam1..4).
+#define X4_PROJECT_NAME "x4cam"
+
 #define X4_BUILD_TIME __DATE__ " " __TIME__
 
 // Wire protocol version (UDP + HTTP). Peers with a different major refuse to talk.

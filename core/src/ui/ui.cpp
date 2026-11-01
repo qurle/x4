@@ -225,7 +225,7 @@ struct {
 // ---------------------------------------------------------------- splash (not in Figma)
 void buildSplash() {
   g.splash = screenBase(kBg);
-  lv_obj_t* t = label(g.splash, fontDisplay(), kOnPhoto, "Four Eyes");
+  lv_obj_t* t = label(g.splash, fontDisplay(), kOnPhoto, X4_PROJECT_NAME);
   lv_obj_align(t, LV_ALIGN_CENTER, 0, -12);
   lv_obj_t* v = label(g.splash, fontFooter(), kFgMuted, "x4 " X4_FW_VERSION);
   lv_obj_align(v, LV_ALIGN_CENTER, 0, 34);
@@ -411,10 +411,10 @@ void updateMain(const Status& s, uint32_t now) {
   if (!live && !saving && !err) {
     if (s.state == State::Booting) ph = "starting";
     else if (s.state == State::Idle) {
-      snprintf(buf, sizeof(buf), "waiting for eyes · %d of 4", s.camsOnline);
+      snprintf(buf, sizeof(buf), "waiting for cameras · %d of 4", s.camsOnline);
       ph = buf;
     } else {
-      snprintf(buf, sizeof(buf), "%d of 4 eyes ready", s.camsOnline);
+      snprintf(buf, sizeof(buf), "%d of 4 cameras ready", s.camsOnline);
       ph = buf;
     }
   }
@@ -799,7 +799,7 @@ void shotCaptured() { beep(1800, 12); }
 
 void shotStored(bool partial, uint32_t totalMs, bool overBudget) {
   char b[48];
-  if (partial) snprintf(b, sizeof(b), "saved, some eyes missing · %.1fs", totalMs / 1000.0f);
+  if (partial) snprintf(b, sizeof(b), "saved, some cameras missing · %.1fs", totalMs / 1000.0f);
   else snprintf(b, sizeof(b), "saved · %.1fs", totalMs / 1000.0f);
   toast(b, partial || overBudget ? kWarn : kOnPhoto);
   if (!partial) beep(2200, 20, 3300, 40);

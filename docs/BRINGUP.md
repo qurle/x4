@@ -51,11 +51,11 @@ M5Unified's comments show USB VBUS and the bus node are joined through two load 
 both enables are 0, so two 5 V sources would fight. Keep the rule.
 
 After the first USB flash, update over WiFi (Stage 5, ArduinoOTA): join your laptop to the
-`x4-rig` AP, then
+`x4cam` AP, then
 ```bash
 pio run -e core -t upload --upload-port 192.168.4.1
 ```
-Cameras: `--upload-port x4-cam2.local` or their IP (shown on the web page). OTA needs the
+Cameras: `--upload-port x4cam-cam2.local` or their IP (shown on the web page). OTA needs the
 `X4_OTA_PASS` from secrets.h (PlatformIO asks, or set `upload_flags = --auth=...`).
 
 ## Test ladder
@@ -81,7 +81,7 @@ t=931 lvl=INFO dev=core mod=boot evt=reset reason=poweron boot_count=1 brownouts
 t=1650 lvl=INFO dev=core mod=sd evt=mount type=sdhc total_mb=15xxx free_mb=…
 t=4000 lvl=INFO dev=core mod=sd evt=bench ok=1 write_kbps=… read_kbps=…
 ```
-Screen: "Four Eyes" splash → **Bring-up** screen with system lines, camera lines, log tail and
+Screen: "x4cam" splash → **Bring-up** screen with system lines, camera lines, log tail and
 buttons *Arm / Flash / SD*. Touch anywhere in the text area: a red dot appears under your finger
 (touch test; also logged as `evt=touch_test x=… y=…`). Button test needs step 4 wiring.
 
@@ -129,7 +129,7 @@ USB unplugged everywhere. USB meter between bank and breakout. Switch off betwee
 |---|---|---|
 | Core (Port A, split cable) | boots from the rail alone; ≈ 0.15–0.3 A; `vbus_mv` ≈ rail voltage | no boot: Grove contact, polarity; bank asleep (press its button) |
 | + Mini Button (white → G1) | diagnostics "button DOWN" when pressed | stays "up": wiring; "DOWN" stuck: wrong polarity or wrong unit |
-| + cam1 | +0.15–0.3 A; cam joins `x4-rig`, registers; footer/diagnostics show 1 camera, viewfinder shows its preview | [TROUBLESHOOTING WiFi](TROUBLESHOOTING.md#wifi) |
+| + cam1 | +0.15–0.3 A; cam joins `x4cam`, registers; footer/diagnostics show 1 camera, viewfinder shows its preview | [TROUBLESHOOTING WiFi](TROUBLESHOOTING.md#wifi) |
 | + cam2, cam3, cam4 | ≈ 1–1.5 A total at idle; diagnostics list four cameras online | brown-out resets: [Power](TROUBLESHOOTING.md#power) |
 | + Flashlight (EN → G2, rail power) | nothing lights at boot; current unchanged | lights at boot: EN pulled up (step 3), unplug immediately |
 
@@ -152,7 +152,7 @@ shots with the flash armed, at the 8 s cooldown, 10 times.
 
 ### Step 6 — WiFi
 
-Core running `core`. Cameras join, register, heartbeat. Phone/laptop joins `x4-rig` and opens
+Core running `core`. Cameras join, register, heartbeat. Phone/laptop joins `x4cam` and opens
 `http://192.168.4.1/`.
 
 | expected | if it fails |

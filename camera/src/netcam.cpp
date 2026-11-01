@@ -471,7 +471,7 @@ void begin() {
   startHttp();
   if (sizeof(X4_OTA_PASS) > 1) {
     char host[16];
-    snprintf(host, sizeof(host), "x4-cam%u", sys::camId());
+    snprintf(host, sizeof(host), X4_PROJECT_NAME "-cam%u", sys::camId());
     ArduinoOTA.setHostname(host);
     ArduinoOTA.setPassword(X4_OTA_PASS);
     ArduinoOTA.onStart([]() { X4_LOGW("ota", "start", "cam=%u", sys::camId()); });

@@ -158,7 +158,7 @@ curl "http://192.168.4.50/settings?cam_id=3"
 | `ui_brightness` | 160 | 10…255 | level | core |  |  | Backlight brightness. |
 | `ui_sound` | 1 | 0…1 | bool | core |  |  | Shutter sound through the Core speaker. |
 | `ui_volume` | 96 | 0…255 | level | core |  |  | Speaker volume. |
-| `ui_mode` | 1 | 0…1 | enum | core |  |  | Settings tile 'ui': 0 = minml (photo only + flash recharge indicator), 1 = full (footer with eyes online and SD free). |
+| `ui_mode` | 1 | 0…1 | enum | core |  |  | Settings tile 'ui': 0 = minml (photo only + flash recharge indicator), 1 = full (footer with cameras online and SD free). |
 | `ui_orient` | 0 | 0…1 | enum | core |  |  | Settings tile 'orientation': 0 = horzntl, 1 = portrait (preview dims the sides to a 180 px crop; recorded in shot.json for the companion to crop). |
 | `ui_effect` | 0 | 0…1 | enum | core |  |  | Settings tile 'effect': 0 = normal, 1 = dithered (applied to the live preview; photos stay original, the choice is recorded in shot.json). |
 | `ui_show_fps` | 0 | 0…1 | bool | core |  |  | FPS overlay in the corner. |

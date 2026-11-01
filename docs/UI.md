@@ -57,7 +57,7 @@ above. The serif is only used ≥ 24 px, where its hairlines survive on the 320�
 
 | Figma frame | device | LVGL objects | behaviour |
 |---|---|---|---|
-| (none) splash | Splash | serif 64 "Four Eyes", mono caption | fade + rise, 1.4 s, then fade to viewfinder |
+| (none) splash | Splash | serif 64 "x4cam" (`X4_PROJECT_NAME`), mono caption | fade + rise, 1.4 s, then fade to viewfinder |
 | **preview: full, photo** | Viewfinder, `ui_mode = full` | full-screen `lv_image` (RGB565 swapped, live preview), footer: two corner-glow images + Space Mono Bold 13 labels | left = **battery estimate "~72%"** (energy counting, see compromises; long-press it → "Bank charged?" confirm resets to 100 %), right = SD free ("820 MB" / "12.3 GB" / "NO SD") |
 | **preview: minimal ui, photo, flash recharging** | Viewfinder, `ui_mode = minml` | photo only; flash-recharge image bottom-centre | the bolt shows (in both modes) while the flash is armed and cooling down |
 | **preview: dithered** | Viewfinder, `ui_effect = dithered` | same; each preview frame dithered in place (Bayer 4×4, 4 levels per channel) | photos on SD stay original; `shot.json` records `"effect":"dithered"` for the companion |
@@ -139,5 +139,5 @@ lvgl.io/editor, pro.lvgl.io, lvgl.io blog "lv_xml removal from v9.5".
 
 ## Smoke test (`hello-ui`)
 
-`pio run -e hello-ui -t upload`: "Four Eyes" (serif 64) with an eased fade + 18 px rise on
+`pio run -e hello-ui -t upload`: "x4cam" (serif 64) with an eased fade + 18 px rise on
 `#1E1E1E`, tap to replay. Also runs the power-safety boot path.

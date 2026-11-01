@@ -187,7 +187,7 @@ void flashTimerCb(void*) {
 
 void banner() {
   const auto& i = sys::info();
-  X4_LOGI("boot", "banner", "app=core mode=%s fw=%s git=%s built=\"%s\" proto=%d", g_mode == Mode::Full ? "full" : "hello",
+  X4_LOGI("boot", "banner", "app=core name=" X4_PROJECT_NAME " mode=%s fw=%s git=%s built=\"%s\" proto=%d", g_mode == Mode::Full ? "full" : "hello",
           X4_FW_VERSION, X4_GIT_HASH, X4_BUILD_TIME, X4_PROTOCOL_VERSION);
   X4_LOGI("boot", "chip", "model=esp32s3 rev=%lu cpu_mhz=%lu flash_mb=%lu psram_mb=%lu mac=%02x:%02x:%02x:%02x:%02x:%02x board=%d",
           (unsigned long)i.chipRev, (unsigned long)i.cpuMhz, (unsigned long)(i.flashBytes >> 20),

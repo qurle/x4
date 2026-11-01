@@ -1,4 +1,4 @@
-# x4 — Four Eyes
+# x4cam
 
 my first hardware project i guess
 

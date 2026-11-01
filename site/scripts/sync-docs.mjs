@@ -45,7 +45,7 @@ for (const [file, slug] of Object.entries(DOCS)) {
     const readme = fs.readFileSync(path.join(repo, 'README.md'), 'utf8')
       .replace(/^# .*\n/, '')
       .replace(/!\[\]\(\/\.github\/assets\/cover\.png\)\n?/, '')
-    md = `# x4 — Four Eyes\n${readme}\n${md.replace(/^# .*\n/, '## Manual\n')}`
+    md = `# x4cam\n${readme}\n${md.replace(/^# .*\n/, '## Manual\n')}`
     title = 'start here'
   }
 

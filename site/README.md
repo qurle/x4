@@ -1,4 +1,4 @@
-# x4 manual (site/)
+# x4cam manual (site/)
 
 The docs in `../docs/*.md` rendered as a small static site, built on
 [notes.](https://github.com/qurle/notes) (Astro, MIT). Keyboard browsing, fuzzy search,

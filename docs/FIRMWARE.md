@@ -100,8 +100,8 @@ stateDiagram-v2
 | state | shutter | UI |
 |---|---|---|
 | Booting | refused | splash, then "starting" |
-| Idle | refused ("not ready") | "waiting for eyes · n of 4" over the dark viewfinder |
-| Armed | **accepted** | "n of 4 eyes ready" (no preview frame yet) |
+| Idle | refused ("not ready") | "waiting for cameras · n of 4" over the dark viewfinder |
+| Armed | **accepted** | "n of 4 cameras ready" (no preview frame yet) |
 | Preview | **accepted** (preview pauses) | live photo full-bleed + footer (full mode) |
 | Shooting | refused ("busy") | white-out, then the holographic "Saving..." overlay |
 | Transferring | refused ("busy") — the next shot waits until buffers are free | "Saving..." with "k of n" |
