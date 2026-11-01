@@ -47,6 +47,10 @@ struct Status {
   // flash
   bool flashEnabled, flashArmed, flashReady;
   uint32_t flashReadyInMs, flashPulses;
+  uint8_t flashChargePct;  // 0..100 through the cooldown, 100 = ready (footer animates it)
+  // video (not implemented yet: always false; the footer already shows the state)
+  bool recording;
+  uint32_t recordMs;
   // power / system
   bool powerSafe, busOutEn, usbOtgEn;
   int32_t vbusMv;
@@ -67,13 +71,7 @@ struct Status {
   bool previewOn;
   int apStations;
   bool buttonDown;
-  // battery estimate (energy counting; the SE cannot read the bank)
-  int batteryPct;        // 0..100
-  float batteryHours;    // at the current estimated draw
-  uint32_t powerMw;      // current estimated draw
-  float batteryUsedMwh;
   // settings tiles (config mirror for the UI)
-  uint8_t uiMode;      // 0 minimal, 1 full
   uint8_t uiOrient;    // 0 horizontal, 1 portrait
   uint8_t uiEffect;    // 0 normal, 1 dithered
   uint16_t camDelayMs;

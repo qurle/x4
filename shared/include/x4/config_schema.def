@@ -59,13 +59,6 @@ X4_CFG(cam_hold_ms,     20000, 2000,  120000,ms,    CAM,  0,        "How long a 
 X4_CFG(cam_vflip,       0,     0,     1,     bool,  CAM,  0,        "Flip vertically.")
 X4_CFG(cam_hmirror,     0,     0,     1,     bool,  CAM,  0,        "Mirror horizontally.")
 
-// ---- battery estimate (energy counting, the SE cannot read the bank) ---------------------------
-X4_CFG(bat_cap_mwh,     18500, 1000,  100000,mWh,   CORE, 0,        "Power bank energy: mAh x 3.7 V (Anker Nano 5000 = 18500).")
-X4_CFG(bat_eff_pct,     80,    50,    100,   %,     CORE, 0,        "Share of the bank energy that reaches the rail (boost conversion losses).")
-X4_CFG(pw_core_mw,      900,   100,   5000,  mW,    CORE, 0,        "Estimated Core draw (screen on, AP up). Replace with the measured value.")
-X4_CFG(pw_cam_idle_mw,  750,   100,   5000,  mW,    CORE, 0,        "Estimated camera draw when online and idle.")
-X4_CFG(pw_cam_strm_mw,  1000,  100,   5000,  mW,    CORE, 0,        "Estimated camera draw while streaming the preview.")
-X4_CFG(pw_cam_busy_mw,  1500,  100,   5000,  mW,    CORE, 0,        "Estimated camera draw while capturing / uploading.")
 
 // ---- preview ---------------------------------------------------------------------------------
 X4_CFG(prev_cam,        1,     1,     4,     count, CORE, 0,        "Preferred preview camera; if it is offline the first online camera is used.")
@@ -86,7 +79,6 @@ X4_CFG(btn_double_ms,   0,     0,     600,   ms,    CORE, 0,        "Double-clic
 X4_CFG(ui_brightness,   160,   10,    255,   level, CORE, 0,        "Backlight brightness.")
 X4_CFG(ui_sound,        1,     0,     1,     bool,  CORE, 0,        "Shutter sound through the Core speaker.")
 X4_CFG(ui_volume,       96,    0,     255,   level, CORE, 0,        "Speaker volume.")
-X4_CFG(ui_mode,         1,     0,     1,     enum,  CORE, 0,        "Settings tile 'ui': 0 = minml (photo only + flash recharge indicator), 1 = full (footer with cameras online and SD free).")
 X4_CFG(ui_orient,       0,     0,     1,     enum,  CORE, 0,        "Settings tile 'orientation': 0 = horzntl, 1 = portrait (preview dims the sides to a 180 px crop; recorded in shot.json for the companion to crop).")
 X4_CFG(ui_effect,       0,     0,     1,     enum,  CORE, 0,        "Settings tile 'effect': 0 = normal, 1 = dithered (applied to the live preview; photos stay original, the choice is recorded in shot.json).")
 X4_CFG(ui_show_fps,     0,     0,     1,     bool,  CORE, 0,        "FPS overlay in the corner.")

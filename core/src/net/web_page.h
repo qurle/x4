@@ -37,7 +37,7 @@ input{font:inherit;background:#000;color:var(--fg);border:1px solid var(--ln);bo
 <div class="row" style="margin-top:12px"><button class="pri" onclick="act('shutter')">Shoot</button>
 <button onclick="act('flash_arm')">Arm flash</button><button onclick="act('flash_disarm')">Disarm</button>
 <button onclick="act('preview_on')">Preview on</button><button onclick="act('preview_off')">off</button>
-<button onclick="if(confirm('Power bank fully charged? Resets the battery estimate to 100%.'))act('bat_full')">Bank charged</button></div>
+</div>
 <table style="margin-top:12px" id="sys"></table></section>
 <section><h2>Cameras</h2><table id="cams"></table><p class="mu" id="lastshot"></p></section>
 <section><h2>Log</h2><div class="row" style="margin-bottom:8px">
@@ -62,7 +62,7 @@ const f=[];if(s.faults&1)f.push('no cameras');if(s.faults&2)f.push('SD missing')
 $('faults').innerHTML=f.length?'<span class=err>'+f.join(' · ')+'</span>':'ready';
 const p=s.power,y=s.system,d=s.sd,u=s.ui,fl=s.flash;
 $('sys').innerHTML=[['5V out (BUS_OUT_EN)',p.bus_out_en?'<b class=err>ON (unsafe)</b>':'<span class=ok>off</span>'],
-['USB OTG',p.usb_otg_en?'<b class=err>ON</b>':'<span class=ok>off</span>'],['rail (VBUS)',p.vbus_mv+' mV'],['battery (estimate)',`~${p.battery_pct_est}% · ${p.battery_hours_est.toFixed(1)} h left at ${p.power_mw_est} mW · ${p.battery_used_mwh.toFixed(0)} mWh used`],
+['USB OTG',p.usb_otg_en?'<b class=err>ON</b>':'<span class=ok>off</span>'],['rail (VBUS)',p.vbus_mv+' mV'],
 ['chip temp',`<span class=${y.overheat?'err':y.hot?'warn':''}>${y.temp_c.toFixed(1)} °C</span>`],['heap / min / psram',`${kb(y.heap)} / ${kb(y.heap_min)} / ${kb(y.psram)}`],
 ['reset · boots · brown-outs',`${y.reset} · ${y.boots} · ${y.brownouts}`],['SD',d.mounted?`${d.free_mb} / ${d.total_mb} MB free · w ${d.write_kBps.toFixed(0)} kB/s r ${d.read_kBps.toFixed(0)} kB/s`:'<span class=err>not mounted</span>'],
 ['UI',`${u.fps.toFixed(1)} fps · worst frame ${(u.frame_max_us/1000).toFixed(1)} ms · preview ${u.preview_on?u.preview_fps.toFixed(1)+' fps':'off'}`],

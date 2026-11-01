@@ -21,7 +21,6 @@ enum class Request : uint8_t {
   PreviewOn,
   PreviewOff,
   Reboot,
-  BatteryFull,    // the power bank was charged: reset the energy estimate to 100 %
 };
 void request(Request r);
 
