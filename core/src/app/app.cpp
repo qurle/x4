@@ -20,7 +20,6 @@
 #include "../ui/ui.h"
 #include "config_store.h"
 #include "status.h"
-#include "x4/energy.h"
 #include "x4/log.h"
 #include "x4/shoot.h"
 #include "x4/storage_layout.h"
@@ -70,8 +69,6 @@ esp_timer_handle_t g_flashTimer = nullptr;
 uint8_t* g_previewBuf = nullptr;
 uint32_t g_previewSeq = 0;
 uint32_t g_sdFreeMb = 0, g_sdTotalMb = 0;
-x4::energy::Meter g_bat;
-uint32_t g_lastEnergy = 0, g_lastBatSave = 0, g_flashSeen = 0, g_powerMw = 0;
 
 sh::Params paramsFrom(const x4::cfg::Config& c) {
   sh::Params p;
@@ -87,57 +84,6 @@ sh::Params paramsFrom(const x4::cfg::Config& c) {
 
 void onCfgChange(const x4::cfg::OptionInfo&, int32_t) { g_cfgDirty = true; }
 
-x4::energy::PowerModel powerModel() {
-  const auto& c = conf::get();
-  x4::energy::PowerModel m;
-  m.coreMw = (uint32_t)c.pw_core_mw;
-  m.camIdleMw = (uint32_t)c.pw_cam_idle_mw;
-  m.camStreamMw = (uint32_t)c.pw_cam_strm_mw;
-  m.camBusyMw = (uint32_t)c.pw_cam_busy_mw;
-  return m;
-}
-
-// Integrates the estimated draw every 250 ms; persists every 60 s (NVS wear: ~1 write/min).
-void energyTick(uint32_t now) {
-  if (g_lastEnergy == 0) {
-    g_lastEnergy = now;
-    g_lastBatSave = now;
-    return;
-  }
-  uint32_t dt = now - g_lastEnergy;
-  if (dt < 250) return;
-  g_lastEnergy = now;
-  x4::energy::Load l;
-  auto snap = cams::snapshot();
-  for (const auto& cm : snap.cam) {
-    if (!cm.online) continue;
-    auto st = (x4::proto::CamState)cm.hb.state;
-    if (st == x4::proto::CamState::Streaming) l.camsStream++;
-    else if (st == x4::proto::CamState::Capturing || st == x4::proto::CamState::Holding ||
-             st == x4::proto::CamState::Armed)
-      l.camsBusy++;
-    else l.camsIdle++;
-  }
-  if (g_previewOn && l.camsIdle > 0 && l.camsStream == 0) {  // preview polling counts as streaming
-    l.camsIdle--;
-    l.camsStream++;
-  }
-  auto m = powerModel();
-  g_powerMw = x4::energy::estimateMw(m, l);
-  g_bat.add(dt, g_powerMw);
-  uint32_t pulses = flash::pulseCount();
-  if (pulses != g_flashSeen) {
-    g_bat.addEnergy(x4::energy::flashPulseMwh(m, (uint32_t)conf::get().flash_pulse_ms) * (float)(pulses - g_flashSeen));
-    g_flashSeen = pulses;
-  }
-  if (now - g_lastBatSave >= 60000) {
-    g_lastBatSave = now;
-    sys::saveBatteryUsedMwh(g_bat.usedMwh());
-    X4_LOGD("bat", "estimate", "pct=%d used_mwh=%.0f power_mw=%lu hours_left=%.1f", g_bat.percent(), g_bat.usedMwh(),
-            (unsigned long)g_powerMw, g_bat.hoursLeft(g_powerMw));
-  }
-}
-
 void applyLiveConfig() {
   const auto& c = conf::get();
   g_ctl.setParams(paramsFrom(c));
@@ -145,7 +91,6 @@ void applyLiveConfig() {
   inputs::applyConfig(c);
   display::setBrightness((uint8_t)c.ui_brightness);
   M5.Speaker.setVolume((uint8_t)c.ui_volume);
-  g_bat.setCapacity((uint32_t)c.bat_cap_mwh, (uint8_t)c.bat_eff_pct);
   if (g_mode == Mode::Full) net::applyTransferConfig(c);
   X4_LOGI("cfg", "applied", "live=1");
 }
@@ -282,7 +227,6 @@ void handleEffects(uint32_t eff) {
       X4_LOG_ERR(Warn, "shoot", "slow", x4::Err::NET_TRANSFER_SLOW, "shot=%lu total_ms=%lu", (unsigned long)s.id,
                  (unsigned long)s.totalMs());
     x4ui::shotStored(partial, s.totalMs(), over);
-    sys::saveBatteryUsedMwh(g_bat.usedMwh());
     g_lastSd = 0;  // re-check free space now
   }
   if (eff & sh::kResumePreview) startPreview();
@@ -323,12 +267,6 @@ void processRequests() {
         conf::set("prev_enabled", 0, nullptr);
         handleEffects(g_ctl.setPreviewWanted(false, millis()));
         net::setPreview(false, 0, 0);
-        break;
-      case Request::BatteryFull:
-        g_bat.reset();
-        sys::saveBatteryUsedMwh(0);
-        X4_LOGI("bat", "reset", "pct=100 by=request");
-        x4ui::toast("battery set to 100%", 0xFFFFFF);
         break;
       case Request::Reboot:
         X4_LOGW("app", "reboot", "by=request");
@@ -443,6 +381,13 @@ void publishStatus(uint32_t now) {
   st.flashReady = flash::ready();
   st.flashReadyInMs = flash::readyInMs();
   st.flashPulses = flash::pulseCount();
+  {
+    uint32_t cool = (uint32_t)conf::get().flash_cool_ms;
+    uint32_t left = st.flashReadyInMs > cool ? cool : st.flashReadyInMs;
+    st.flashChargePct = (st.flashReady || cool == 0) ? 100 : (uint8_t)(100 - left * 100 / cool);
+  }
+  st.recording = false;
+  st.recordMs = 0;
   const auto& p = power::last();
   st.powerSafe = power::safe();
   st.busOutEn = p.busOutEn;
@@ -469,12 +414,7 @@ void publishStatus(uint32_t now) {
   st.previewOn = g_previewOn;
   st.apStations = g_mode == Mode::Full ? net::apStations() : 0;
   st.buttonDown = inputs::shutterPressed();
-  st.batteryPct = g_bat.percent();
-  st.batteryHours = g_bat.hoursLeft(g_powerMw);
-  st.powerMw = g_powerMw;
-  st.batteryUsedMwh = g_bat.usedMwh();
   const auto& cf = conf::get();
-  st.uiMode = (uint8_t)cf.ui_mode;
   st.uiOrient = (uint8_t)cf.ui_orient;
   st.uiEffect = (uint8_t)cf.ui_effect;
   st.camDelayMs = (uint16_t)cf.cam_delay_ms;
@@ -554,10 +494,6 @@ void setup(Mode m) {
     net::beginOta();
     g_previewBuf = (uint8_t*)heap_caps_malloc(128 * 1024, MALLOC_CAP_SPIRAM);
   }
-  g_bat.setCapacity((uint32_t)c.bat_cap_mwh, (uint8_t)c.bat_eff_pct);
-  g_bat.setUsed(sys::batteryUsedMwh());
-  X4_LOGI("bat", "restore", "pct=%d used_mwh=%.0f usable_mwh=%.0f note=estimate", g_bat.percent(), g_bat.usedMwh(),
-          g_bat.usableMwh());
   g_ctl.setParams(paramsFrom(c));
   handleEffects(g_ctl.setPreviewWanted(c.prev_enabled != 0, millis()));
   handleEffects(g_ctl.bootDone(millis()));
@@ -604,7 +540,6 @@ void loop() {
     applyLiveConfig();
   }
   thermal(now);
-  energyTick(now);
   sdCheck(now);
   power::poll(now);
   flash::poll();

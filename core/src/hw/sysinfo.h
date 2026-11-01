@@ -30,9 +30,6 @@ uint32_t minFreeHeap();
 // Persistent shot counter (NVS). next() increments and stores.
 uint32_t nextShotId();
 uint32_t lastShotId();
-// Battery estimate persistence (mWh used since the bank was last marked charged).
-float batteryUsedMwh();
-void saveBatteryUsedMwh(float mWh);
 
 }  // namespace sys
 }  // namespace x4core

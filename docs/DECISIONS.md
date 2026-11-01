@@ -97,11 +97,14 @@ Mermaid renders client-side, lazily. **Rejected:** moving the docs into `site/sr
 preview, footer, tap menu, 2×2 settings tiles, Saving/Error overlays. Figma raster overlays are
 exported through the MCP (asset host blocked in the build sandbox, so via rendered screenshots)
 and baked into RGB565+A8 images by `tools/gen_assets.py`. New config options back the tiles
-(`ui_mode`, `ui_orient`, `ui_effect`, `cam_delay_ms`); the camera delay needed a protocol field
+(`ui_orient`, `ui_effect`, `cam_delay_ms`; a `ui_mode` minimal/full switch existed until 2026-11-01 and was dropped with the footer redesign); the camera delay needed a protocol field
 (`dl=`, backwards compatible). Deviations are listed in UI.md "Compromises".
 
 ## ADR-014 No battery gauge
-The SE has no battery and the bank's level is not readable; the UI shows none.
+The SE has no battery and the bank's level is not readable; the UI shows none. An energy-counting
+estimate (`~NN%` from a power model × uptime, reset by hand after charging) was built and then
+removed on 2026-11-01: it could not know when the bank was charged, so it needed manual resets
+and still drifted. The bank's own indicator is the truth.
 
 ## ADR-015 Live preview by polling QVGA JPEGs
 **Decision.** The Core polls `/capture?res=0` from one camera and decodes in software.

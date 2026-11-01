@@ -70,11 +70,11 @@ Baseline from earlier work kept: `/capture` and `/settings` on :80, MJPEG `/stre
 |---|---|
 | `GET /` | web debug page |
 | `POST /register` | camera registration. Body: `{"id":2,"proto":1,"fw":"0.1.0","git":"abc","mac":"…","ip":"…","sensor_pid":926,"sensor":"MEGA_CCM","hw_rev":1,"heap":…,"psram":…,"chip_rev":…}` → `{"ok":true,"core_fw":"0.1.0","proto":1,"config":{<camera-scope options>}}`. 400 bad JSON/id, 409 protocol mismatch |
-| `GET /api/status` | JSON snapshot: state, faults bitmask (1 no cams, 2 SD missing, 4 SD full, 8 overheat), shots_taken, last_shot {id,total_ms,captured_ms,skew_us,stored,expected}, cams[] {id, online, ip, fw, sensor, temp_c, rssi, state, hb_age_ms, shot_ok/stored/failed, bytes, xfer_bytes/total, cap_offset_us, cap_ms}, flash {…}, power {safe, bus_out_en, usb_otg_en, vbus_mv, battery}, system {…}, sd {…}, ui {fps, frame_max_us, preview_on, preview_fps, button_down} |
+| `GET /api/status` | JSON snapshot: state, faults bitmask (1 no cams, 2 SD missing, 4 SD full, 8 overheat), shots_taken, last_shot {id,total_ms,captured_ms,skew_us,stored,expected}, cams[] {id, online, ip, fw, sensor, temp_c, rssi, state, hb_age_ms, shot_ok/stored/failed, bytes, xfer_bytes/total, cap_offset_us, cap_ms}, flash {enabled, armed, ready, ready_in_ms, pulses, charge_pct}, power {safe, bus_out_en, usb_otg_en, vbus_mv}, system {…}, sd {…}, ui {fps, frame_max_us, preview_on, preview_fps, button_down} |
 | `GET /logs?since=<seq>` | log lines newer than `seq`; header `X-Log-Seq` = newest seq |
 | `GET /config` | options with value, default, min, max, unit, safety, reboot, doc |
 | `POST /config?key=value[&…]` | set options (tighten-only rules); JSON per key: ok, value, clamped |
-| `POST /api/action?a=…` | `shutter`, `flash_arm`, `flash_disarm`, `flash_test` (50 ms), `sd_bench`, `preview_on`, `preview_off`, `bat_full` (bank charged → estimate 100 %), `reboot` |
+| `POST /api/action?a=…` | `shutter`, `flash_arm`, `flash_disarm`, `flash_test` (50 ms), `sd_bench`, `preview_on`, `preview_off`, `reboot` |
 | `GET /api/shots` | newest 24 shots with their files and sizes |
 | `GET /file?path=/x4/…` | stream a file from the SD (only below `/x4/`) |
 

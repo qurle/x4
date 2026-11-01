@@ -1,6 +1,6 @@
 // x4 UI v2 — implemented from the Figma file fgEvP6Ms0bOAbWxfkFki4R, section 73:368 "states".
 // Frame → LVGL mapping (details and compromises: docs/UI.md):
-//   preview: full / minimal / dithered / portrait   → Main screen (live photo full-bleed)
+//   preview: photo / dithered / portrait            → Main screen (live photo full-bleed)
 //   on tap: buttons                                 → tap menu (video · settings · media)
 //   settings (2×2 tiles)                            → Settings screen
 //   state: saving (n of 4)                          → saving overlay (holographic image)
@@ -193,9 +193,13 @@ struct {
   lv_obj_t* dimL = nullptr;
   lv_obj_t* dimR = nullptr;
   lv_obj_t* footer = nullptr;
-  lv_obj_t* footL = nullptr;
-  lv_obj_t* footR = nullptr;
-  lv_obj_t* flashInd = nullptr;
+  lv_obj_t* recDot = nullptr;   // footer left: white dot idle, red + glow while recording
+  lv_obj_t* recTime = nullptr;  // "-:--" idle, "m:ss" while recording
+  lv_obj_t* flashInd = nullptr; // footer centre: bolt + charge %, while the flash is armed and charging
+  lv_obj_t* flashBolt = nullptr;
+  lv_obj_t* flashPct = nullptr;
+  lv_obj_t* footR = nullptr;    // footer right: SD free
+  int lastRec = -1;
   lv_obj_t* menu = nullptr;
   uint32_t menuUntil = 0;
   lv_obj_t* saving = nullptr;
@@ -208,9 +212,9 @@ struct {
   uint8_t effect = 0;
   // settings
   lv_obj_t* settings = nullptr;
-  Tile tOrient{}, tDelay{}, tEffect{}, tUi{};
+  Tile tOrient{}, tDelay{}, tEffect{}, tFlash{};
   int32_t shownDelay = -1;
-  int lastOrient = -1, lastEffect = -1, lastUi = -1;
+  int lastOrient = -1, lastEffect = -1, lastFlash = -1;
   // diagnostics
   lv_obj_t* diag = nullptr;
   lv_obj_t* diagSys = nullptr;
@@ -234,8 +238,6 @@ void buildSplash() {
 }
 
 // ---------------------------------------------------------------- main (viewfinder)
-void onBatteryLongPress(lv_event_t*);  // defined with the confirm overlay below
-
 void hideMenu() { fadeTo(g.menu, false, kMsFast); }
 
 void onViewfinderTap(lv_event_t*) {
@@ -285,7 +287,10 @@ void buildMain() {
   lv_obj_set_pos(g.dimL, 0, 0);
   lv_obj_set_pos(g.dimR, kScreenW - side, 0);
 
-  // Footer (Figma "Footer", 320×47): corner glows + Space Mono Bold 13 values.
+  // Footer (Figma "Footer", 320×47): corner glows + Space Mono Bold 13.
+  //   left: record state · centre: flash charge · right: SD free
+  // Exact positions/sizes of the record dot and the charge group: TODO from the Figma components
+  // (MCP rate limit hit on 2026-11-01); current values follow the old footer grid.
   g.footer = plain(g.main);
   lv_obj_set_size(g.footer, kScreenW, kFooterH);
   lv_obj_align(g.footer, LV_ALIGN_BOTTOM_LEFT, 0, 0);
@@ -293,21 +298,32 @@ void buildMain() {
   lv_obj_align(gl, LV_ALIGN_BOTTOM_LEFT, 0, 0);
   lv_obj_t* gr = image(g.footer, &x4_img_glow_corner_right);
   lv_obj_align(gr, LV_ALIGN_BOTTOM_RIGHT, 0, 0);
-  g.footL = label(g.footer, fontFooter(), kOnPhoto, "");
-  lv_obj_align(g.footL, LV_ALIGN_BOTTOM_LEFT, kFooterPadX, -kFooterPadB);
-  // Long-press the battery estimate to mark the bank as charged (not in Figma; no other place to
-  // do it without a phone).
-  lv_obj_t* batHit = plain(g.footer);
-  lv_obj_set_size(batHit, 80, kFooterH);
-  lv_obj_align(batHit, LV_ALIGN_BOTTOM_LEFT, 0, 0);
-  lv_obj_add_flag(batHit, LV_OBJ_FLAG_CLICKABLE);
-  lv_obj_add_event_cb(batHit, onBatteryLongPress, LV_EVENT_LONG_PRESSED, nullptr);
+
+  g.recDot = plain(g.footer);
+  lv_obj_set_size(g.recDot, kRecDot, kRecDot);
+  lv_obj_set_style_radius(g.recDot, LV_RADIUS_CIRCLE, 0);
+  lv_obj_set_style_bg_color(g.recDot, c(kOnPhoto), 0);
+  lv_obj_set_style_bg_opa(g.recDot, LV_OPA_COVER, 0);
+  lv_obj_set_style_shadow_color(g.recDot, c(kRec), 0);
+  lv_obj_set_style_shadow_width(g.recDot, 0, 0);
+  lv_obj_set_style_shadow_spread(g.recDot, 1, 0);
+  lv_obj_set_style_shadow_opa(g.recDot, LV_OPA_80, 0);
+  lv_obj_align(g.recDot, LV_ALIGN_BOTTOM_LEFT, kFooterPadX, -kFooterPadB - (kFooterText - kRecDot) / 2);
+  g.recTime = label(g.footer, fontFooter(), kOnPhoto, "-:--");
+  lv_obj_align(g.recTime, LV_ALIGN_BOTTOM_LEFT, kFooterPadX + kRecDot + kSpaceXS + 2, -kFooterPadB);
+
   g.footR = label(g.footer, fontFooter(), kOnPhoto, "");
   lv_obj_align(g.footR, LV_ALIGN_BOTTOM_RIGHT, -kFooterPadX, -kFooterPadB);
 
-  // Flash recharge indicator (Figma component 81:184, 82×32, bottom centre).
-  g.flashInd = image(g.main, &x4_img_flash_recharge);
+  // Flash charge (Figma component 81:184 bolt, 82×32, bottom centre) + percent. The bolt fades in
+  // with the charge so it reads as filling up; the number moves in 1 % steps (smoother than seconds).
+  g.flashInd = plain(g.footer);
+  lv_obj_set_size(g.flashInd, 82, 32);
   lv_obj_align(g.flashInd, LV_ALIGN_BOTTOM_MID, 0, 0);
+  g.flashBolt = image(g.flashInd, &x4_img_flash_recharge);
+  lv_obj_align(g.flashBolt, LV_ALIGN_LEFT_MID, -8, 0);
+  g.flashPct = label(g.flashInd, fontFooter(), kOnPhoto, "");
+  lv_obj_align(g.flashPct, LV_ALIGN_BOTTOM_RIGHT, -4, -kFooterPadB);
   lv_obj_add_flag(g.flashInd, LV_OBJ_FLAG_HIDDEN);
 
   // Tap menu (Figma "on tap: buttons"): 80 px black 80 %→0 gradient, three serif-32 labels.
@@ -424,17 +440,37 @@ void updateMain(const Status& s, uint32_t now) {
   setHidden(g.dimL, s.uiOrient != 1);
   setHidden(g.dimR, s.uiOrient != 1);
   g.effect = s.uiEffect;
-  setHidden(g.footer, s.uiMode != 1 || saving || err);
-  if (s.uiMode == 1) {
-    // Left slot: battery % ESTIMATED by energy counting (x4/energy.h); "~" marks it as an estimate.
-    snprintf(buf, sizeof(buf), "~%d%%", s.batteryPct);
-    setText(g.footL, buf);
-    if (!s.sdMounted) snprintf(buf, sizeof(buf), "NO SD");
-    else if (s.sdFreeMb >= 10240) snprintf(buf, sizeof(buf), "%.1f GB", s.sdFreeMb / 1024.0f);
-    else snprintf(buf, sizeof(buf), "%lu MB", (unsigned long)s.sdFreeMb);
-    setText(g.footR, buf);
+  setHidden(g.footer, saving || err);
+
+  // Left: record state. Idle = white dot + "-:--"; recording = red dot with a glow + timer.
+  int rec = s.recording ? 1 : 0;
+  if (rec != g.lastRec) {
+    g.lastRec = rec;
+    lv_obj_set_style_bg_color(g.recDot, c(rec ? kRec : kOnPhoto), 0);
+    lv_obj_set_style_shadow_width(g.recDot, rec ? kRecGlow : 0, 0);
   }
-  setHidden(g.flashInd, !(s.flashArmed && !s.flashReady) || saving || err);
+  if (rec) {
+    uint32_t sec = s.recordMs / 1000;
+    snprintf(buf, sizeof(buf), "%lu:%02lu", (unsigned long)(sec / 60), (unsigned long)(sec % 60));
+    setText(g.recTime, buf);
+  } else {
+    setText(g.recTime, "-:--");
+  }
+
+  // Centre: flash charge, only while armed and not yet ready.
+  bool charging = s.flashArmed && !s.flashReady;
+  setHidden(g.flashInd, !charging);
+  if (charging) {
+    snprintf(buf, sizeof(buf), "%u%%", (unsigned)s.flashChargePct);
+    setText(g.flashPct, buf);
+    lv_obj_set_style_image_opa(g.flashBolt, (lv_opa_t)(LV_OPA_30 + (LV_OPA_COVER - LV_OPA_30) * s.flashChargePct / 100), 0);
+  }
+
+  // Right: SD free.
+  if (!s.sdMounted) snprintf(buf, sizeof(buf), "NO SD");
+  else if (s.sdFreeMb >= 10240) snprintf(buf, sizeof(buf), "%.1f GB", s.sdFreeMb / 1024.0f);
+  else snprintf(buf, sizeof(buf), "%lu MB", (unsigned long)s.sdFreeMb);
+  setText(g.footR, buf);
 
   if (!lv_obj_has_flag(g.menu, LV_OBJ_FLAG_HIDDEN) && (int32_t)(now - g.menuUntil) >= 0) hideMenu();
 }
@@ -490,7 +526,9 @@ int32_t thumbX(int idx) {
 
 void onOrient(lv_event_t*) { app::setOption("ui_orient", x4core::status::get().uiOrient ? 0 : 1); }
 void onEffect(lv_event_t*) { app::setOption("ui_effect", x4core::status::get().uiEffect ? 0 : 1); }
-void onUi(lv_event_t*) { app::setOption("ui_mode", x4core::status::get().uiMode ? 0 : 1); }
+void onFlash(lv_event_t*) {
+  app::request(x4core::status::get().flashArmed ? app::Request::FlashDisarm : app::Request::FlashArm);
+}
 void onDelayDrag(lv_event_t* e) {
   lv_point_t p;
   lv_indev_get_point(lv_indev_active(), &p);
@@ -535,12 +573,14 @@ void buildSettings() {
   g.tEffect.label = label(g.tEffect.box, fontTileSmall(), kInk, "normal");
   lv_obj_align(g.tEffect.label, LV_ALIGN_BOTTOM_LEFT, 4, -2);
 
-  // ui: minml / full
-  g.tUi = makeTile(g.settings, x1, y1);
-  g.tUi.label = label(g.tUi.box, fontTileSmall(), kInk, "full");
-  lv_obj_align(g.tUi.label, LV_ALIGN_CENTER, 0, 0);
+  // flashlight: flash / no flash (Figma 83:2219). Visual states TODO from the components 83:2133 /
+  // 83:2220 (MCP rate limit); label only for now. Runtime arm, like the button gesture: the rig
+  // always boots with the flash off.
+  g.tFlash = makeTile(g.settings, x1, y1);
+  g.tFlash.label = label(g.tFlash.box, fontTileSmall(), kInk, "no flash");
+  lv_obj_align(g.tFlash.label, LV_ALIGN_CENTER, 0, 0);
 
-  Tile* tiles[] = {&g.tOrient, &g.tDelay, &g.tEffect, &g.tUi};
+  Tile* tiles[] = {&g.tOrient, &g.tDelay, &g.tEffect, &g.tFlash};
   for (Tile* t : tiles) {
     lv_obj_add_event_cb(t->box, tilePressed, LV_EVENT_PRESSED, t);
     lv_obj_add_event_cb(t->box, tileReleased, LV_EVENT_RELEASED, t);
@@ -548,7 +588,7 @@ void buildSettings() {
   }
   lv_obj_add_event_cb(g.tOrient.box, onOrient, LV_EVENT_CLICKED, nullptr);
   lv_obj_add_event_cb(g.tEffect.box, onEffect, LV_EVENT_CLICKED, nullptr);
-  lv_obj_add_event_cb(g.tUi.box, onUi, LV_EVENT_CLICKED, nullptr);
+  lv_obj_add_event_cb(g.tFlash.box, onFlash, LV_EVENT_CLICKED, nullptr);
 }
 
 void updateSettings(const Status& s) {
@@ -590,9 +630,9 @@ void updateSettings(const Status& s) {
     setText(g.tEffect.label, s.uiEffect ? "dithered" : "normal");
     setHidden(g.tEffect.a, !s.uiEffect);
   }
-  if (s.uiMode != g.lastUi) {
-    g.lastUi = s.uiMode;
-    setText(g.tUi.label, s.uiMode ? "full" : "minml");
+  if ((int)s.flashArmed != g.lastFlash) {
+    g.lastFlash = s.flashArmed;
+    setText(g.tFlash.label, s.flashArmed ? "flash" : "no flash");
   }
 }
 
@@ -614,7 +654,7 @@ void onConfirmYes(lv_event_t* e) {
 }
 void onConfirmNo(lv_event_t*) { closeConfirm(); }
 
-// On-screen confirmation (flash test: requirement "on-screen confirm"; battery reset).
+// On-screen confirmation (flash test: requirement "on-screen confirm").
 void showConfirm(const char* title, const char* detail, const char* yes, app::Request r) {
   closeConfirm();
   g.confirm = lv_obj_create(lv_layer_top());
@@ -637,11 +677,6 @@ void showConfirm(const char* title, const char* detail, const char* yes, app::Re
 void onFlashTest(lv_event_t*) {
   showConfirm("Fire one 50 ms flash?", "Flashlight Unit on G2 (Port A yellow).\nDon't look into it.", "Fire",
               app::Request::FlashTest);
-}
-
-void onBatteryLongPress(lv_event_t*) {
-  showConfirm("Bank charged?", "Sets the battery estimate to 100 %.\nIt counts down from there.", "Yes",
-              app::Request::BatteryFull);
 }
 
 void onTouchTest(lv_event_t*) {
@@ -703,8 +738,7 @@ void updateDiag(const Status& s, uint32_t now) {
            "temp %.1f°C%s · heap %luk (min %luk) · psram %luk\n"
            "reset %s · boots %lu · brown-outs %lu\n"
            "SD %s %lu/%lu MB · w %.0f r %.0f kB/s\n"
-           "button %s · flash %s%s · pulses %lu\n"
-           "battery ~%d%% · %.1f h left at %lu mW (estimate)",
+           "button %s · flash %s%s · pulses %lu",
            X4_FW_VERSION, X4_GIT_HASH, (unsigned long)(s.uptimeMs / 1000), s.fps, s.frameMaxUs / 1000.0f,
            s.busOutEn ? "ON!" : "off", s.usbOtgEn ? "ON!" : "off", (long)s.vbusMv, s.powerSafe ? "safe" : "UNSAFE",
            s.tempC, s.overheat ? " HOT" : s.hot ? " warm" : "", (unsigned long)(s.heap / 1024),
@@ -712,8 +746,7 @@ void updateDiag(const Status& s, uint32_t now) {
            (unsigned long)s.bootCount, (unsigned long)s.brownouts, s.sdMounted ? "ok" : "MISSING",
            (unsigned long)s.sdFreeMb, (unsigned long)s.sdTotalMb, s.sdWriteKBps, s.sdReadKBps,
            s.buttonDown ? "DOWN" : "up", s.flashEnabled ? "armed" : "disarmed",
-           s.flashEnabled ? (s.flashReady ? " ready" : " cooling") : "", (unsigned long)s.flashPulses, s.batteryPct,
-           s.batteryHours, (unsigned long)s.powerMw);
+           s.flashEnabled ? (s.flashReady ? " ready" : " cooling") : "", (unsigned long)s.flashPulses);
   setText(g.diagSys, b);
   lv_obj_set_style_text_color(g.diagSys, c(s.powerSafe ? kFg : kError), 0);
   size_t w = 0;
