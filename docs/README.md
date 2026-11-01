@@ -2,7 +2,8 @@
 
 | doc | what's in it |
 |---|---|
-| [BRINGUP.md](BRINGUP.md) | **start here when the boards arrive**: flashing without breaking the power rules, 8-step test ladder |
+| [STEPS.md](STEPS.md) | **start here when the boards arrive**: 13 small steps from "it boots" to the full rig, one tiny firmware each |
+| [BRINGUP.md](BRINGUP.md) | flashing without breaking the power rules; full-firmware tests (flash stress, WiFi, skew, soak) |
 | [WIRING.md](WIRING.md) | diagram, pin table, colours, connectors, spare ports, printable pre-power checklist |
 | [POWER.md](POWER.md) | power architecture, why Port A back-feeding is OK, risks, firmware safety rules |
 | [HARDWARE.md](HARDWARE.md) | BOM, exact variants, pin tables, confirmed vs assumed, fill-in table |
