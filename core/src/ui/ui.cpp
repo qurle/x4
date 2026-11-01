@@ -1,10 +1,12 @@
-// x4 UI v2 — implemented from the Figma file fgEvP6Ms0bOAbWxfkFki4R, section 73:368 "states".
-// Frame → LVGL mapping (details and compromises: docs/UI.md):
-//   preview: photo / dithered / portrait            → Main screen (live photo full-bleed)
-//   on tap: buttons                                 → tap menu (video · settings · media)
-//   settings (2×2 tiles)                            → Settings screen
-//   state: saving (n of 4)                          → saving overlay (holographic image)
-//   state: error                                    → error overlay (red image)
+// x4 UI v3 — implemented from the Figma file fgEvP6Ms0bOAbWxfkFki4R (node JSON in ui/figma/nodes/).
+// Frame / component → LVGL mapping (details and compromises: docs/UI.md):
+//   preview: photo / dithered / portrait  73:368     → Main screen (live photo full-bleed)
+//   Footer States 83:1905                            → footer (record · flash charge · SD free)
+//   on tap: buttons                                  → tap menu (video · settings · media)
+//   settings 73:254 + tile components 83:2147        → Settings screen
+//   saving overlay 83:2228 (progress k of 4)         → saving overlay (image opacity k/n)
+//   error overlay 83:2286 (unknown true/false)       → error overlay ("Error" or the known reason)
+// Positions are Figma's; text labels are placed by baseline (see the layout tokens in ui/tokens.json).
 // Not in the design, kept for bring-up: splash, diagnostics screen, toasts, white-out shutter.
 #include "ui.h"
 
@@ -75,6 +77,29 @@ void animOpa(void* o, int32_t v) { lv_obj_set_style_opa((lv_obj_t*)o, (lv_opa_t)
 void animY(void* o, int32_t v) { lv_obj_set_style_translate_y((lv_obj_t*)o, v, 0); }
 void animX(void* o, int32_t v) { lv_obj_set_x((lv_obj_t*)o, v); }
 void animBgOpa(void* o, int32_t v) { lv_obj_set_style_bg_opa((lv_obj_t*)o, (lv_opa_t)v, 0); }
+void animImgOpa(void* o, int32_t v) { lv_obj_set_style_image_opa((lv_obj_t*)o, (lv_opa_t)v, 0); }
+void animW(void* o, int32_t v) { lv_obj_set_width((lv_obj_t*)o, v < 1 ? 1 : v); }  // spring may undershoot
+
+// Row that hugs its content (Figma auto layout, horizontal, items centred).
+lv_obj_t* hugRow(lv_obj_t* parent, int32_t gap) {
+  lv_obj_t* r = plain(parent);
+  lv_obj_set_size(r, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+  lv_obj_set_flex_flow(r, LV_FLEX_FLOW_ROW);
+  lv_obj_set_flex_align(r, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+  lv_obj_set_style_pad_column(r, gap, 0);
+  lv_obj_remove_flag(r, LV_OBJ_FLAG_CLICKABLE);
+  return r;
+}
+
+// Label in a fixed-width box, so Figma's CENTER / RIGHT text alignment maps 1:1.
+lv_obj_t* boxLabel(lv_obj_t* parent, const lv_font_t* f, uint32_t color, const char* txt, int32_t w,
+                   lv_text_align_t align) {
+  lv_obj_t* l = label(parent, f, color, txt);
+  lv_obj_set_width(l, w);
+  lv_obj_set_style_text_align(l, align, 0);
+  lv_label_set_long_mode(l, LV_LABEL_LONG_CLIP);
+  return l;
+}
 
 void anim(lv_obj_t* o, lv_anim_exec_xcb_t cb, int32_t from, int32_t to, uint32_t ms, lv_anim_path_cb_t path,
           uint32_t delay = 0) {
@@ -175,8 +200,8 @@ void ditherBE565(uint16_t* px, int32_t w, int32_t h) {
 struct Tile {
   lv_obj_t* box;
   lv_obj_t* label;
-  lv_obj_t* a;  // decoration: bar / thumb / dither strip
-  lv_obj_t* b;  // second bar
+  lv_obj_t* a;   // orientation: bar 1 · delay: fill · style: gradient
+  lv_obj_t* b;   // orientation: bar 2 · delay: value label inside the fill · style: dither strip
 };
 
 struct {
@@ -193,19 +218,25 @@ struct {
   lv_obj_t* dimL = nullptr;
   lv_obj_t* dimR = nullptr;
   lv_obj_t* footer = nullptr;
-  lv_obj_t* recDot = nullptr;   // footer left: white dot idle, red + glow while recording
+  lv_obj_t* recGlow = nullptr;  // footer left: red glow while recording
+  lv_obj_t* recDot = nullptr;   // white dot idle, red while recording
   lv_obj_t* recTime = nullptr;  // "-:--" idle, "m:ss" while recording
+  lv_obj_t* glowMid = nullptr;  // footer centre glow, with the flash charge
   lv_obj_t* flashInd = nullptr; // footer centre: bolt + charge %, while the flash is armed and charging
   lv_obj_t* flashBolt = nullptr;
   lv_obj_t* flashPct = nullptr;
-  lv_obj_t* footR = nullptr;    // footer right: SD free
+  lv_obj_t* sdNum = nullptr;    // footer right: SD free, number + unit
+  lv_obj_t* sdUnit = nullptr;
   int lastRec = -1;
   lv_obj_t* menu = nullptr;
   uint32_t menuUntil = 0;
   lv_obj_t* saving = nullptr;
-  lv_obj_t* savingSub = nullptr;
+  lv_obj_t* savingImg = nullptr;
+  lv_obj_t* savingK = nullptr;
+  lv_obj_t* savingOf = nullptr;
+  int savingOpa = -1;
   lv_obj_t* error = nullptr;
-  lv_obj_t* errorSub = nullptr;
+  lv_obj_t* errorTitle = nullptr;
   lv_obj_t* whiteout = nullptr;
   lv_obj_t* toast = nullptr;
   lv_obj_t* toastL = nullptr;
@@ -287,44 +318,49 @@ void buildMain() {
   lv_obj_set_pos(g.dimL, 0, 0);
   lv_obj_set_pos(g.dimR, kScreenW - side, 0);
 
-  // Footer (Figma "Footer", 320×47): corner glows + Space Mono Bold 13.
-  //   left: record state · centre: flash charge · right: SD free
-  // Exact positions/sizes of the record dot and the charge group: TODO from the Figma components
-  // (MCP rate limit hit on 2026-11-01); current values follow the old footer grid.
+  // Footer (Footer States 83:1905, 320×47). Footer coordinates below are Figma's.
+  //   left: record state (Rec Timer 83:866) · centre: flash charge (83:1188) · right: SD free (18:782)
+  // Glows: Overlay Element 18:587, 80 px ellipses centred on the footer's bottom edge, blurred;
+  // they reach 25 px above the footer, so the footer does not clip its children.
   g.footer = plain(g.main);
   lv_obj_set_size(g.footer, kScreenW, kFooterH);
   lv_obj_align(g.footer, LV_ALIGN_BOTTOM_LEFT, 0, 0);
-  lv_obj_t* gl = image(g.footer, &x4_img_glow_corner_left);
-  lv_obj_align(gl, LV_ALIGN_BOTTOM_LEFT, 0, 0);
-  lv_obj_t* gr = image(g.footer, &x4_img_glow_corner_right);
-  lv_obj_align(gr, LV_ALIGN_BOTTOM_RIGHT, 0, 0);
+  lv_obj_add_flag(g.footer, LV_OBJ_FLAG_OVERFLOW_VISIBLE);
+  lv_obj_set_pos(image(g.footer, &x4_img_glow_corner_left), 0, kGlowY);
+  lv_obj_set_pos(image(g.footer, &x4_img_glow_corner_right), kScreenW - x4_img_glow_corner_right.header.w, kGlowY);
+  g.glowMid = image(g.footer, &x4_img_glow_mid);
+  lv_obj_set_pos(g.glowMid, (kScreenW - x4_img_glow_mid.header.w) / 2, kGlowY);
+  lv_obj_add_flag(g.glowMid, LV_OBJ_FLAG_HIDDEN);
 
+  // Left. The record glow (60×23 ellipse, centred on the timer's bottom-left corner) shows only
+  // while recording. Figma shows this block only in the Video footer state; it is always shown
+  // here (owner, 2026-11-01): "-:--" until video exists.
+  g.recGlow = image(g.footer, &x4_img_rec_glow);
+  lv_obj_set_pos(g.recGlow, 0, kRecGlowY);
+  lv_obj_add_flag(g.recGlow, LV_OBJ_FLAG_HIDDEN);
   g.recDot = plain(g.footer);
   lv_obj_set_size(g.recDot, kRecDot, kRecDot);
   lv_obj_set_style_radius(g.recDot, LV_RADIUS_CIRCLE, 0);
   lv_obj_set_style_bg_color(g.recDot, c(kOnPhoto), 0);
   lv_obj_set_style_bg_opa(g.recDot, LV_OPA_COVER, 0);
-  lv_obj_set_style_shadow_color(g.recDot, c(kRec), 0);
-  lv_obj_set_style_shadow_width(g.recDot, 0, 0);
-  lv_obj_set_style_shadow_spread(g.recDot, 1, 0);
-  lv_obj_set_style_shadow_opa(g.recDot, LV_OPA_80, 0);
-  lv_obj_align(g.recDot, LV_ALIGN_BOTTOM_LEFT, kFooterPadX, -kFooterPadB - (kFooterText - kRecDot) / 2);
+  lv_obj_set_pos(g.recDot, kFooterPadX, kRecDotY);
   g.recTime = label(g.footer, fontFooter(), kOnPhoto, "-:--");
-  lv_obj_align(g.recTime, LV_ALIGN_BOTTOM_LEFT, kFooterPadX + kRecDot + kSpaceXS + 2, -kFooterPadB);
+  lv_obj_set_pos(g.recTime, kRecTextX, kFooterTextY);
 
-  g.footR = label(g.footer, fontFooter(), kOnPhoto, "");
-  lv_obj_align(g.footR, LV_ALIGN_BOTTOM_RIGHT, -kFooterPadX, -kFooterPadB);
-
-  // Flash charge (Figma component 81:184 bolt, 82×32, bottom centre) + percent. The bolt fades in
-  // with the charge so it reads as filling up; the number moves in 1 % steps (smoother than seconds).
-  g.flashInd = plain(g.footer);
-  lv_obj_set_size(g.flashInd, 82, 32);
-  lv_obj_align(g.flashInd, LV_ALIGN_BOTTOM_MID, 0, 0);
-  g.flashBolt = image(g.flashInd, &x4_img_flash_recharge);
-  lv_obj_align(g.flashBolt, LV_ALIGN_LEFT_MID, -8, 0);
+  // Centre: bolt (6.6×9.7) + gap 4 + "80%", the group centred on the screen. The bolt fades in with
+  // the charge so it reads as filling up; the number moves in 1 % steps.
+  g.flashInd = hugRow(g.footer, kFlashGap);
+  g.flashBolt = image(g.flashInd, &x4_img_flash_bolt);
   g.flashPct = label(g.flashInd, fontFooter(), kOnPhoto, "");
-  lv_obj_align(g.flashPct, LV_ALIGN_BOTTOM_RIGHT, -4, -kFooterPadB);
+  lv_obj_align(g.flashInd, LV_ALIGN_TOP_MID, 0, kFooterTextY);
   lv_obj_add_flag(g.flashInd, LV_OBJ_FLAG_HIDDEN);
+
+  // Right: "820 MB", right edge 8 px from the screen edge. Figma separates number and unit with a
+  // thin space, which Space Mono lacks: two labels, 3 px apart.
+  lv_obj_t* sd = hugRow(g.footer, kSdUnitGap);
+  g.sdNum = label(sd, fontFooter(), kOnPhoto, "");
+  g.sdUnit = label(sd, fontFooter(), kOnPhoto, "");
+  lv_obj_align(sd, LV_ALIGN_TOP_RIGHT, -kFooterPadX, kFooterTextY);
 
   // Tap menu (Figma "on tap: buttons"): 80 px black 80 %→0 gradient, three serif-32 labels.
   g.menu = plain(g.main);
@@ -352,24 +388,27 @@ void buildMain() {
   }
   lv_obj_add_flag(g.menu, LV_OBJ_FLAG_HIDDEN);
 
-  // Saving overlay (Figma "state: saving (n of 4)"): holographic image (alpha baked), serif 48 + 24.
+  // Saving overlay (83:2228): holographic image whose opacity follows progress (k of 4 = k/4),
+  // "Saving..." serif 48 at x 105 (the word centred, the dots trail), "k of n" serif 24 with k
+  // right-aligned against a fixed " of n".
   g.saving = plain(g.main);
   lv_obj_set_size(g.saving, kScreenW, kScreenH);
-  image(g.saving, &x4_img_overlay_saving);
+  g.savingImg = image(g.saving, &x4_img_overlay_saving);
   lv_obj_t* st = label(g.saving, fontState(), kOnPhoto, "Saving...");
-  lv_obj_align(st, LV_ALIGN_TOP_MID, 0, 89);
-  g.savingSub = label(g.saving, fontSub(), kOnPhoto, "");
-  lv_obj_align(g.savingSub, LV_ALIGN_TOP_MID, 0, kScreenH - kStateSubBottom);
+  lv_obj_set_pos(st, kSavingTitleX, kStateTitleY);
+  g.savingK = boxLabel(g.saving, fontSub(), kOnPhoto, "", 40, LV_TEXT_ALIGN_RIGHT);
+  lv_obj_set_pos(g.savingK, kSavingOfX - 40, kStateSubY);
+  g.savingOf = label(g.saving, fontSub(), kOnPhoto, "");
+  lv_obj_set_pos(g.savingOf, kSavingOfX, kStateSubY);
   lv_obj_add_flag(g.saving, LV_OBJ_FLAG_HIDDEN);
 
-  // Error overlay (Figma "state: error"): red image at 90 %, serif 48 "Error" + our reason line.
+  // Error overlay (83:2286): red image at 90 % (baked), one centred serif 48 line: the reason when
+  // it is known (unknown=false), "Error" otherwise (unknown=true).
   g.error = plain(g.main);
   lv_obj_set_size(g.error, kScreenW, kScreenH);
   image(g.error, &x4_img_overlay_error);
-  lv_obj_t* et = label(g.error, fontState(), kOnPhoto, "Error");
-  lv_obj_align(et, LV_ALIGN_TOP_MID, 0, 89);
-  g.errorSub = label(g.error, fontSub(), kOnPhoto, "");
-  lv_obj_align(g.errorSub, LV_ALIGN_TOP_MID, 0, kScreenH - kStateSubBottom);
+  g.errorTitle = boxLabel(g.error, fontState(), kOnPhoto, "Error", kScreenW, LV_TEXT_ALIGN_CENTER);
+  lv_obj_set_pos(g.errorTitle, 0, kStateTitleY);
   lv_obj_add_flag(g.error, LV_OBJ_FLAG_HIDDEN);
 
   // Shutter white-out on the top layer (not in Figma; tactile feedback replacing haptics).
@@ -392,11 +431,13 @@ void buildMain() {
   lv_obj_add_flag(g.toast, LV_OBJ_FLAG_HIDDEN);
 }
 
+// Known reasons replace "Error" (Figma 83:2282 'unknown=false' shows "SD is full"). Sentence case
+// like the design; the longest, "Too hot, cooling", is 261 px wide in serif 48.
 const char* errorReason(const Status& s) {
-  if (s.faults & (uint8_t)x4::shoot::Fault::SdMissing) return "no sd card";
-  if (s.faults & (uint8_t)x4::shoot::Fault::SdFull) return "sd card full";
-  if (s.faults & (uint8_t)x4::shoot::Fault::Overheat) return "too hot, cooling";
-  return "";
+  if (s.faults & (uint8_t)x4::shoot::Fault::SdMissing) return "No SD card";
+  if (s.faults & (uint8_t)x4::shoot::Fault::SdFull) return "SD is full";
+  if (s.faults & (uint8_t)x4::shoot::Fault::Overheat) return "Too hot, cooling";
+  return "Error";
 }
 
 void updateMain(const Status& s, uint32_t now) {
@@ -411,14 +452,25 @@ void updateMain(const Status& s, uint32_t now) {
   // Overlays by state.
   bool saving = s.state == State::Shooting || s.state == State::Transferring;
   bool err = s.state == State::Error;
+  bool savingAppears = saving && lv_obj_has_flag(g.saving, LV_OBJ_FLAG_HIDDEN);
   fadeTo(g.saving, saving, kMsBase);
   fadeTo(g.error, err, kMsBase);
   if (saving) {
     int k = stored + 1 > expected ? expected : stored + 1;
-    snprintf(buf, sizeof(buf), "%d of %d", expected ? k : 0, expected);
-    setText(g.savingSub, buf);
+    snprintf(buf, sizeof(buf), "%d", k);
+    setText(g.savingK, expected ? buf : "");
+    snprintf(buf, sizeof(buf), " of %d", expected);
+    setText(g.savingOf, expected ? buf : "");
+    // Image opacity = progress (Figma: 25 / 50 / 75 / 100 % for 1..4 of 4); eases between steps.
+    int opa = expected ? LV_OPA_COVER * k / expected : LV_OPA_COVER / 4;
+    if (opa != g.savingOpa) {
+      lv_anim_delete(g.savingImg, animImgOpa);
+      if (savingAppears || g.savingOpa < 0) animImgOpa(g.savingImg, opa);
+      else anim(g.savingImg, animImgOpa, g.savingOpa, opa, kMsBase, pathBase());
+      g.savingOpa = opa;
+    }
   }
-  if (err) setText(g.errorSub, errorReason(s));
+  if (err) setText(g.errorTitle, errorReason(s));
 
   // Placeholder when no photo is on screen.
   bool live = g.hasFrame && s.previewOn;
@@ -442,12 +494,12 @@ void updateMain(const Status& s, uint32_t now) {
   g.effect = s.uiEffect;
   setHidden(g.footer, saving || err);
 
-  // Left: record state. Idle = white dot + "-:--"; recording = red dot with a glow + timer.
+  // Left: record state. Idle = white dot + "-:--"; recording = red dot with the red glow + timer.
   int rec = s.recording ? 1 : 0;
   if (rec != g.lastRec) {
     g.lastRec = rec;
     lv_obj_set_style_bg_color(g.recDot, c(rec ? kRec : kOnPhoto), 0);
-    lv_obj_set_style_shadow_width(g.recDot, rec ? kRecGlow : 0, 0);
+    setHidden(g.recGlow, !rec);
   }
   if (rec) {
     uint32_t sec = s.recordMs / 1000;
@@ -460,6 +512,7 @@ void updateMain(const Status& s, uint32_t now) {
   // Centre: flash charge, only while armed and not yet ready.
   bool charging = s.flashArmed && !s.flashReady;
   setHidden(g.flashInd, !charging);
+  setHidden(g.glowMid, !charging);
   if (charging) {
     snprintf(buf, sizeof(buf), "%u%%", (unsigned)s.flashChargePct);
     setText(g.flashPct, buf);
@@ -467,24 +520,27 @@ void updateMain(const Status& s, uint32_t now) {
   }
 
   // Right: SD free.
-  if (!s.sdMounted) snprintf(buf, sizeof(buf), "NO SD");
-  else if (s.sdFreeMb >= 10240) snprintf(buf, sizeof(buf), "%.1f GB", s.sdFreeMb / 1024.0f);
-  else snprintf(buf, sizeof(buf), "%lu MB", (unsigned long)s.sdFreeMb);
-  setText(g.footR, buf);
+  const char* unit = "";
+  if (!s.sdMounted) {
+    snprintf(buf, sizeof(buf), "NO SD");
+  } else if (s.sdFreeMb >= 10240) {
+    snprintf(buf, sizeof(buf), "%.1f", s.sdFreeMb / 1024.0f);
+    unit = "GB";
+  } else {
+    snprintf(buf, sizeof(buf), "%lu", (unsigned long)s.sdFreeMb);
+    unit = "MB";
+  }
+  setText(g.sdNum, buf);
+  setText(g.sdUnit, unit);
+  setHidden(g.sdUnit, !*unit);
 
   if (!lv_obj_has_flag(g.menu, LV_OBJ_FLAG_HIDDEN) && (int32_t)(now - g.menuUntil) >= 0) hideMenu();
 }
 
-// ---------------------------------------------------------------- settings (Figma "settings")
-void tilePressed(lv_event_t* e) {
-  Tile* t = (Tile*)lv_event_get_user_data(e);
-  // Press feedback: tile flashes ink for a beat (the design is pure ink on grey).
-  lv_obj_set_style_bg_opa(t->box, LV_OPA_20, 0);
-}
-void tileReleased(lv_event_t* e) {
-  Tile* t = (Tile*)lv_event_get_user_data(e);
-  lv_obj_set_style_bg_opa(t->box, LV_OPA_TRANSP, 0);
-}
+// ---------------------------------------------------------------- settings (Figma "settings" 73:254)
+// Tiles are the components in section 83:2147: 140×100, 2 px black frame (inside), black ink on
+// #D1D1D1. LVGL places children inside the border, so tile-local Figma coordinates go through at().
+void at(lv_obj_t* o, int32_t x, int32_t y) { lv_obj_set_pos(o, x - kBorderStrong, y - kBorderStrong); }
 
 Tile makeTile(lv_obj_t* parent, int32_t x, int32_t y) {
   Tile t{};
@@ -495,22 +551,26 @@ Tile makeTile(lv_obj_t* parent, int32_t x, int32_t y) {
   lv_obj_set_style_border_color(t.box, c(kInk), 0);
   lv_obj_set_style_bg_color(t.box, c(kInk), 0);
   lv_obj_set_style_bg_opa(t.box, LV_OPA_TRANSP, 0);
+  // Press feedback (not in Figma): the tile takes a 20 % ink tint while pressed.
+  lv_obj_set_style_bg_opa(t.box, LV_OPA_20, LV_STATE_PRESSED);
   lv_obj_add_flag(t.box, LV_OBJ_FLAG_CLICKABLE);
   return t;
 }
 
-lv_obj_t* bar(lv_obj_t* parent) {
+lv_obj_t* inkRect(lv_obj_t* parent, int32_t x, int32_t y, int32_t w, int32_t h) {
   lv_obj_t* b = plain(parent);
   lv_obj_set_style_bg_color(b, c(kInk), 0);
   lv_obj_set_style_bg_opa(b, LV_OPA_COVER, 0);
   lv_obj_remove_flag(b, LV_OBJ_FLAG_CLICKABLE);
-  lv_obj_add_flag(b, LV_OBJ_FLAG_IGNORE_LAYOUT);
+  lv_obj_set_size(b, w, h);
+  at(b, x, y);
   return b;
 }
 
 // cam delay steps: 0 (all at once), 0.2 … 1.0 s
 constexpr int32_t kDelaySteps[] = {0, 200, 300, 400, 500, 600, 700, 800, 900, 1000};
 constexpr int kDelayCount = sizeof(kDelaySteps) / sizeof(kDelaySteps[0]);
+constexpr int32_t kDelayMax = 1000;
 
 int delayIndex(int32_t ms) {
   int best = 0;
@@ -519,9 +579,10 @@ int delayIndex(int32_t ms) {
   return best;
 }
 
-int32_t thumbX(int idx) {
-  int32_t travel = kTileW - 2 * kBorderStrong - kSliderW;
-  return -kBorderStrong + (travel + kBorderStrong) * idx / (kDelayCount - 1);
+// Fill width: delay / 1 s of the tile (Figma slider=0% / 20% / 80% / 1: 1, 28, 112, 140 px).
+int32_t fillW(int32_t ms) {
+  int32_t w = (kTileW * ms + kDelayMax / 2) / kDelayMax;
+  return w < 1 ? 1 : w;
 }
 
 void onOrient(lv_event_t*) { app::setOption("ui_orient", x4core::status::get().uiOrient ? 0 : 1); }
@@ -529,7 +590,7 @@ void onEffect(lv_event_t*) { app::setOption("ui_effect", x4core::status::get().u
 void onFlash(lv_event_t*) {
   app::request(x4core::status::get().flashArmed ? app::Request::FlashDisarm : app::Request::FlashArm);
 }
-void onDelayDrag(lv_event_t* e) {
+void onDelayDrag(lv_event_t*) {
   lv_point_t p;
   lv_indev_get_point(lv_indev_active(), &p);
   lv_area_t a;
@@ -540,7 +601,6 @@ void onDelayDrag(lv_event_t* e) {
   if (idx < 0) idx = 0;
   if (idx >= kDelayCount) idx = kDelayCount - 1;
   if (kDelaySteps[idx] != x4core::status::get().camDelayMs) app::setOption("cam_delay_ms", kDelaySteps[idx]);
-  (void)e;
 }
 
 void buildSettings() {
@@ -548,44 +608,52 @@ void buildSettings() {
   lv_obj_add_event_cb(g.settings, [](lv_event_t*) { show(Screen::Main); }, LV_EVENT_GESTURE, nullptr);
   const int32_t x0 = kSettingsPad, x1 = kSettingsPad + kTileW + kSettingsGap;
   const int32_t y0 = kSettingsPad, y1 = kSettingsPad + kTileH + kSettingsGap;
+  const int32_t labelW = kTileW;
 
-  // orientation: horzntl = bars top + bottom; portrt = bars left + right
+  // orientation (83:2168): horzntl = 25 px bars top + bottom; vertcl = 30 px bars left + right.
+  // Label serif 36, centred.
   g.tOrient = makeTile(g.settings, x0, y0);
-  g.tOrient.a = bar(g.tOrient.box);
-  g.tOrient.b = bar(g.tOrient.box);
-  g.tOrient.label = label(g.tOrient.box, fontTile(), kInk, "horzntl");
-  lv_obj_align(g.tOrient.label, LV_ALIGN_CENTER, 0, 0);
+  g.tOrient.a = inkRect(g.tOrient.box, 0, 0, kTileW, kTileBarH);
+  g.tOrient.b = inkRect(g.tOrient.box, 0, kTileH - kTileBarH, kTileW, kTileBarH);
+  g.tOrient.label = boxLabel(g.tOrient.box, fontTile(), kInk, "horzntl", labelW, LV_TEXT_ALIGN_CENTER);
+  at(g.tOrient.label, 0, kTileLabelY);
 
-  // cam delay: vertical thumb that slides left→right, value bottom-right
+  // cam delay (83:2173): black fill from the left, width = delay / 1 s. The value (serif 36, right
+  // edge 8 px in) is white with EXCLUSION blend in Figma: dark grey over the grey, white over the
+  // fill. Drawn as two labels: a dark one on the tile and a white one inside the fill, which clips it.
   g.tDelay = makeTile(g.settings, x1, y0);
-  g.tDelay.a = bar(g.tDelay.box);
-  lv_obj_set_size(g.tDelay.a, kSliderW, kTileH);
-  lv_obj_set_y(g.tDelay.a, -kBorderStrong);
-  g.tDelay.label = label(g.tDelay.box, fontTile(), kInk, "0 s");
-  lv_obj_align(g.tDelay.label, LV_ALIGN_BOTTOM_RIGHT, -6, -4);
+  g.tDelay.label = boxLabel(g.tDelay.box, fontTile(), kSliderText, "0 s", kTileW - kDelayLabelR, LV_TEXT_ALIGN_RIGHT);
+  at(g.tDelay.label, 0, kDelayLabelY);
+  g.tDelay.a = inkRect(g.tDelay.box, 0, 0, 1, kTileH);
+  g.tDelay.b = boxLabel(g.tDelay.a, fontTile(), kOnPhoto, "0 s", kTileW - kDelayLabelR, LV_TEXT_ALIGN_RIGHT);
+  lv_obj_set_pos(g.tDelay.b, 0, kDelayLabelY);  // the fill sits at the tile's (0, 0)
   lv_obj_add_event_cb(g.tDelay.box, onDelayDrag, LV_EVENT_PRESSING, nullptr);
+  lv_obj_remove_flag(g.tDelay.box, LV_OBJ_FLAG_GESTURE_BUBBLE);  // a fast drag must not leave the screen
 
-  // effect: label bottom-left, dither strip on the right edge when dithered
+  // style (83:2215): 40×100 strip on the right: gradient (transparent #D1D1D1 → #1E1E1E) when
+  // normal, dither image when dithered. Label serif 34 bottom-left.
   g.tEffect = makeTile(g.settings, x0, y1);
-  lv_obj_set_style_clip_corner(g.tEffect.box, true, 0);
-  g.tEffect.a = image(g.tEffect.box, &x4_img_dither_strip);
-  lv_obj_set_pos(g.tEffect.a, kTileW - 2 * kBorderStrong - 40 + kBorderStrong, -kBorderStrong);
+  g.tEffect.a = plain(g.tEffect.box);
+  lv_obj_set_size(g.tEffect.a, kTileW - kStyleStripX, kTileH);
+  at(g.tEffect.a, kStyleStripX, 0);
+  lv_obj_set_style_bg_color(g.tEffect.a, c(kSettingsBg), 0);
+  lv_obj_set_style_bg_grad_color(g.tEffect.a, c(kBg), 0);
+  lv_obj_set_style_bg_grad_dir(g.tEffect.a, LV_GRAD_DIR_HOR, 0);
+  lv_obj_set_style_bg_opa(g.tEffect.a, LV_OPA_COVER, 0);
+  lv_obj_set_style_bg_main_opa(g.tEffect.a, LV_OPA_TRANSP, 0);
+  lv_obj_set_style_bg_grad_opa(g.tEffect.a, LV_OPA_COVER, 0);
+  lv_obj_remove_flag(g.tEffect.a, LV_OBJ_FLAG_CLICKABLE);
+  g.tEffect.b = image(g.tEffect.box, &x4_img_dither_strip);
+  at(g.tEffect.b, kStyleStripX, 0);
   g.tEffect.label = label(g.tEffect.box, fontTileSmall(), kInk, "normal");
-  lv_obj_align(g.tEffect.label, LV_ALIGN_BOTTOM_LEFT, 4, -2);
+  at(g.tEffect.label, kStyleLabelX, kStyleLabelY);
 
-  // flashlight: flash / no flash (Figma 83:2219). Visual states TODO from the components 83:2133 /
-  // 83:2220 (MCP rate limit); label only for now. Runtime arm, like the button gesture: the rig
-  // always boots with the flash off.
+  // flashlight (83:2219): no flash = black tile, grey label; flash = empty tile, black label.
+  // Serif 36, centred. Runtime arm, like the button gesture: the rig always boots with the flash off.
   g.tFlash = makeTile(g.settings, x1, y1);
-  g.tFlash.label = label(g.tFlash.box, fontTileSmall(), kInk, "no flash");
-  lv_obj_align(g.tFlash.label, LV_ALIGN_CENTER, 0, 0);
+  g.tFlash.label = boxLabel(g.tFlash.box, fontTile(), kSettingsBg, "no flash", labelW, LV_TEXT_ALIGN_CENTER);
+  at(g.tFlash.label, 0, kFlashLabelY);
 
-  Tile* tiles[] = {&g.tOrient, &g.tDelay, &g.tEffect, &g.tFlash};
-  for (Tile* t : tiles) {
-    lv_obj_add_event_cb(t->box, tilePressed, LV_EVENT_PRESSED, t);
-    lv_obj_add_event_cb(t->box, tileReleased, LV_EVENT_RELEASED, t);
-    lv_obj_add_event_cb(t->box, tileReleased, LV_EVENT_PRESS_LOST, t);
-  }
   lv_obj_add_event_cb(g.tOrient.box, onOrient, LV_EVENT_CLICKED, nullptr);
   lv_obj_add_event_cb(g.tEffect.box, onEffect, LV_EVENT_CLICKED, nullptr);
   lv_obj_add_event_cb(g.tFlash.box, onFlash, LV_EVENT_CLICKED, nullptr);
@@ -594,45 +662,47 @@ void buildSettings() {
 void updateSettings(const Status& s) {
   if (s.uiOrient != g.lastOrient) {
     g.lastOrient = s.uiOrient;
-    const int32_t inner = kTileW - 2 * kBorderStrong;
     if (s.uiOrient == 0) {
-      lv_obj_set_size(g.tOrient.a, kTileW, kTileBar);
-      lv_obj_set_pos(g.tOrient.a, -kBorderStrong, -kBorderStrong);
-      lv_obj_set_size(g.tOrient.b, kTileW, kTileBar);
-      lv_obj_set_pos(g.tOrient.b, -kBorderStrong, kTileH - kTileBar - kBorderStrong);
+      lv_obj_set_size(g.tOrient.a, kTileW, kTileBarH);
+      at(g.tOrient.a, 0, 0);
+      lv_obj_set_size(g.tOrient.b, kTileW, kTileBarH);
+      at(g.tOrient.b, 0, kTileH - kTileBarH);
       setText(g.tOrient.label, "horzntl");
     } else {
-      lv_obj_set_size(g.tOrient.a, kTileBar, kTileH);
-      lv_obj_set_pos(g.tOrient.a, -kBorderStrong, -kBorderStrong);
-      lv_obj_set_size(g.tOrient.b, kTileBar, kTileH);
-      lv_obj_set_pos(g.tOrient.b, inner - kTileBar + kBorderStrong, -kBorderStrong);
-      setText(g.tOrient.label, "portrt");
+      lv_obj_set_size(g.tOrient.a, kTileBarV, kTileH);
+      at(g.tOrient.a, 0, 0);
+      lv_obj_set_size(g.tOrient.b, kTileBarV, kTileH);
+      at(g.tOrient.b, kTileW - kTileBarV, 0);
+      setText(g.tOrient.label, "vertcl");
     }
   }
   if ((int32_t)s.camDelayMs != g.shownDelay) {
     int idx = delayIndex(s.camDelayMs);
-    int32_t to = thumbX(idx);
-    if (g.shownDelay < 0) {
-      lv_obj_set_x(g.tDelay.a, to);
-    } else {
-      lv_anim_delete(g.tDelay.a, animX);
-      anim(g.tDelay.a, animX, lv_obj_get_x(g.tDelay.a), to, kMsSpring, pathSpring());
-    }
+    int32_t to = fillW(kDelaySteps[idx]);
+    lv_anim_delete(g.tDelay.a, animW);
+    if (g.shownDelay < 0) lv_obj_set_width(g.tDelay.a, to);
+    else anim(g.tDelay.a, animW, lv_obj_get_width(g.tDelay.a), to, kMsSpring, pathSpring());
     g.shownDelay = s.camDelayMs;
     char b[12];
     if (kDelaySteps[idx] == 0) snprintf(b, sizeof(b), "0 s");
     else if (kDelaySteps[idx] == 1000) snprintf(b, sizeof(b), "1 s");
     else snprintf(b, sizeof(b), "0.%d s", (int)(kDelaySteps[idx] / 100));
     setText(g.tDelay.label, b);
+    setText(g.tDelay.b, b);
   }
   if (s.uiEffect != g.lastEffect) {
     g.lastEffect = s.uiEffect;
     setText(g.tEffect.label, s.uiEffect ? "dithered" : "normal");
-    setHidden(g.tEffect.a, !s.uiEffect);
+    setHidden(g.tEffect.a, s.uiEffect);
+    setHidden(g.tEffect.b, !s.uiEffect);
   }
   if ((int)s.flashArmed != g.lastFlash) {
     g.lastFlash = s.flashArmed;
-    setText(g.tFlash.label, s.flashArmed ? "flash" : "no flash");
+    bool on = s.flashArmed;
+    lv_obj_set_style_bg_opa(g.tFlash.box, on ? LV_OPA_TRANSP : LV_OPA_COVER, 0);
+    lv_obj_set_style_bg_opa(g.tFlash.box, on ? LV_OPA_20 : LV_OPA_80, LV_STATE_PRESSED);
+    lv_obj_set_style_text_color(g.tFlash.label, c(on ? kInk : kSettingsBg), 0);
+    setText(g.tFlash.label, on ? "flash" : "no flash");
   }
 }
 

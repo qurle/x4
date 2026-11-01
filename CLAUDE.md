@@ -34,14 +34,15 @@ Mini Button, powered by an Anker power bank through a USB-C breakout rail. Start
 cd core && pio run && pio test -e native        # core, core-hello, hello-ui + 32 host tests
 cd camera && pio run                             # cam1..cam4, cam-hello
 cd steps && pio run                              # 15 bring-up envs (slow, ~5 min)
-python tools/gen_docs.py --check && python tools/gen_tokens.py --check && python tools/gen_assets.py --check
+python tools/gen_docs.py --check && python tools/gen_tokens.py --check && python tools/gen_figma_assets.py --check && python tools/gen_assets.py --check
 cd site && npm ci && npm run build               # manual site from docs/
 ```
 
 - Config options live in `shared/include/x4/config_schema.def`; `docs/CONFIG.md` is generated
   (`python tools/gen_docs.py`). Same for error codes (`errors.def`).
 - UI tokens: edit `ui/tokens.json`, then `python tools/gen_tokens.py` → `core/src/ui/tokens.h`.
-- UI images: `ui/assets/figma/*.png` → `python tools/gen_assets.py` → `core/src/ui/assets/`.
+- UI images: `ui/figma/` (pulled) → `python tools/gen_figma_assets.py` → `ui/assets/figma/*.png` →
+  `python tools/gen_assets.py` → `core/src/ui/assets/`.
 - Toolchain is pinned (pioarduino 55.03.312-1, M5Unified 0.2.29, M5GFX 0.2.36, LVGL 9.6.0); see
   `docs/FIRMWARE.md#pinned-versions`. If PlatformIO downloads fail in the sandbox, check the
   proxy notes in `/root/.ccr/README.md` first.
@@ -68,20 +69,20 @@ python tools/figma_pull.py              # needs FIGMA_TOKEN (read-only) in the e
 ```
 
 It writes `ui/figma/components.json`, `ui/figma/nodes/<id>.json` (raw geometry, fills, effects,
-text) and `ui/figma/export/*.png` (reference renders only). Commit the output so design changes
-show up as diffs. `api.figma.com` is allowed in this environment's network policy.
+text), `ui/figma/fills/*.png` (image fills used by `gen_figma_assets.py`) and
+`ui/figma/export/*.png` (reference renders only). Commit the output so design changes show up as
+diffs. `api.figma.com` is allowed in this environment's network policy. The file's components are
+unpublished, so `components.json` is built from the node responses. The `/images` (renders)
+endpoint can answer 429 with a Retry-After of days (seen 2026-11-01: ~111 h); the script then
+skips renders and keeps the existing PNGs (`--no-renders` skips them on purpose). 135 of 154
+renders are in the repo.
 
 ## In flight (update or delete this section as it changes)
 
-1. Run `tools/figma_pull.py`, commit `ui/figma/`.
-2. From the node JSON, implement in `core/src/ui/ui.cpp` (and tokens):
-   - the four setting tiles with their component states (83:2147);
-   - Saving and Error overlays as drawn in their components: re-aligned text, error message
-     shown when known (`errorReason()`: "no sd card", "sd card full", "too hot, cooling");
-   - footer exact geometry: record dot + `-:--` / red dot with glow + `m:ss` (left), flash bolt +
-     charge % (centre), SD free (right). Current dot size/glow (`recDot`, `recGlow` in
-     `ui/tokens.json`) are assumptions.
-   Then update `docs/UI.md` (remove the "Pending from Figma" note).
-3. Video recording is not implemented; `Status.recording` is always false. The footer already
-   shows the state.
+1. Video recording is not implemented; `Status.recording` is always false. The footer already
+   shows the state (Figma shows the record block only in the Video footer state; the owner wants
+   it always, so it shows `-:--`).
+2. Open design question (*Not sure*): Figma puts the footer's centre glow on the Middle frame's
+   left edge (x ≈ 135); the code centres it under the flash group. Ask the owner.
+3. Measure the UI on the panel: the label positions are computed from font metrics, not seen.
 4. Optional: split the CI `steps / all` job into parallel jobs (it takes ~10 of the 10.5 min).

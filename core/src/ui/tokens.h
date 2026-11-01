@@ -9,10 +9,11 @@ namespace tok {
 // ---- colour (RGB hex) ----
 constexpr uint32_t kBg = 0x1E1E1E;  // Figma variable Backround/Primary: dark ink, borders and text on light surfaces
 constexpr uint32_t kSettingsBg = 0xD1D1D1;  // settings screen background
-constexpr uint32_t kInk = 0x1E1E1E;  // text, borders, bars on the settings screen
+constexpr uint32_t kInk = 0x000000;  // tile frames, bars and text on the settings screen (tile components 83:2147)
 constexpr uint32_t kOnPhoto = 0xFFFFFF;  // text over the photo (menu, footer, Saving/Error)
-constexpr uint32_t kGlow = 0x212121;  // corner glows behind footer text (alpha baked into the asset)
-constexpr uint32_t kRec = 0xFF2E2E;  // recording dot and its glow (footer left)
+constexpr uint32_t kGlow = 0x212121;  // footer glows (Overlay Element 18:587; alpha baked into the assets)
+constexpr uint32_t kRec = 0xEE2E2E;  // recording dot and its glow (Rec Timer 83:867)
+constexpr uint32_t kSliderText = 0x2E2E2E;  // cam delay value over the grey: Figma draws it white with EXCLUSION blend = #2E2E2E on #D1D1D1, white on the black fill
 constexpr uint32_t kSurface = 0x141414;  // diagnostics cards
 constexpr uint32_t kSurface2 = 0x2A2A2A;  // diagnostics buttons
 constexpr uint32_t kLine = 0x3A3A3A;  // hairlines
@@ -44,21 +45,35 @@ constexpr int32_t kRadiusPill = LV_RADIUS_CIRCLE;
 constexpr int32_t kBorderHairline = 1;
 constexpr int32_t kBorderStrong = 2;
 // ---- layout (px, from Figma) ----
-constexpr int32_t kFooterH = 47;  // footer height
+constexpr int32_t kFooterH = 47;  // footer height (Footer 18:830)
 constexpr int32_t kFooterPadX = 8;  // footer text inset from the screen edge
-constexpr int32_t kFooterPadB = 4;  // footer text inset from the bottom
-constexpr int32_t kFooterText = 15;  // footer text line height (Space Mono Bold 13), centres the record dot
-constexpr int32_t kRecDot = 9;  // record dot diameter (ASSUMPTION until read from Figma)
-constexpr int32_t kRecGlow = 12;  // record dot glow (shadow) width while recording (ASSUMPTION)
+constexpr int32_t kFooterTextY = 26;  // footer label top: Figma box y 24 + ascent = baseline 38; Space Mono Bold 13 baseline is 12 below the label top
+constexpr int32_t kRecDot = 9;  // record dot diameter (Rec Timer 83:866)
+constexpr int32_t kRecDotY = 29;  // record dot top in the footer
+constexpr int32_t kRecTextX = 22;  // record time left edge (dot 8 + 9 + gap 5)
+constexpr int32_t kRecGlowY = 16;  // record glow image top in the footer (54x31, from x 0)
+constexpr int32_t kGlowY = -25;  // footer glow images top in the footer (72 px tall, ellipse centre on the footer bottom)
+constexpr int32_t kFlashGap = 4;  // bolt to charge % gap (Flash Readiness Level 83:1188)
+constexpr int32_t kSdUnitGap = 3;  // gap between SD number and unit (Figma uses a thin space, not in Space Mono)
 constexpr int32_t kMenuH = 80;  // tap menu gradient height (black 80% -> 0)
 constexpr int32_t kMenuPadTop = 6;  // tap menu label top padding
 constexpr int32_t kSettingsPad = 16;  // settings grid padding
 constexpr int32_t kSettingsGap = 8;  // settings grid gap
 constexpr int32_t kTileW = 140;  // settings tile width
 constexpr int32_t kTileH = 100;  // settings tile height
-constexpr int32_t kTileBar = 25;  // orientation tile bar thickness
-constexpr int32_t kSliderW = 19;  // delay tile slider thumb width
-constexpr int32_t kStateSubBottom = 48;  // '1 of 4' baseline distance from the bottom
+constexpr int32_t kTileBarH = 25;  // orientation horzntl: top and bottom bar height
+constexpr int32_t kTileBarV = 30;  // orientation vertcl: left and right bar width
+constexpr int32_t kTileLabelY = 31;  // orientation label top (serif 36, cap box y 36 -> baseline 62)
+constexpr int32_t kFlashLabelY = 32;  // flashlight label top (serif 36, cap box y 37 -> baseline 63)
+constexpr int32_t kDelayLabelY = 61;  // cam delay label top (serif 36, cap box y 66 -> baseline 92)
+constexpr int32_t kDelayLabelR = 8;  // cam delay label inset from the tile's right edge
+constexpr int32_t kStyleLabelX = 8;  // style label left edge
+constexpr int32_t kStyleLabelY = 62;  // style label top (serif 34, cap box y 68 -> baseline 92)
+constexpr int32_t kStyleStripX = 100;  // style tile gradient / dither strip left edge (40x100)
+constexpr int32_t kStateTitleY = 101;  // Saving... / Error label top (serif 48, box y 95 -> baseline 142)
+constexpr int32_t kSavingTitleX = 105;  // Saving... left edge (the word is centred, the dots trail)
+constexpr int32_t kStateSubY = 202;  // 'k of n' label top (serif 24, box y 199 -> baseline 223)
+constexpr int32_t kSavingOfX = 147;  // k is right-aligned to this x, ' of n' starts here
 constexpr int32_t kPortraitW = 180;  // portrait crop width (sides dimmed to 30%)
 
 // ---- motion ----
@@ -66,7 +81,7 @@ constexpr uint32_t kMsInstant = 60;  // press feedback
 constexpr uint32_t kMsFast = 140;  // menu, toggles
 constexpr uint32_t kMsBase = 260;  // overlays, reveals
 constexpr uint32_t kMsSlow = 520;  // screen transitions, splash, shutter white-out
-constexpr uint32_t kMsSpring = 420;  // slider thumb, counters
+constexpr uint32_t kMsSpring = 420;  // cam delay fill, counters
 constexpr uint32_t kMsStagger = 40;  // delay between staggered items
 inline lv_anim_path_cb_t pathInstant() { return lv_anim_path_linear; }
 inline lv_anim_path_cb_t pathFast() { return lv_anim_path_ease_out; }

@@ -107,7 +107,7 @@ stateDiagram-v2
 | Preview | **accepted** (preview pauses) | live photo full-bleed + footer (full mode) |
 | Shooting | refused ("busy") | white-out, then the holographic "Saving..." overlay |
 | Transferring | refused ("busy") — the next shot waits until buffers are free | "Saving..." with "k of n" |
-| Error | refused ("error") | red "Error" overlay + reason ("no sd card", "sd card full", "too hot, cooling") |
+| Error | refused ("error") | red overlay with the reason when known ("No SD card", "SD is full", "Too hot, cooling"), else "Error" |
 
 Effects the app performs: send trigger, schedule flash, pause/resume preview, start transfers
 (respecting `xfer_parallel`), write the sidecar, UI moments (`shutterMoment`, `shotCaptured`,
