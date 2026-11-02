@@ -135,7 +135,10 @@ nav li a,
 .btn {
   display: inline-block;
   border: var(--frame);
-  padding: 9px 18px 11px;
+  /* Optical centring: Instrument Serif's line box reserves a deep descender these labels don't
+     use, so equal padding leaves the text ~2 px high. 11 / 9 puts the ascender-to-baseline band
+     in the middle (measured: 13.25 px above, 13 px below in the 44 px inner box). */
+  padding: 11px 18px 9px;
   font-family: var(--serif);
   font-size: 24px;
   line-height: 1;
