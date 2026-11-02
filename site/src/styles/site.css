@@ -1,7 +1,7 @@
 /* x4cam website. Dark, like the device's screen (#1E1E1E). Instrument Serif for headings, Inter
    for reading, Space Mono for code, tables and short labels (the device's numbers font).
-   Lime (#DDFF00) is the one accent, kept to primary buttons, link underlines, selection, focus
-   and the current-page dot. Frames are 2 px, like the settings tiles.
+   Lime (#DDFF00) is the one accent, kept to primary buttons, link underlines on hover, selection,
+   focus and the current-page dot. Frames are 2 px, like the settings tiles.
 
    Motion follows Emil Kowalski's rules for UI animation: short (under 300 ms, entrances 500 ms
    once), ease-out on a strong curve, only transform and opacity, a press scales to 0.97 and
@@ -101,18 +101,27 @@ img {
   display: block;
 }
 
-/* Links: the lime is the underline; the text turns lime on hover. */
+/* Links: a 1 px underline at half the text's alpha, lime on hover. Link lists (doc index, side
+   nav, previous / next) have no underline until hovered. */
 a {
   color: inherit;
   text-decoration-line: underline;
-  text-decoration-color: var(--lime);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 0.2em;
-  transition: color 150ms ease;
+  text-decoration-color: rgb(209 209 209 / 0.5);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition: text-decoration-color 150ms ease;
+}
+.index li a,
+nav li a,
+.turn a {
+  text-decoration-color: transparent;
 }
 @media (hover: hover) and (pointer: fine) {
-  a:hover {
-    color: var(--lime);
+  a:hover,
+  .index li a:hover,
+  nav li a:hover,
+  .turn a:hover {
+    text-decoration-color: var(--lime);
   }
 }
 
@@ -126,7 +135,10 @@ a {
 .btn {
   display: inline-block;
   border: var(--frame);
-  padding: 9px 18px 11px;
+  /* Optical centring: Instrument Serif's line box reserves a deep descender these labels don't
+     use, so equal padding leaves the text ~2 px high. 11 / 9 puts the ascender-to-baseline band
+     in the middle (measured: 13.25 px above, 13 px below in the 44 px inner box). */
+  padding: 11px 18px 9px;
   font-family: var(--serif);
   font-size: 24px;
   line-height: 1;
@@ -141,9 +153,8 @@ a {
   transform: scale(0.97);
 }
 .btn.primary {
-  background: var(--lime);
   border-color: var(--lime);
-  color: #000;
+  color: var(--lime);
 }
 @media (hover: hover) and (pointer: fine) {
   .btn:hover {
@@ -151,14 +162,13 @@ a {
     color: var(--head);
   }
   .btn.primary:hover {
-    background: #e8ff4d;
-    color: #000;
+    background: rgb(221 255 0 / 0.1);
+    color: var(--lime);
   }
 }
 
-/* ---------- top and bottom bars */
-.top,
-.bottom {
+/* ---------- top bar */
+.top {
   max-width: 1180px;
   margin: 0 auto;
   display: flex;
@@ -179,28 +189,12 @@ a {
   font-size: 13px;
   text-decoration: none;
 }
-.bottom {
-  max-width: 1080px;
-  padding-top: 72px;
-  padding-bottom: 32px;
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--soft);
-}
-.bottom p {
-  margin: 0;
-  max-width: 40em;
-}
-.bottom a {
-  text-decoration-color: var(--soft);
-  text-decoration-thickness: 1px;
-}
 
 /* ---------- landing */
 .landing {
   max-width: 1080px;
   margin: 0 auto;
-  padding: 24px 24px 0;
+  padding: 24px 24px 96px;
 }
 .hero h1 {
   font-family: var(--serif);
@@ -279,12 +273,40 @@ a {
 .about p {
   margin: 0;
 }
+.parts {
+  margin: 0;
+}
+.parts div {
+  margin: 0 0 10px;
+}
+.parts dt {
+  color: var(--head);
+}
+.parts dd {
+  margin: 0;
+  color: var(--soft);
+}
 
 .index {
+  margin-top: 88px;
+  scroll-margin-top: 24px;
+}
+.index .intro {
+  font-family: var(--mono);
+  font-size: 15px;
+  margin: 0 0 8px;
+}
+.index .groups {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0 48px;
-  margin-top: 64px;
+}
+.index h3 {
+  font-family: var(--mono);
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--soft);
+  margin: 32px 0 8px;
 }
 .index ul {
   list-style: none;
@@ -299,7 +321,6 @@ a {
   font-size: 26px;
   line-height: 1.15;
   color: var(--head);
-  text-decoration: none; /* a list of links needs no underline; lime comes on hover */
 }
 .index li span {
   display: block;
@@ -380,7 +401,6 @@ nav li a {
   padding: 2px 0;
   font-size: 15px;
   line-height: 1.4;
-  text-decoration: none;
 }
 nav a[aria-current='page'] {
   color: var(--head);
@@ -407,7 +427,6 @@ nav a[aria-current='page']::before {
   font-family: var(--serif);
   font-size: 26px;
   color: var(--head);
-  text-decoration: none;
 }
 .turn .next {
   margin-left: auto;
@@ -454,7 +473,7 @@ nav a[aria-current='page']::before {
     display: inline;
   }
   .screens,
-  .index {
+  .index .groups {
     grid-template-columns: minmax(0, 1fr);
   }
 }

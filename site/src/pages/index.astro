@@ -1,5 +1,5 @@
 ---
-// Landing page: what x4cam is, four real device screens, the docs.
+// Landing page: what x4cam is and what's in it. The docs come last, for whoever builds one.
 import Base from '../layouts/Base.astro'
 import { ALL, GROUPS, REPO } from '../lib/docs.mjs'
 
@@ -9,6 +9,15 @@ const screens = [
   ['saving', 'Saving', 'Fills in as each photo arrives.'],
   ['portrait', 'Portrait', 'Centre crop, faded copies at the sides.'],
 ]
+
+// Facts from docs/HARDWARE.md.
+const parts = [
+  ['M5Stack CoreS3-SE', 'A 2" touchscreen, WiFi and a microSD slot. It runs the UI and the shot.'],
+  ['4 × Unit CamS3-5MP', 'One 5 MP camera each, with its own ESP32-S3.'],
+  ['Unit FlashLight', 'Fires with the shot.'],
+  ['Mini Button', 'The shutter.'],
+  ['Anker Nano 5000 mAh', 'Powers all of it through one switch.'],
+]
 ---
 
 <Base title="x4cam">
@@ -17,7 +26,7 @@ const screens = [
       <h1>x4cam</h1>
       <p class="lead">Four cameras that shoot at the same moment.</p>
       <p class="actions">
-        <a class="btn primary" href="/steps/">Start building</a>
+        <a class="btn primary" href="#docs">Read the docs</a>
         <a class="btn" href={REPO}>GitHub</a>
       </p>
     </section>
@@ -26,7 +35,7 @@ const screens = [
       {
         screens.map(([file, name, text], i) => (
           <figure style={`--i: ${i}`}>
-            <img src={`/screens/${file}.png`} width="320" height="240" alt={`${name} screen`} />
+            <img src={`/screens/${file}.png`} width="960" height="720" alt={`${name} screen`} />
             <figcaption>
               <span>{name}</span> {text}
             </figcaption>
@@ -36,37 +45,46 @@ const screens = [
     </section>
 
     <section class="about">
+      <h2>What's inside</h2>
+      <dl class="parts">
+        {
+          parts.map(([name, text]) => (
+            <div>
+              <dt>{name}</dt>
+              <dd>{text}</dd>
+            </div>
+          ))
+        }
+      </dl>
       <h2>How it works</h2>
       <p>
         The Core runs the screen and its own WiFi network. The cameras join it, sync their clocks and capture at a
         moment the Core picks 120&nbsp;ms ahead.
       </p>
       <h2>Where it stands</h2>
-      <p>The code is written and the UI is checked in a simulator. Nothing has run on the boards yet.</p>
+      <p>The code is written and the UI runs in a simulator, checked against the Figma design. The boards come next.</p>
     </section>
 
-    <section class="index">
-      {
-        GROUPS.map((g) => (
-          <section>
-            <h2>{g.name}</h2>
-            <ul>
-              {ALL.filter((d) => d.group === g.name).map((d) => (
-                <li>
-                  <a href={`/${d.slug}/`}>{d.label}</a>
-                  <span>{d.blurb}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))
-      }
+    <section class="index" id="docs">
+      <h2>Docs</h2>
+      <p class="intro">How to build one, and how it works inside.</p>
+      <div class="groups">
+        {
+          GROUPS.map((g) => (
+            <section>
+              <h3>{g.name}</h3>
+              <ul>
+                {ALL.filter((d) => d.group === g.name).map((d) => (
+                  <li>
+                    <a href={`/${d.slug}/`}>{d.label}</a>
+                    <span>{d.blurb}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))
+        }
+      </div>
     </section>
   </main>
-  <footer class="bottom">
-    <p>
-      Set in <a href="/fonts/OFL-InstrumentSerif.txt">Instrument Serif</a>, <a href="/fonts/OFL-Inter.txt">Inter</a> and
-      <a href="/fonts/OFL-SpaceMono.txt">Space Mono</a>, all under the SIL Open Font License.
-    </p>
-  </footer>
 </Base>
