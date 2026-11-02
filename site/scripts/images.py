@@ -4,7 +4,8 @@
     python tools/ui_sim/run.py preview_photo settings saving_3of4 preview_portrait
     python site/scripts/images.py
 
-The screens are the UI simulator's renders (the real UI code, tools/ui_sim), not mock-ups.
+The screens are the UI simulator's renders (the real UI code, tools/ui_sim), not mock-ups, at 3x
+with exact pixel duplication.
 Needs Pillow (13.0.0, like the rest of the repo).
 """
 import pathlib
@@ -14,6 +15,7 @@ from PIL import Image, ImageDraw, ImageFont
 SITE = pathlib.Path(__file__).resolve().parent.parent
 ROOT = SITE.parent
 SIM = ROOT / "tools" / "ui_sim" / "out"
+SCALE = 3
 SCREENS = {"viewfinder": "preview_photo", "settings": "settings", "saving": "saving_3of4", "portrait": "preview_portrait"}
 
 out = SITE / "public" / "screens"
@@ -22,7 +24,10 @@ for name, scene in SCREENS.items():
     src = SIM / f"{scene}.png"
     if not src.exists():
         raise SystemExit(f"{src} missing: run tools/ui_sim/run.py {scene} first")
-    Image.open(src).convert("RGB").save(out / f"{name}.png", optimize=True)
+    # The panel is 320 x 240. Each device pixel becomes an exact 3 x 3 block (960 x 720), so a
+    # high-DPI browser barely scales the image and the screen's pixels stay sharp.
+    im = Image.open(src).convert("RGB")
+    im.resize((im.width * SCALE, im.height * SCALE), Image.NEAREST).save(out / f"{name}.png", optimize=True)
 
 # Social preview, 1200 x 630: the name in Instrument Serif on the site's dark background, the
 # viewfinder in a black bezel.

@@ -13,12 +13,12 @@ of `src/styles/site.css`).
 |---|---|
 | `src/lib/docs.mjs` | the page list: groups, order, labels, one-line blurbs, routes (`STEPS.md` → `/steps/`). A doc missing here fails the build |
 | `src/lib/rewrite-links.mjs` | links between docs → site routes; links to repo files → GitHub; a link reading `WIRING.md` → "Wiring" |
-| `src/pages/index.astro` | the landing page; each doc's one-line blurb is in `src/lib/docs.mjs` |
+| `src/pages/index.astro` | the landing page: what x4cam is, its screens, what's inside (from `docs/HARDWARE.md`), how it works, where it stands, then the docs. Each doc's blurb is in `src/lib/docs.mjs` |
 | `src/pages/[slug].astro`, `src/layouts/` | doc pages: article, page list, next / previous |
 | `src/styles/site.css` | all styling |
 | `src/scripts/copy.js` | a Copy button on code blocks |
 | `src/scripts/mermaid.js` | `mermaid` blocks as diagrams, loaded only on pages that have one; wide ones fit the column and open full size on click |
-| `public/screens/`, `public/og.png` | the device screens on the landing page, rendered by the UI simulator. Refresh: `python tools/ui_sim/run.py preview_photo settings saving_3of4 preview_portrait`, then `python site/scripts/images.py` |
+| `public/screens/`, `public/og.png` | the device screens on the landing page, rendered by the UI simulator at 3× with exact pixel duplication (960×720), so they stay sharp on high-DPI screens. Refresh: `python tools/ui_sim/run.py preview_photo settings saving_3of4 preview_portrait`, then `python site/scripts/images.py` |
 | `public/fonts/` | the three fonts as WOFF2 (Inter trimmed to the characters the docs use), with their SIL Open Font License files |
 
 Adding a doc: create `docs/NEW.md`, add it with a short blurb to `src/lib/docs.mjs`, and give it a
