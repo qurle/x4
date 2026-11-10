@@ -76,6 +76,7 @@ test). *Not sure* which revision new stock ships with; the boot log tells you.
 | symptom | likely cause | check | fix |
 |---|---|---|---|
 | `err=300 SD_MOUNT_FAIL` | no card, exFAT, > 16 GB, bad contact | card in a PC | FAT32, ≤ 16 GB (CoreS3 documented limit); reseat |
+| writes work, reads fail; log shows `sdReadSectors(): command failed` | the card's reply to CMD12 (end of a multi-sector read) isn't 0, so Arduino's SD driver drops the data. Seen 2026-11-10 on a SmartBuy 16 GB microSDHC class 10 U1 | step 3 shows *4 KB reads FAIL, 512 B ok* | another card (SanDisk, Samsung) |
 | `err=302 SD_FULL` | < 12 MB free | web page SD | copy photos off, delete `/x4/shots/S…` folders |
 | `err=303 SD_SLOW` (< 1000 kB/s) | slow/old card, SPI clock | `evt=bench` | a better card (A1/U1), keep `kSpiHz` at 25 MHz |
 | UI stutters while saving | SD and LCD share the SPI bus | worst frame time during "SAVING" | expected to some degree; chunks are 16 KB; `xfer_parallel=1` smooths it |

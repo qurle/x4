@@ -268,16 +268,26 @@ pio run -e s03-sd -t upload -t monitor
 
 **Read:**
 ```
-sd mount type=… size_mb=15xxx
-sd bench bytes=1048576 write_ms=… read_ms=… write_kbps=… read_kbps=… verify=1
+sd mount mhz=25 type=… size_mb=15xxx
+sd bench mhz=25 bytes=1048576 written=1048576 file_size=1048576 write_ms=… read_ms=… write_kbps=… read_kbps=… verify=1
 ```
-The test runs once at boot. If the monitor attached too late, press RST once and watch again
-(or just read the screen).
+then the same at 10 and 4 MHz. The test runs once at boot. If the monitor attached too late,
+press RST once and watch again (or just read the screen).
 
-**Pass:** *verify ok* on screen (`verify=1`), and `x4cam_step3.bin` (1 MB) is on the card.
+**Pass:** *25 MHz ok* and *PASS* on screen (`mhz=25 … verify=1`), and `x4cam_step3.bin` (1 MB)
+is on the card. 10 and 4 MHz are only there to narrow down a failure.
 
-**If not:** *mount FAILED* → reseat the card, format it FAT32, try another card
-([TROUBLESHOOTING: SD](TROUBLESHOOTING.md#sd)).
+**If not:**
+- *mount FAILED* → reseat the card, format it FAT32, try another card
+  ([TROUBLESHOOTING: SD](TROUBLESHOOTING.md#sd)).
+- *write short* → the card stopped taking data: card full, write-protected or worn out.
+- *4 KB reads FAIL, 512 B ok* → the card handles one-sector reads but not multi-sector ones:
+  look for `token error [12] 0x…` just above (the card's answer to CMD12, "stop reading").
+  Try another card first.
+- *verify FAILED* → an `sd verify … read=1/2/3 chunk=… bad=… first_bad=…` line follows. Both reads with
+  the same `bad` and `first_bad`: the data went onto the card wrong. Different numbers: the
+  reads are unstable. Fails at 25 MHz but passes at 10 or 4: the card or its contacts can't keep
+  up with 25 MHz. Fails at every clock: try another card first, then send the log.
 
 **Save:** write and read kB/s in [MEASUREMENTS: throughput](MEASUREMENTS.md#throughput). They set
 how fast photos can be stored.
@@ -706,7 +716,7 @@ More methods (shunt + scope for the flash, current per device): [DEBUGGING](DEBU
 |---|---|
 | `power … safe=1` | Core 5 V outputs off: good. `safe=0` or `when=found_on`: stop |
 | `hello … psram_mb=8` | board settings right |
-| `sd bench … verify=1` | card writes and reads back |
+| `sd bench mhz=25 … verify=1` | card writes and reads back at the firmware's 25 MHz |
 | `rail boot reset=power on … brownouts=0` | clean start on the rail |
 | `flash refused reason=cooldown` | the guard working, not a fault |
 | `cam sensor pid=0x039e … ok=1` | right camera sensor |
