@@ -281,7 +281,10 @@ is on the card. 10 and 4 MHz are only there to narrow down a failure.
 - *mount FAILED* → reseat the card, format it FAT32, try another card
   ([TROUBLESHOOTING: SD](TROUBLESHOOTING.md#sd)).
 - *write short* → the card stopped taking data: card full, write-protected or worn out.
-- *verify FAILED* → an `sd verify … read=1/2 bad=… first_bad=…` line follows. Both reads with
+- *4 KB reads FAIL, 512 B ok* → the card handles one-sector reads but not multi-sector ones:
+  look for `token error [12] 0x…` just above (the card's answer to CMD12, "stop reading").
+  Try another card first.
+- *verify FAILED* → an `sd verify … read=1/2/3 chunk=… bad=… first_bad=…` line follows. Both reads with
   the same `bad` and `first_bad`: the data went onto the card wrong. Different numbers: the
   reads are unstable. Fails at 25 MHz but passes at 10 or 4: the card or its contacts can't keep
   up with 25 MHz. Fails at every clock: try another card first, then send the log.

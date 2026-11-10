@@ -4,8 +4,11 @@
 //
 // The test runs at 25 MHz (what the firmware uses, and M5's own CoreS3 examples), then at 10 and
 // 4 MHz. If only the slower clocks pass, the card or its contacts can't keep up with 25 MHz.
-// Each run reads the file twice: two reads that disagree with each other mean the read path is
+// Each run reads the file twice in 4 KB chunks: two reads that disagree with each other mean the read path is
 // unstable; two reads that agree but are wrong mean the data went onto the card wrong.
+// A third read goes one 512-byte sector at a time (CMD17 instead of CMD18 + CMD12). If only that
+// one passes, the card trips over multi-sector reads: Arduino's SD driver logs
+// "sdReadSectors(): command failed" when the card's answer to CMD12 (stop) isn't 0.
 #include <SD.h>
 #include <SPI.h>
 
@@ -28,27 +31,30 @@ struct ReadResult {
   uint32_t ms = 0;
 };
 
-ReadResult readBack() {
+// chunk = 4096: the File's 4 KB buffer makes every card read 8 sectors (CMD18).
+// chunk = 512 with a 512-byte buffer: one sector per card read (CMD17).
+ReadResult readBack(size_t chunk) {
   ReadResult r;
   File f = SD.open(kPath, FILE_READ);
   if (!f) return r;
+  if (chunk < kChunk) f.setBufferSize(chunk);
   uint32_t t0 = millis();
-  for (size_t off = 0; off < kTotal; off += kChunk) {
-    size_t n = f.read(buf, kChunk);
+  for (size_t off = 0; off < kTotal; off += chunk) {
+    size_t n = f.read(buf, chunk);
     for (size_t i = 0; i < n; i++) {
       if (buf[i] == pattern(off + i)) continue;
       if (r.firstBad < 0) r.firstBad = off + i, r.want = pattern(off + i), r.saw = buf[i];
       r.bad++;
     }
     r.got += n;
-    if (n < kChunk) break;
+    if (n < chunk) break;
   }
   r.ms = millis() - t0;
   f.close();
   return r;
 }
 
-// One full write + two reads at the given SPI clock. Returns true if everything matched.
+// One full write + three reads at the given SPI clock. Returns true if everything matched.
 bool bench(int row, uint32_t hz) {
   unsigned mhz = hz / 1000000;
   SD.end();
@@ -78,9 +84,9 @@ bool bench(int row, uint32_t hz) {
   size_t fileSize = f ? f.size() : 0;
   f.close();
 
-  ReadResult r1 = readBack(), r2 = readBack();
-  bool ok = written == kTotal && fileSize == kTotal && r1.got == kTotal && r1.bad == 0 &&
-            r2.got == kTotal && r2.bad == 0;
+  ReadResult r1 = readBack(kChunk), r2 = readBack(kChunk), r3 = readBack(512);
+  auto good = [](const ReadResult& r) { return r.got == kTotal && r.bad == 0; };
+  bool ok = written == kTotal && fileSize == kTotal && good(r1) && good(r2) && good(r3);
   unsigned wk = writeMs ? kTotal / writeMs : 0;  // bytes per ms = kB/s
   unsigned rk = r1.ms ? kTotal / r1.ms : 0;
 
@@ -88,10 +94,11 @@ bool bench(int row, uint32_t hz) {
                 "write_kbps=%u read_kbps=%u verify=%d\n",
                 mhz, (unsigned)kTotal, (unsigned)written, (unsigned)fileSize,
                 (unsigned long)writeMs, (unsigned long)r1.ms, wk, rk, ok);
-  for (const ReadResult* r : {&r1, &r2}) {
-    if (r->got == kTotal && r->bad == 0) continue;
-    Serial.printf("sd verify mhz=%u read=%d got=%u bad=%u first_bad=%ld want=0x%02x saw=0x%02x\n",
-                  mhz, r == &r1 ? 1 : 2, (unsigned)r->got, (unsigned)r->bad, r->firstBad,
+  for (const ReadResult* r : {&r1, &r2, &r3}) {
+    if (good(*r)) continue;
+    Serial.printf("sd verify mhz=%u read=%d chunk=%u got=%u bad=%u first_bad=%ld want=0x%02x saw=0x%02x\n",
+                  mhz, r == &r1 ? 1 : r == &r2 ? 2 : 3, r == &r3 ? 512u : (unsigned)kChunk,
+                  (unsigned)r->got, (unsigned)r->bad, r->firstBad,
                   r->want, r->saw);
   }
 
@@ -99,9 +106,10 @@ bool bench(int row, uint32_t hz) {
     screenLine(row, TFT_GREEN, "%u MHz ok: w %u, r %u kB/s", mhz, wk, rk);
   } else if (written != kTotal || fileSize != kTotal) {
     screenLine(row, TFT_RED, "%u MHz: write short (%u kB)", mhz, (unsigned)(fileSize >> 10));
+  } else if (good(r3)) {
+    screenLine(row, TFT_RED, "%u MHz: 4 KB reads FAIL, 512 B ok", mhz);
   } else {
-    screenLine(row, TFT_RED, "%u MHz: verify FAILED, bad %u/%u B", mhz, (unsigned)r1.bad,
-               (unsigned)r2.bad);
+    screenLine(row, TFT_RED, "%u MHz: verify FAILED", mhz);
   }
   return ok;
 }
