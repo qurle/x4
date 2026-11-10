@@ -90,6 +90,7 @@ void applyLiveConfig() {
   flash::applyConfig(c);
   inputs::applyConfig(c);
   display::setBrightness((uint8_t)c.ui_brightness);
+  display::setFlip(c.ui_flip != 0);
   M5.Speaker.setVolume((uint8_t)c.ui_volume);
   if (g_mode == Mode::Full) net::applyTransferConfig(c);
   X4_LOGI("cfg", "applied", "live=1");
@@ -478,7 +479,7 @@ void setup(Mode m) {
   inputs::begin(c);
   M5.Speaker.setVolume((uint8_t)c.ui_volume);
 
-  display::begin((uint8_t)c.ui_brightness);
+  display::begin((uint8_t)c.ui_brightness, c.ui_flip != 0);
   x4ui::begin(m == Mode::Hello);
   display::handle();
 

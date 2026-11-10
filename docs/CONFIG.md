@@ -150,6 +150,7 @@ curl "http://192.168.4.50/settings?cam_id=3"
 | `ui_volume` | 96 | 0…255 | level | core |  |  | Speaker volume. |
 | `ui_orient` | 0 | 0…1 | enum | core |  |  | Settings tile 'orientation': 0 = horzntl, 1 = portrait (preview dims the sides to a 180 px crop; recorded in shot.json for the companion to crop). |
 | `ui_effect` | 0 | 0…1 | enum | core |  |  | Settings tile 'effect': 0 = normal, 1 = dithered (applied to the live preview; photos stay original, the choice is recorded in shot.json). |
+| `ui_flip` | 1 | 0…1 | bool | core |  |  | Screen and touch turned 180 degrees. 1 = the rig's mounting (default), 0 = the Core as it comes, e.g. on the desk. |
 | `ui_show_fps` | 0 | 0…1 | bool | core |  |  | FPS overlay in the corner. |
 <!-- END GENERATED:config -->
 

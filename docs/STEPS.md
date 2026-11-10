@@ -339,6 +339,10 @@ Then run the [printable pre-power checklist](WIRING.md#printable-pre-power-check
 The first time the real power path is used. This step also teaches the move you'll repeat for
 every Core step from now on.
 
+From here on the Core sits in the rig upside down, so steps 5+ turn the screen 180 degrees
+(`X4_SCREEN_FLIP=1` in `steps/platformio.ini`, section `core_rig`). The full firmware does the
+same with the config option `ui_flip` (default 1; [CONFIG](CONFIG.md)).
+
 ### The USB swap (Core)
 
 1. Rail switch **off**.

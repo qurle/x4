@@ -9,6 +9,7 @@
 #include "../hw/power_safety.h"
 #include "../log/log_setup.h"
 #include "../ui/tokens.h"
+#include "x4/config.h"
 #include "x4/log.h"
 #include "x4/version.h"
 
@@ -63,7 +64,7 @@ void setup() {
   x4core::power::enforce("boot");
   X4_LOGI("boot", "banner", "app=hello-ui name=" X4_PROJECT_NAME " fw=%s git=%s", X4_FW_VERSION, X4_GIT_HASH);
 
-  x4core::display::begin(160);
+  x4core::display::begin(160, x4::cfg::defaults().ui_flip != 0);  // no NVS config here: the default
   lv_obj_t* scr = lv_screen_active();
   lv_obj_set_style_bg_color(scr, tok::c(tok::kBg), 0);
   lv_obj_set_style_bg_opa(scr, LV_OPA_COVER, 0);

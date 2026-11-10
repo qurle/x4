@@ -23,6 +23,16 @@ uint32_t g_windowStart = 0;
 int64_t g_renderStart = 0;
 uint32_t g_windowMax = 0;
 TouchSample g_sample{false, 0, 0};
+uint8_t g_baseRotation = 0;  // M5GFX's own rotation for the CoreS3, read once at begin()
+bool g_flip = false;
+
+// 180 degrees on M5GFX: rotations 0..3 are 90 degree steps, 4..7 the same mirrored.
+uint8_t flipped(uint8_t r) { return (uint8_t)((r & 4) | ((r + 2) & 3)); }
+
+void applyRotation() {
+  SpiLock lock;
+  M5.Display.setRotation(g_flip ? flipped(g_baseRotation) : g_baseRotation);
+}
 
 uint32_t tickCb() { return (uint32_t)millis(); }
 
@@ -67,7 +77,10 @@ void renderReady(lv_event_t*) {
 
 }  // namespace
 
-void begin(uint8_t brightness) {
+void begin(uint8_t brightness, bool flip) {
+  g_baseRotation = M5.Display.getRotation();
+  g_flip = flip;
+  applyRotation();
   lv_init();
   lv_tick_set_cb(tickCb);
   g_disp = lv_display_create(kW, kH);
@@ -87,8 +100,20 @@ void begin(uint8_t brightness) {
   lv_indev_set_read_cb(g_touch, touchCb);
   setBrightness(brightness);
   g_windowStart = millis();
-  X4_LOGI("ui", "lvgl_init", "lvgl=%d.%d.%d buf_lines=%ld buf_bytes=%u", LVGL_VERSION_MAJOR,
-          LVGL_VERSION_MINOR, LVGL_VERSION_PATCH, (long)kBufLines, (unsigned)bytes);
+  X4_LOGI("ui", "lvgl_init", "lvgl=%d.%d.%d buf_lines=%ld buf_bytes=%u flip=%d", LVGL_VERSION_MAJOR,
+          LVGL_VERSION_MINOR, LVGL_VERSION_PATCH, (long)kBufLines, (unsigned)bytes, g_flip);
+}
+
+void setFlip(bool flip) {
+  if (flip == g_flip) return;
+  g_flip = flip;
+  applyRotation();
+  if (g_disp) {  // redraw everything the other way round
+    lv_obj_invalidate(lv_display_get_screen_active(g_disp));
+    lv_obj_invalidate(lv_display_get_layer_top(g_disp));
+    lv_obj_invalidate(lv_display_get_layer_sys(g_disp));
+  }
+  X4_LOGI("ui", "flip", "flip=%d", g_flip);
 }
 
 void setBrightness(uint8_t b) { M5.Display.setBrightness(b); }
