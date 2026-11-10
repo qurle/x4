@@ -31,7 +31,7 @@ flowchart LR
   GRAIL -->|"black"| PA
   FL -->|"yellow = EN"| PA
   BTN -->|"white = signal"| PA
-  C1 -.-x|"yellow/white = USB D+/D−<br/>CUT + TAPE"| X((nc))
+  C1 & C2 & C3 & C4 -.-x NC["not connected: yellow + white of every camera cable<br/>(= the camera's USB D+/D−): cut short, insulate, tape"]
 ```
 
 ASCII version (same thing):

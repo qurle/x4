@@ -12,8 +12,12 @@
 namespace x4core {
 namespace display {
 
-void begin(uint8_t brightness);
+void begin(uint8_t brightness, bool flip);
 void setBrightness(uint8_t b);
+// Screen (and touch) upside down, config ui_flip. Turns the M5GFX panel 180 degrees, so LVGL and
+// everything else keep drawing in the same 320x240 coordinates. Touch follows the panel rotation
+// in M5GFX (ASSUMPTION: check on hardware that a tap lands where the finger is).
+void setFlip(bool flip);
 // Run LVGL. Call from the UI loop only. Returns ms until LVGL wants to run again.
 uint32_t handle();
 

@@ -1,9 +1,14 @@
 // Shared by every Core step. Three things only: pin numbers, keeping the flash pin LOW, and
-// switching the Core's 5 V outputs off (and checking they really are off).
+// switching the Core's 5 V outputs off (and checking they really are off). Plus the screen turned
+// upside down for steps that run in the rig (X4_SCREEN_FLIP, set in platformio.ini).
 // Facts and sources: core/include/board_pins.h, docs/POWER.md, docs/HARDWARE.md.
 #pragma once
 #include <M5Unified.h>
 #include <driver/gpio.h>
+
+#ifndef X4_SCREEN_FLIP
+#define X4_SCREEN_FLIP 0
+#endif
 
 namespace pins {
 constexpr int kButton = 1;   // Port A white, Mini Button, LOW when pressed
@@ -69,6 +74,10 @@ inline PowerBits beginCoreSafely() {
   cfg.serial_baudrate = 115200;
   M5.begin(cfg);
   flashPinLow();  // again, in case M5.begin touched Port A
+  if (X4_SCREEN_FLIP) {  // 180 degrees: M5GFX rotations 0..3 are 90 degree steps (4..7 mirrored)
+    uint8_t r = M5.Display.getRotation();
+    M5.Display.setRotation((r & 4) | ((r + 2) & 3));
+  }
   PowerBits b = forcePowerOutputsOff();
   printPowerBits("boot", b);
   return b;
