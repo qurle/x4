@@ -13,7 +13,7 @@ namespace sd {
 constexpr uint32_t kSpiHz = 25000000;  // 25 MHz: M5's own CoreS3 examples use this value
 constexpr size_t kChunk = 16 * 1024;
 
-bool begin();          // mount (retries once); creates /x4/shots, /x4/logs
+bool begin();          // mount (retries once); creates /x4, /x4/logs
 bool mounted();
 uint64_t freeBytes();
 uint64_t totalBytes();
@@ -30,18 +30,21 @@ Bench benchmark(uint32_t kb);
 const Bench& lastBench();
 
 // Shot file helpers (paths from shared/x4/storage_layout.h).
-bool ensureShotDir(uint32_t shotId);
 File openCamFile(uint32_t shotId, uint8_t cam);           // "w"
 bool writeChunk(File& f, const uint8_t* data, size_t len);  // locks the bus per call
 void closeFile(File& f);
-bool writeText(const char* path, const char* text, size_t len);
 bool removeFile(const char* path);
 
 // SD log sink: drains the log queue into /x4/logs/x4.log (rotates at log_sd_max_kb).
 void pumpLogs(uint32_t maxKb);
 
-// Lists the newest shot folders (names like "S000042"), newest first. Returns count.
-int listShots(char names[][8], int max);
+// The newest shots found in /x4 (files "000042-1.jpg" ...), newest first. Returns count.
+// One pass over the folder by name only (no per-file open), so it stays linear in the file count.
+struct ShotEntry {
+  uint32_t id;
+  uint8_t cams;  // bit (cam-1) set if that camera's photo is on the card
+};
+int listShots(ShotEntry* out, int max);
 
 }  // namespace sd
 }  // namespace x4core

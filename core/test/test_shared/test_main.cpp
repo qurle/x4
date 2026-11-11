@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unity.h>
 
+#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -507,26 +508,127 @@ void test_fsm_ignores_stale_and_duplicate_acks() {
 }
 
 // ---------------------------------------------------------------- storage + dither
-void test_storage_paths_and_sidecar() {
+void test_storage_paths() {
   char buf[64];
   storage::camFile(buf, sizeof(buf), 42, 3);
-  TEST_ASSERT_EQUAL_STRING("/x4/shots/S000042/cam3.jpg", buf);
-  storage::sidecarFile(buf, sizeof(buf), 42);
-  TEST_ASSERT_EQUAL_STRING("/x4/shots/S000042/shot.json", buf);
+  TEST_ASSERT_EQUAL_STRING("/x4/000042-3.jpg", buf);
+  storage::camFileName(buf, sizeof(buf), 42, 3);
+  TEST_ASSERT_EQUAL_STRING("000042-3.jpg", buf);
+  TEST_ASSERT_EQUAL(0, storage::camFile(buf, 10, 42, 3));  // overflow reported
 
-  shoot::Session s;
-  s.id = 42;
-  s.cam[0].expected = s.cam[0].ok = s.cam[0].stored = true;
-  s.cam[0].bytes = 1234;
-  char js[1024];
-  storage::SidecarInfo info{&s, "0.1.0", "abc", "", 5, 1, false, 50, "portrait", "dithered", 200};
-  size_t n = storage::sidecarJson(js, sizeof(js), info);
-  TEST_ASSERT_TRUE(n > 0);
-  TEST_ASSERT_NOT_NULL(strstr(js, "\"shot\":42"));
-  TEST_ASSERT_NOT_NULL(strstr(js, "\"file\":\"cam1.jpg\""));
-  TEST_ASSERT_NOT_NULL(strstr(js, "\"orientation\":\"portrait\""));
-  TEST_ASSERT_NOT_NULL(strstr(js, "\"effect\":\"dithered\""));
-  TEST_ASSERT_EQUAL(0, storage::sidecarJson(js, 20, info));  // overflow reported
+  uint32_t id = 0;
+  uint8_t cam = 0;
+  TEST_ASSERT_TRUE(storage::parseCamFile("/x4/000042-3.jpg", &id, &cam));
+  TEST_ASSERT_EQUAL_UINT32(42, id);
+  TEST_ASSERT_EQUAL_UINT8(3, cam);
+  TEST_ASSERT_TRUE(storage::parseCamFile("123456-1.JPG", &id, &cam));  // FAT may hand back upper case
+  TEST_ASSERT_EQUAL_UINT32(123456, id);
+  TEST_ASSERT_FALSE(storage::parseCamFile("000042-0.jpg", &id, &cam));
+  TEST_ASSERT_FALSE(storage::parseCamFile("00042-1.jpg", &id, &cam));
+  TEST_ASSERT_FALSE(storage::parseCamFile("000042-1.json", &id, &cam));
+  TEST_ASSERT_FALSE(storage::parseCamFile("bench.bin", &id, &cam));
+  TEST_ASSERT_FALSE(storage::parseCamFile("logs", &id, &cam));
+}
+
+// A minimal JPEG head: SOI, APP0 (JFIF, 16 bytes), DQT start.
+static const uint8_t kJpegHead[] = {0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 'J', 'F', 'I', 'F', 0x00, 0x01, 0x01,
+                                    0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0xFF, 0xDB, 0x00, 0x43};
+
+void test_storage_comment_insert_point() {
+  TEST_ASSERT_EQUAL(20, storage::commentInsertAt(kJpegHead, sizeof(kJpegHead)));  // after APP0
+  TEST_ASSERT_EQUAL(0, storage::commentInsertAt(kJpegHead, 1));                   // need more
+  TEST_ASSERT_EQUAL(0, storage::commentInsertAt(kJpegHead, 10));                  // APP0 not complete
+  TEST_ASSERT_EQUAL(0, storage::commentInsertAt(kJpegHead, 20));                  // next marker unseen
+  const uint8_t noApp[] = {0xFF, 0xD8, 0xFF, 0xDB, 0x00, 0x43};
+  TEST_ASSERT_EQUAL(2, storage::commentInsertAt(noApp, sizeof(noApp)));  // straight after SOI
+  const uint8_t notJpeg[] = {'G', 'I', 'F', '8'};
+  TEST_ASSERT_EQUAL(-1, storage::commentInsertAt(notJpeg, sizeof(notJpeg)));
+}
+
+void test_storage_comment_roundtrip() {
+  storage::ShotMeta m{42, "0.1.0", "abc", 5, 10, true, 50, "portrait", "dithered", 200};
+  uint8_t com[384];
+  size_t n = storage::jpegComment(com, sizeof(com), m, 3);
+  TEST_ASSERT_TRUE(n > 4);
+  TEST_ASSERT_EQUAL_HEX8(0xFF, com[0]);
+  TEST_ASSERT_EQUAL_HEX8(0xFE, com[1]);
+  TEST_ASSERT_EQUAL((size_t)((com[2] << 8) | com[3]), n - 2);  // length counts itself, not the marker
+  uint8_t small[40];
+  TEST_ASSERT_EQUAL(0, storage::jpegComment(small, sizeof(small), m, 3));  // overflow reported
+
+  // Build "photo with comment" the way the transfer does and read the settings back.
+  std::vector<uint8_t> jpg(kJpegHead, kJpegHead + 20);
+  jpg.insert(jpg.end(), com, com + n);
+  jpg.insert(jpg.end(), kJpegHead + 20, kJpegHead + sizeof(kJpegHead));
+  const char* text = nullptr;
+  size_t len = storage::findComment(jpg.data(), jpg.size(), &text);
+  TEST_ASSERT_EQUAL(n - 4, len);
+  std::string js(text, len);
+  TEST_ASSERT_EQUAL_INT(0, (int)js.find("{\"format\":\"x4-shot/2\""));
+  TEST_ASSERT_TRUE(js.find("\"shot\":42,\"cam\":3") != std::string::npos);
+  TEST_ASSERT_TRUE(js.find("\"orientation\":\"portrait\"") != std::string::npos);
+  TEST_ASSERT_TRUE(js.find("\"effect\":\"dithered\"") != std::string::npos);
+  TEST_ASSERT_TRUE(js.find("\"flash\":true") != std::string::npos);
+  TEST_ASSERT_EQUAL('}', js.back());
+  TEST_ASSERT_EQUAL(0, storage::findComment(kJpegHead, sizeof(kJpegHead), &text));  // none there
+}
+
+static bool appendTo(void* ctx, const uint8_t* p, size_t n) {
+  static_cast<std::vector<uint8_t>*>(ctx)->insert(static_cast<std::vector<uint8_t>*>(ctx)->end(), p, p + n);
+  return true;
+}
+
+// Streams `in` through a CommentInserter in pieces of `step` bytes.
+static std::vector<uint8_t> streamed(const std::vector<uint8_t>& in, size_t step, const uint8_t* com, size_t comLen,
+                                     size_t holdCap, bool* inserted) {
+  std::vector<uint8_t> out;
+  std::vector<uint8_t> hold(holdCap);
+  storage::CommentInserter ins(hold.data(), holdCap, com, comLen, appendTo, &out);
+  for (size_t i = 0; i < in.size(); i += step) TEST_ASSERT_TRUE(ins.feed(in.data() + i, std::min(step, in.size() - i)));
+  TEST_ASSERT_TRUE(ins.finish());
+  *inserted = ins.inserted();
+  return out;
+}
+
+void test_storage_comment_streaming() {
+  storage::ShotMeta m{7, "0.1.0", "abc", 5, 10, false, 40, "horizontal", "normal", 0};
+  uint8_t com[384];
+  size_t comLen = storage::jpegComment(com, sizeof(com), m, 2);
+  std::vector<uint8_t> photo(kJpegHead, kJpegHead + sizeof(kJpegHead));
+  for (int i = 0; i < 3000; i++) photo.push_back((uint8_t)(i * 7));  // stand-in for DQT ... scan data
+  photo.push_back(0xFF);
+  photo.push_back(0xD9);
+  std::vector<uint8_t> want(photo.begin(), photo.begin() + 20);
+  want.insert(want.end(), com, com + comLen);
+  want.insert(want.end(), photo.begin() + 20, photo.end());
+
+  const size_t steps[] = {1, 3, 20, 21, 1000, 16384};
+  for (size_t step : steps) {
+    bool ins = false;
+    std::vector<uint8_t> out = streamed(photo, step, com, comLen, 1024, &ins);
+    TEST_ASSERT_TRUE(ins);
+    TEST_ASSERT_TRUE(out == want);
+  }
+  // Header longer than the hold buffer: the segment goes right after SOI, nothing is lost.
+  bool ins = false;
+  std::vector<uint8_t> out = streamed(photo, 7, com, comLen, 16, &ins);
+  TEST_ASSERT_TRUE(ins);
+  TEST_ASSERT_EQUAL(photo.size() + comLen, out.size());
+  TEST_ASSERT_TRUE(memcmp(out.data() + 2, com, comLen) == 0);
+  // No settings: the photo passes through untouched.
+  out = streamed(photo, 100, com, 0, 1024, &ins);
+  TEST_ASSERT_FALSE(ins);
+  TEST_ASSERT_TRUE(out == photo);
+  // Not a JPEG (e.g. an error page): passed through unchanged.
+  std::vector<uint8_t> html = {'<', 'h', 't', 'm', 'l', '>'};
+  out = streamed(html, 2, com, comLen, 1024, &ins);
+  TEST_ASSERT_FALSE(ins);
+  TEST_ASSERT_TRUE(out == html);
+  // Stream ends inside the header (broken photo): every received byte is still written.
+  std::vector<uint8_t> cut(kJpegHead, kJpegHead + 10);
+  out = streamed(cut, 4, com, comLen, 1024, &ins);
+  TEST_ASSERT_EQUAL(cut.size() + comLen, out.size());
+  TEST_ASSERT_TRUE(memcmp(out.data() + 2 + comLen, cut.data() + 2, cut.size() - 2) == 0);
 }
 
 void test_dither() {
@@ -583,7 +685,10 @@ int main(int, char**) {
   RUN_TEST(test_fsm_transfer_retries);
   RUN_TEST(test_fsm_faults);
   RUN_TEST(test_fsm_ignores_stale_and_duplicate_acks);
-  RUN_TEST(test_storage_paths_and_sidecar);
+  RUN_TEST(test_storage_paths);
+  RUN_TEST(test_storage_comment_insert_point);
+  RUN_TEST(test_storage_comment_roundtrip);
+  RUN_TEST(test_storage_comment_streaming);
   RUN_TEST(test_dither);
   return UNITY_END();
 }

@@ -24,7 +24,7 @@ shot total/skew; the last 6 log lines. Buttons: Arm, Flash (test pulse, on-scree
 Join `x4cam`, open `http://192.168.4.1/`. Status card (state, faults, power, system, SD, UI,
 flash, button), cameras table with a transfer bar per camera, live log tail with level/text
 filter and pause, full config table with inline editing (safety options marked ⚑, reboot ↻),
-photos list with thumbnails and `shot.json`, bring-up actions (arm, test pulse with confirm,
+photos list with thumbnails, bring-up actions (arm, test pulse with confirm,
 reboot). Raw JSON: `/api/status`, `/config`, `/logs?since=0`, `/api/shots`.
 
 ## Measuring shutter skew

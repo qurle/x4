@@ -2,6 +2,8 @@
 // kWorkers parallel workers (cfg xfer_parallel limits how many the app starts at once) and
 // streams it to the SD card in 16 KB chunks. Pull keeps the Core in control of concurrency, so
 // SD writes and WiFi never fight more than configured. Measured numbers: docs/MEASUREMENTS.md.
+// Each photo gets the shot's settings as a JPEG COM segment right after its header (SOI + APPn),
+// so no sidecar file is needed (x4/storage_layout.h).
 #include <Arduino.h>
 #include <HTTPClient.h>
 #include <WiFi.h>
@@ -29,19 +31,26 @@ struct Worker {
   QueueHandle_t q;
   volatile bool busy;
   XferProgress prog;
+  uint8_t com[384];    // this photo's COM segment
+  uint8_t hold[1024];  // JPEG header held back until the COM segment can go in after it
 };
 
 Worker g_w[kWorkers];
 QueueHandle_t g_results = nullptr;
 volatile uint32_t g_timeoutMs = 8000;
+// Written by the app at the shutter, read by the workers afterwards. The FSM refuses a new shot
+// while one is transferring, so a worker never reads it mid-update.
+x4::storage::ShotMeta g_meta{};
 
 bool endsWithJpegEoi(const uint8_t* tail2) { return tail2[0] == 0xFF && tail2[1] == 0xD9; }
+
+bool writeToSd(void* ctx, const uint8_t* p, size_t n) { return sd::writeChunk(*static_cast<File*>(ctx), p, n); }
 
 XferResult run(Worker& w, const Job& j, uint8_t* buf, size_t cap) {
   XferResult r{j.cam, j.shot, false, 0, 0, 0};
   uint32_t t0 = millis();
   uint32_t ip = cams::ipOf(j.cam);
-  if (!ip || !sd::mounted() || !sd::ensureShotDir(j.shot)) return r;
+  if (!ip || !sd::mounted()) return r;
   char url[64];
   IPAddress a(ip);
   snprintf(url, sizeof(url), "http://%u.%u.%u.%u/shot?id=%lu", a[0], a[1], a[2], a[3], (unsigned long)j.shot);
@@ -64,6 +73,8 @@ XferResult run(Worker& w, const Job& j, uint8_t* buf, size_t cap) {
     return r;
   }
   WiFiClient* s = http.getStreamPtr();
+  size_t comLen = g_meta.shot == j.shot ? x4::storage::jpegComment(w.com, sizeof(w.com), g_meta, j.cam) : 0;
+  x4::storage::CommentInserter ins(w.hold, sizeof(w.hold), w.com, comLen, writeToSd, &f);
   uint8_t tail[2] = {0, 0};
   bool ok = true;
   uint32_t got = 0, lastData = millis();
@@ -81,7 +92,7 @@ XferResult run(Worker& w, const Job& j, uint8_t* buf, size_t cap) {
     int n = s->read(buf, avail < cap ? avail : cap);
     if (n <= 0) continue;
     lastData = millis();
-    ok = sd::writeChunk(f, buf, (size_t)n);
+    ok = ins.feed(buf, (size_t)n);
     if (n >= 2) {
       tail[0] = buf[n - 2];
       tail[1] = buf[n - 1];
@@ -92,6 +103,10 @@ XferResult run(Worker& w, const Job& j, uint8_t* buf, size_t cap) {
     got += (uint32_t)n;
     w.prog.bytes = got;
   }
+  if (ok) ok = ins.finish();
+  if (!ins.inserted())
+    X4_LOGW("xfer", "no_meta", "cam=%u shot=%lu meta_shot=%lu com=%u", j.cam, (unsigned long)j.shot,
+            (unsigned long)g_meta.shot, (unsigned)comLen);
   sd::closeFile(f);
   http.end();
   r.bytes = got;
@@ -140,6 +155,8 @@ void beginTransfer(const x4::cfg::Config& c) {
   X4_LOGI("xfer", "init", "workers=%d chunk=%u timeout_ms=%lu", kWorkers, (unsigned)sd::kChunk,
           (unsigned long)g_timeoutMs);
 }
+
+void setShotMeta(const x4::storage::ShotMeta& m) { g_meta = m; }
 
 bool startTransfer(uint8_t cam, uint32_t shot) {
   for (auto& w : g_w) {

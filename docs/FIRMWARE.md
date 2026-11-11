@@ -110,7 +110,7 @@ stateDiagram-v2
 | Error | refused ("error") | red overlay with the reason when known ("No SD card", "SD is full", "Too hot, cooling"), else "Error" |
 
 Effects the app performs: send trigger, schedule flash, pause/resume preview, start transfers
-(respecting `xfer_parallel`), write the sidecar, UI moments (`shutterMoment`, `shotCaptured`,
+(respecting `xfer_parallel`), log per-camera timings, UI moments (`shutterMoment`, `shotCaptured`,
 `shotStored`, `shutterRefused`). Screens and overlays: [UI.md](UI.md). Faults: no cameras, SD missing, SD full (< 12 MB), overheat.
 Brown-out is reported (boot log, diagnostics, web) but is not a blocking state.
 
@@ -122,7 +122,7 @@ t≈0      SHOOT shot=N at=T (T = now + trig_lead_ms) → broadcast + unicast ×
 t≈T      cameras capture at their local T (clock-synced), flash fires at T − flash_lead_ms
 t≈T+…    each camera ACKs (cap timestamp in Core time) → "captured" moment when all ACKed
          transfers start as soon as the first ACK arrives (pull, ≤ xfer_parallel at once)
-t≤5 s    all JPEGs + shot.json on SD → "saved · 3.4 s" toast; next shot allowed
+t≤5 s    all JPEGs on SD (settings inside each) → "saved · 3.4 s" toast; next shot allowed
 ```
 
 ### Memory map (Core)
@@ -192,10 +192,10 @@ WiFi instead of the Core.
 
 ## Tests
 
-`cd core && pio test -e native` — 32 host tests: log format/levels/rate limit/ring, config
+`cd core && pio test -e native` — 35 host tests: log format/levels/rate limit/ring, config
 validation + tighten-only + schema-vs-safety limits, flash guard, protocol round-trips + garbage,
 clock sync, input map + debouncer + swipes, shooting FSM (happy path, timeouts, retries, faults,
-stale ACKs), storage paths + sidecar, dithering. CI also checks that generated tokens/docs are
+stale ACKs), storage paths + in-photo settings, dithering. CI also checks that generated tokens/docs are
 fresh and builds all 8 firmware environments.
 
 The UI also runs on a PC: `python tools/ui_sim/run.py` renders every screen with the real UI

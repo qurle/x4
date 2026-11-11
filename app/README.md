@@ -9,4 +9,4 @@ Not on the critical path. Plan (docs/COMPANION.md):
    photos through the API in docs/PROTOCOL.md, does post-processing (alignment, dithering, GIFs).
 
 Do not start the Flutter project until the owner asks. The contract it must follow:
-docs/PROTOCOL.md (HTTP API) and docs/COMPANION.md (SD layout, sidecar format, platform notes).
+docs/PROTOCOL.md (HTTP API) and docs/COMPANION.md (SD layout, in-photo settings, platform notes).

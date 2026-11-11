@@ -33,12 +33,15 @@ bring-up actions. Contract: [PROTOCOL.md](PROTOCOL.md#core-http-api-port-80).
 ## 3. SD / file contract
 
 ```
-/x4/shots/S000042/cam1.jpg … cam4.jpg     full-resolution JPEG (5 MP by default)
-/x4/shots/S000042/shot.json               sidecar, format "x4-shot/1"
+/x4/000042-1.jpg … 000042-4.jpg    full-resolution JPEG (5 MP by default), one per camera
 ```
-Folder name = persistent shot counter (6 digits). Readable on any PC (FAT32). The sidecar format
-is documented in [PROTOCOL.md](PROTOCOL.md#sd-layout-fat32); new keys may be added, existing ones
-keep their meaning within `x4-shot/1`.
+Flat, no folders, no sidecar (owner, 2026-11-11). Name = persistent shot counter (6 digits) +
+camera number; no date, the Core has no working clock. Readable on any PC (FAT32). Each photo
+carries the shot's settings (`orientation`, `effect`, …) as a JSON comment inside the JPEG,
+format `x4-shot/2`, documented in [Protocol](PROTOCOL.md#sd-layout-fat32); new keys may be added,
+existing ones keep their meaning within `x4-shot/2`. The pixels are always the original:
+applying portrait crop / dither is the companion's job, until the cameras can do it themselves
+([STEPS step 14](STEPS.md#14-effects-on-the-camera-planned-no-firmware-yet)).
 
 ## 4. BLE (not v1)
 

@@ -86,6 +86,14 @@ From `python tools/x4log.py core.log --shots` and the web page.
 | 2 cameras in parallel | kB/s aggregate | |
 | 4 cameras in parallel | kB/s aggregate | |
 | SoftAP RSSI per camera at rig distance | dBm | `/api/status` |
+| photo save time, empty card vs ~10k files in `/x4` | ms per photo | flat folder: each new file scans the whole folder (ADR-019). `evt=done ms=` |
+
+## Effects on the camera (STEPS step 14, planned)
+
+| output | decode ms | crop + dither ms | encode ms | PNG kB | peak PSRAM kB |
+|---|---|---|---|---|---|
+| 2592×1944 portrait + dithered | | | | | |
+| 1296×972 portrait + dithered | | | | | |
 
 ## UI
 

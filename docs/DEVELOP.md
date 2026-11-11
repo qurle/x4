@@ -81,7 +81,7 @@ Cameras: `cd camera && pio run` (`cam1`…`cam4`, `cam-hello`). Step firmware: `
 
 ## 2. Host tests
 
-32 tests of the shared logic (`shared/`), compiled for your computer, not the chip.
+35 tests of the shared logic (`shared/`), compiled for your computer, not the chip.
 
 **GUI:** *Run Task… → x4: unit tests (native)*.
 

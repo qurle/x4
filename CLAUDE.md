@@ -35,7 +35,7 @@ Mini Button, powered by an Anker power bank through a USB-C breakout rail. Start
 ## Build and checks (run what you touched before pushing)
 
 ```bash
-cd core && pio run && pio test -e native        # core, core-hello, hello-ui + 32 host tests
+cd core && pio run && pio test -e native        # core, core-hello, hello-ui + 35 host tests
 cd camera && pio run                             # cam1..cam4, cam-hello
 cd steps && pio run                              # 15 bring-up envs (slow, ~5 min)
 python tools/gen_docs.py --check && python tools/gen_tokens.py --check && python tools/gen_figma_assets.py --check && python tools/gen_assets.py --check
