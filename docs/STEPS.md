@@ -56,6 +56,7 @@ Tick these in your copy as you go.
 - [ ] [11. Four cameras](#11-four-cameras)
 - [ ] [12. UI smoke test](#12-ui-smoke-test)
 - [ ] [13. The full firmware](#13-the-full-firmware)
+- [ ] [14. Effects on the camera](#14-effects-on-the-camera-planned-no-firmware-yet) (planned)
 - [ ] [Workshop F: into the box](#workshop-f-into-the-box)
 
 | # | firmware (env) | proves | power |
@@ -73,6 +74,7 @@ Tick these in your copy as you go.
 | 11 | + `s10-cam2..4` | four cameras | rail |
 | 12 | `core/` `hello-ui` | LVGL, fonts, animation | USB, then rail |
 | 13 | `core/` `core` + `camera/` `cam1..4` | the real thing | USB or rail |
+| 14 | `s14-cam-effect` (planned) | a camera can bake crop + dither into its photo, and how fast | camera on USB |
 
 ---
 
@@ -654,7 +656,8 @@ Any `err=NNN`: look it up in [LOGGING: error codes](LOGGING.md#error-codes). On 
 use the **diagnostics screen** (long-press the shutter) or the web page instead
 ([DEBUGGING](DEBUGGING.md#diagnostics-screen-on-the-core)).
 
-**Pass:** four `evt=register` lines, `safe=1`, a button press gives four photos.
+**Pass:** four `evt=register` lines, `safe=1`, a button press gives four photos
+(`/x4/000001-1.jpg` … `-4.jpg`; `exiftool -Comment` on one shows the shot's settings).
 
 Then carry on with [BRINGUP step 5 onward](BRINGUP.md#step-5--flash-fire-stress-test): flash
 stress test, WiFi, simultaneous shot with skew measurement, soak. If something fails here that
@@ -665,6 +668,30 @@ the shooting state machine, the UI ([DEBUGGING](DEBUGGING.md)).
 (OTA): no swap, no cables. Laptop on the `x4cam` WiFi, then
 `pio run -e core -t upload --upload-port 192.168.4.1` (asks for `X4_OTA_PASS` from `secrets.h`)
 ([BRINGUP](BRINGUP.md#flashing-without-breaking-the-power-rules)).
+
+---
+
+## 14. Effects on the camera (planned, no firmware yet)
+
+**Question:** can each camera bake the portrait crop and the dither into its own photo, so the
+card holds finished pictures and no companion is needed? Today the photos stay original and the
+settings ride along inside the JPEG ([PROTOCOL](PROTOCOL.md#sd-layout-fat32)).
+
+**Why on the camera:** the camera module only outputs JPEG (VERIFIED, [HARDWARE](HARDWARE.md)),
+so the photo has to be decoded, cropped/dithered and encoded again. The Core can't do that for
+four photos in time, and its 8 MB PSRAM can't hold a decoded 5 MP frame (~15 MB) anyway. Each
+CamS3 has its own ESP32-S3 + 8 MB PSRAM and is idle once its photo is out, and the four work in
+parallel. Dithered output has to be PNG: JPEG smears the dither pattern and grows.
+
+**Plan (one camera, USB, after step 13):** a `s14-cam-effect` env that takes a 5 MP photo,
+decodes it in strips, applies the portrait crop + Bayer dither (`shared/src/dither.cpp`) and
+encodes PNG, at full size and at 1296×972. Nothing like this has been measured; the times are
+**Not sure** until this runs.
+
+**Save:** decode / dither / encode ms, PNG bytes and peak PSRAM, both sizes, in
+[MEASUREMENTS](MEASUREMENTS.md). **Decides:** if one photo is done in a few seconds, baked
+effects become the default (original kept only on request); if not, fall back to the smaller size
+or keep the in-photo settings.
 
 ---
 

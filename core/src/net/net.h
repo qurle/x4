@@ -7,6 +7,7 @@
 
 #include "x4/config.h"
 #include "x4/protocol.h"
+#include "x4/storage_layout.h"
 
 namespace x4core {
 namespace net {
@@ -35,6 +36,9 @@ struct XferResult {
 void beginTransfer(const x4::cfg::Config& c);
 void applyTransferConfig(const x4::cfg::Config& c);
 bool startTransfer(uint8_t cam, uint32_t shot);  // false if no worker is free
+// Settings written into each photo of shot m.shot (JPEG COM segment, docs/PROTOCOL.md#sd-layout-fat32).
+// Call at the shutter, before startTransfer; a photo of any other shot is saved without them.
+void setShotMeta(const x4::storage::ShotMeta& m);
 bool nextXferResult(XferResult* out);
 struct XferProgress {
   uint8_t cam;

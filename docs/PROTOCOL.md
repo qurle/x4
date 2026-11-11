@@ -75,7 +75,7 @@ Baseline from earlier work kept: `/capture` and `/settings` on :80, MJPEG `/stre
 | `GET /config` | options with value, default, min, max, unit, safety, reboot, doc |
 | `POST /config?key=value[&…]` | set options (tighten-only rules); JSON per key: ok, value, clamped |
 | `POST /api/action?a=…` | `shutter`, `flash_arm`, `flash_disarm`, `flash_test` (50 ms), `sd_bench`, `preview_on`, `preview_off`, `reboot` |
-| `GET /api/shots` | newest 24 shots with their files and sizes |
+| `GET /api/shots` | newest 24 shots, newest first: `{"shots":[{"id":42,"files":[{"cam":1,"name":"000042-1.jpg","path":"/x4/000042-1.jpg"}, …]}]}`. No sizes (that would mean opening every file); `GET /file` sends `Content-Length` |
 | `GET /file?path=/x4/…` | stream a file from the SD (only below `/x4/`) |
 
 Error body (all endpoints): `{"ok":false,"err":<code>,"err_name":"…","detail":"…"}`.
@@ -83,11 +83,31 @@ Error body (all endpoints): `{"ok":false,"err":<code>,"err_name":"…","detail":
 ## SD layout (FAT32)
 
 ```
-/x4/shots/S000042/cam1.jpg … cam4.jpg
-/x4/shots/S000042/shot.json
+/x4/000042-1.jpg … 000042-4.jpg   one shot = one photo per camera, flat, no folders
 /x4/logs/x4.log, x4.1.log         (only with log_sd=1)
 ```
-`shot.json` (`format: "x4-shot/1"`): shot id, fw, git, rtc (empty: RTC not set), res, quality,
-flash, temp_c, orientation (`horizontal`/`portrait`), effect (`normal`/`dithered`), cam_delay_ms, t0_ms, at_us, captured_ms, done_ms, total_ms, skew_us, and per camera: cam, ok,
-stored, bytes, cap_ms, cap_us, rx_us, stored_ms, tries, file. Builder:
-`shared/src/storage_layout.cpp` (unit-tested).
+Name = persistent shot counter (6 digits) + `-` + camera number. No date: the Core has no
+working clock (the RTC has no backup battery and the power switch cuts it, so it forgets the time
+at every power-off; ASSUMPTION from the SE schematic). `000042-1.jpg` is a valid 8.3 name, so each
+photo takes one FAT directory entry.
+
+**Settings travel inside each photo**, there is no sidecar file. Right after the JPEG header
+(SOI and any APP0/APP1 segments) the Core inserts one COM segment (`FF FE`, 2-byte length) whose
+text is a single JSON object:
+
+```json
+{"format":"x4-shot/2","shot":42,"cam":1,"orientation":"portrait","effect":"dithered",
+ "res":5,"quality":10,"flash":true,"cam_delay_ms":0,"temp_c":47,"fw":"0.1.0","git":"abc1234"}
+```
+
+`orientation` (`horizontal`/`portrait`) and `effect` (`normal`/`dithered`) are what the viewfinder
+showed; the pixels stay the camera's original. New keys may be added, existing ones keep their
+meaning within `x4-shot/2`. Any JPEG viewer ignores the segment; to read it: `exiftool -Comment
+000042-1.jpg`, Python `PIL.Image.open(p).info["comment"]`, or `x4::storage::findComment()`.
+The settings are snapshotted at the shutter, so changing a tile during the transfer can't leak in.
+Per-camera timings (`cap_ms`, `cap_us`, `rx_us`, `stored_ms`, `tries`) go to the log as
+`mod=shoot evt=cam` lines. Builder and stream inserter: `shared/src/storage_layout.cpp`
+(unit-tested, checked against Pillow).
+
+`x4-shot/1` (until 2026-11-11) used `/x4/shots/S000042/cam1.jpg` + `shot.json`; nothing reads it
+any more.

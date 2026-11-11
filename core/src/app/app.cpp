@@ -173,6 +173,13 @@ void startShot() {
   }
   sys::nextShotId();
   const auto& s = g_ctl.session();
+  {
+    // Snapshot the settings now: they go into every photo of this shot (JPEG COM segment).
+    const auto& c = conf::get();
+    net::setShotMeta(x4::storage::ShotMeta{s.id, X4_FW_VERSION, X4_GIT_HASH, c.cam_res, c.cam_quality, s.flash,
+                                           (int32_t)g_temp, c.ui_orient ? "portrait" : "horizontal",
+                                           c.ui_effect ? "dithered" : "normal", c.cam_delay_ms});
+  }
   X4_LOGI("shoot", "start", "shot=%lu at_us=%lld lead_ms=%lu cfg_lead_ms=%ld cams=%d flash=%d delay_ms=%ld",
           (unsigned long)s.id, (long long)s.atUs, (unsigned long)p.leadMs, (long)conf::get().trig_lead_ms, s.expected(),
           s.flash, (long)conf::get().cam_delay_ms);
@@ -191,19 +198,17 @@ void startShot() {
   if (g_flashArmed && !flashOk) x4ui::toast("flash cooling down", 0xFFB020);
 }
 
-void writeSidecar() {
+// Per-camera timings of a finished shot, one log line each (they used to go into shot.json).
+void logShotCams() {
   const auto& s = g_ctl.session();
-  char* buf = (char*)heap_caps_malloc(2048, MALLOC_CAP_SPIRAM);
-  if (!buf) return;
-  const auto& c = conf::get();
-  x4::storage::SidecarInfo info{&s, X4_FW_VERSION, X4_GIT_HASH, "", c.cam_res, c.cam_quality, s.flash, (int32_t)g_temp,
-                                c.ui_orient ? "portrait" : "horizontal", c.ui_effect ? "dithered" : "normal",
-                                c.cam_delay_ms};
-  size_t n = x4::storage::sidecarJson(buf, 2048, info);
-  char path[48];
-  x4::storage::sidecarFile(path, sizeof(path), s.id);
-  if (n && sd::ensureShotDir(s.id)) sd::writeText(path, buf, n);
-  heap_caps_free(buf);
+  for (int i = 0; i < x4::proto::kMaxCams; i++) {
+    const auto& c = s.cam[i];
+    if (!c.expected) continue;
+    X4_LOGI("shoot", "cam", "shot=%lu cam=%d ok=%d stored=%d bytes=%lu cap_ms=%lu cap_us=%lld rx_us=%lld stored_ms=%lu tries=%u",
+            (unsigned long)s.id, i + 1, c.ok, c.stored, (unsigned long)c.bytes, (unsigned long)c.capMs,
+            (long long)c.capCoreUs, (long long)c.rxCoreUs, (unsigned long)(c.storedAtMs ? c.storedAtMs - s.t0Ms : 0),
+            (unsigned)c.tries);
+  }
 }
 
 void handleEffects(uint32_t eff) {
@@ -219,7 +224,7 @@ void handleEffects(uint32_t eff) {
     for (uint8_t cam = g_ctl.nextToFetch(); cam; cam = g_ctl.nextToFetch()) net::startTransfer(cam, s.id);
   }
   if (eff & sh::kShotStored) {
-    writeSidecar();
+    logShotCams();
     bool partial = eff & sh::kShotPartial;
     bool over = eff & sh::kOverBudget;
     X4_LOGI("shoot", "stored", "shot=%lu stored=%d of=%d total_ms=%lu budget_ms=%ld partial=%d", (unsigned long)s.id,
@@ -317,7 +322,7 @@ void sdCheck(uint32_t now) {
   if (!mounted && g_mode == Mode::Full) mounted = sd::begin();  // card inserted later
   g_sdFreeMb = (uint32_t)(sd::freeBytes() >> 20);
   g_sdTotalMb = (uint32_t)(sd::totalBytes() >> 20);
-  // One full shot needs up to 4 x jpeg buffer (2 MB) + sidecar: keep 12 MB headroom.
+  // One full shot needs up to 4 x jpeg buffer (2 MB): keep 12 MB headroom.
   bool full = mounted && g_sdFreeMb < 12;
   if (full) X4_LOG_EVERY(60000, x4::log::Level::Error, "sd", "full", "free_mb=%lu", (unsigned long)g_sdFreeMb);
   handleEffects(g_ctl.setFault(Fault::SdMissing, !mounted, now));

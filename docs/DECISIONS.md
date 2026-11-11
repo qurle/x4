@@ -85,6 +85,24 @@ Runtime XML is paid and removed from open-source LVGL, so XML = compile-time exp
 **Context.** The Figma MCP returned "no access to this file" (connector on the work account).
 **Decision.** Build on placeholder tokens; ask the owner. Superseded once access worked.
 
+## ADR-019 Flat counter-named photos, settings inside the JPEG
+**Context.** Shots were folders (`/x4/shots/S000042/cam1.jpg` … + `shot.json`). The owner doesn't
+want folders or an extra file per shot (2026-11-11). A date in the name was considered: the SE's
+BM8563 has no backup battery (BAT1 not fitted, VERIFIED: M5 SE schematic via the M5 knowledge
+base) and the rig's power switch cuts the Core, so the clock is lost at every power-off
+(ASSUMPTION, follows from the schematic). **Decision.** `/x4/NNNNNN-C.jpg` (shot counter + camera),
+no folders, no date. The shot settings (`orientation`, `effect`, res, quality, flash, …) go into
+each JPEG as one COM segment with JSON, format `x4-shot/2`, inserted after SOI/APPn while the
+photo streams to the card. Per-camera timings move to the log (`mod=shoot evt=cam`).
+**Consequences.** 4 files per shot; any viewer shows the photos, the companion reads the settings
+from the photo. Every new file scans the whole folder (FAT has no index): at ~2,600 shots (a full
+16 GB card) that's ~10k entries. **Not sure** how many ms that adds per save; measure at
+BRINGUP. `/api/shots` lists names in one pass and no longer reports sizes. Q16 (set the clock)
+closed: no clock. **Rejected:** folder per shot (owner), date in name (no clock), card root
+instead of `/x4/` (the OS's own folders and our logs would sit next to the photos; one constant
+to change if wanted), baking the effect on the Core (no JPEG codec, not enough RAM; maybe on the
+cameras, STEPS step 14).
+
 ## ADR-018 Website: own Astro site, no template
 **Decision.** Replace the notes. template with a small Astro site of our own (owner, 2026-11-01):
 a landing page plus every doc. Dark like the device's screen (`#1E1E1E`); Instrument Serif for

@@ -248,32 +248,31 @@ void hAction() {
   sendJson(200, d);
 }
 
+// Newest 24 shots. No sizes: reading them would mean opening every file of a big flat folder.
 void hShots() {
-  char names[24][8];
-  int n = sd::listShots(names, 24);
+  static sd::ShotEntry shots[24];  // web handlers run on one task
+  int n = sd::listShots(shots, 24);
   JsonDocument d;
   JsonArray arr = d["shots"].to<JsonArray>();
   for (int i = 0; i < n; i++) {
     JsonObject o = arr.add<JsonObject>();
-    o["id"] = names[i];
+    o["id"] = shots[i].id;
     JsonArray files = o["files"].to<JsonArray>();
-    char dir[40];
-    snprintf(dir, sizeof(dir), "/x4/shots/%s", names[i]);
-    SpiLock l;
-    File f = SD.open(dir);
-    if (!f) continue;
-    for (File e = f.openNextFile(); e; e = f.openNextFile()) {
+    for (uint8_t cam = 1; cam <= 8; cam++) {
+      if (!(shots[i].cams & (1u << (cam - 1)))) continue;
+      char name[24], path[40];
+      x4::storage::camFileName(name, sizeof(name), shots[i].id, cam);
+      x4::storage::camFile(path, sizeof(path), shots[i].id, cam);
       JsonObject fo = files.add<JsonObject>();
-      fo["name"] = e.name();
-      fo["size"] = (uint32_t)e.size();
-      e.close();
+      fo["cam"] = cam;
+      fo["name"] = name;
+      fo["path"] = path;
     }
-    f.close();
   }
   sendJson(200, d);
 }
 
-// GET /file?path=/x4/shots/S000001/cam1.jpg  (only below /x4)
+// GET /file?path=/x4/000001-1.jpg  (only below /x4)
 void hFile() {
   String p = g_srv.arg("path");
   if (!p.startsWith("/x4/") || p.indexOf("..") >= 0) return sendErr(403, x4::Err::INTERNAL, "path not allowed");

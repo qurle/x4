@@ -24,7 +24,6 @@ bool mkdirs() {
   SpiLock l;
   bool ok = true;
   if (!SD.exists(x4::storage::kRoot)) ok &= SD.mkdir(x4::storage::kRoot);
-  if (!SD.exists(x4::storage::kShotsDir)) ok &= SD.mkdir(x4::storage::kShotsDir);
   if (!SD.exists(x4::storage::kLogsDir)) ok &= SD.mkdir(x4::storage::kLogsDir);
   return ok;
 }
@@ -125,14 +124,6 @@ Bench benchmark(uint32_t kb) {
 
 const Bench& lastBench() { return g_bench; }
 
-bool ensureShotDir(uint32_t shotId) {
-  if (!g_mounted) return false;
-  char dir[40];
-  x4::storage::shotDir(dir, sizeof(dir), shotId);
-  SpiLock l;
-  return SD.exists(dir) || SD.mkdir(dir);
-}
-
 File openCamFile(uint32_t shotId, uint8_t cam) {
   char path[48];
   x4::storage::camFile(path, sizeof(path), shotId, cam);
@@ -154,16 +145,6 @@ bool writeChunk(File& f, const uint8_t* data, size_t len) {
 void closeFile(File& f) {
   SpiLock l;
   if (f) f.close();
-}
-
-bool writeText(const char* path, const char* text, size_t len) {
-  if (!g_mounted) return false;
-  SpiLock l;
-  File f = SD.open(path, FILE_WRITE);
-  if (!f) return false;
-  bool ok = f.write((const uint8_t*)text, len) == len;
-  f.close();
-  return ok;
 }
 
 bool removeFile(const char* path) {
@@ -200,33 +181,38 @@ void pumpLogs(uint32_t maxKb) {
   }
 }
 
-int listShots(char names[][8], int max) {
+int listShots(ShotEntry* out, int max) {
   if (!g_mounted || max <= 0) return 0;
-  SpiLock l;
-  File dir = SD.open(x4::storage::kShotsDir);
-  if (!dir) return 0;
-  int n = 0;
-  // Keep the `max` lexicographically largest names (counter-based, so largest = newest).
-  for (File e = dir.openNextFile(); e; e = dir.openNextFile()) {
-    const char* nm = e.name();
-    if (e.isDirectory() && nm[0] == 'S' && strlen(nm) == 7) {
-      int pos = n < max ? n++ : max;
-      if (pos == max && strcmp(nm, names[max - 1]) <= 0) {
-        e.close();
-        continue;
-      }
-      if (pos == max) pos = max - 1;
-      strncpy(names[pos], nm, 7);
-      names[pos][7] = 0;
-      for (int i = pos; i > 0 && strcmp(names[i], names[i - 1]) > 0; i--) {
-        char t[8];
-        memcpy(t, names[i], 8);
-        memcpy(names[i], names[i - 1], 8);
-        memcpy(names[i - 1], t, 8);
-      }
-    }
-    e.close();
+  File dir;
+  {
+    SpiLock l;
+    dir = SD.open(x4::storage::kRoot);
   }
+  if (!dir) return 0;
+  int n = 0;  // out[0..n) sorted by id, newest first
+  for (;;) {
+    bool isDir = false;
+    String name;
+    {
+      SpiLock l;  // one directory entry per lock, so a big folder doesn't stall the UI
+      name = dir.getNextFileName(&isDir);
+    }
+    if (!name.length()) break;
+    uint32_t id;
+    uint8_t cam;
+    if (isDir || !x4::storage::parseCamFile(name.c_str(), &id, &cam) || cam > 8) continue;
+    int i = 0;
+    while (i < n && out[i].id > id) i++;
+    if (i < n && out[i].id == id) {
+      out[i].cams |= (uint8_t)(1u << (cam - 1));
+      continue;
+    }
+    if (i >= max) continue;  // older than everything kept
+    if (n < max) n++;
+    memmove(&out[i + 1], &out[i], (size_t)(n - 1 - i) * sizeof(ShotEntry));
+    out[i] = ShotEntry{id, (uint8_t)(1u << (cam - 1))};
+  }
+  SpiLock l;
   dir.close();
   return n;
 }
