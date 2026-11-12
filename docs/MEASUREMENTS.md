@@ -1,11 +1,13 @@
 # Measurements
 
-Nothing here is measured yet (no boards on hand). Fill the tables with a USB power meter (bank →
-breakout), a multimeter, the serial log (`tools/x4log.py`) and the web page. Keep the date and
+Nothing here is measured yet (no boards on hand). Fill the tables with a multimeter (current:
+across the open rail switch, [STEPS: measuring current](STEPS.md#measuring-current)), the
+serial log (`tools/x4log.py`) and the web page. Keep the date and
 firmware git hash on every row. Estimates from the brief are in *italics*.
 
-Tools: USB power meter able to show peak/min, multimeter, phone with 240 fps slow motion,
-optionally a cheap scope for the flash and rail sag.
+Tools: multimeter with a 10 A jack (MIN/MAX helps), crocodile-clip leads, phone with 240 fps slow
+motion, optionally a cheap scope for the flash and rail sag. A multimeter gives averages: leave
+peak and min columns empty unless a scope or MIN/MAX measured them (say which in notes).
 
 ## Current per device (5 V rail)
 

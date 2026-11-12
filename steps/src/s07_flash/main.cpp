@@ -4,7 +4,7 @@
 //         yellow (G2). Flashlight slide switch on FLASH. Only after step 2 measured G2 at ~0 V.
 // Use: tap the screen to ARM (auto-disarms after 60 s), press the Mini Button to fire.
 // Pass: one short flash per press; presses inside 8 s are refused on screen; no reset; the rail
-//       (USB meter / multimeter min) stays above ~4.6 V during the flash.
+//       (multimeter MIN in volts mode, if it has one) stays above ~4.6 V during the flash.
 #include "core_common.h"
 
 constexpr uint32_t kPulseMs = 50;          // well under the 150 ms hard cap of the real firmware

@@ -26,7 +26,8 @@ numbers into [MEASUREMENTS.md](MEASUREMENTS.md) as you go.
    ```bash
    cd camera && pio run
    ```
-4. A USB power meter (5 V, ≥ 3 A) between bank and breakout, and a multimeter.
+4. A multimeter with a 10 A current jack and two crocodile-clip leads. Current is measured with
+   the meter across the open rail switch ([STEPS: measuring current](STEPS.md#measuring-current)).
 
 ## Flashing without breaking the power rules
 
@@ -127,7 +128,9 @@ Record both in HARDWARE.md.
 
 ### Step 4 — One load at a time from the rail
 
-USB unplugged everywhere. USB meter between bank and breakout. Switch off between steps.
+USB unplugged everywhere. Switch off between steps. For each current reading: switch off, meter
+(A⎓, 10 A jack) clipped across the switch, read, then switch on to bypass it
+([STEPS: measuring current](STEPS.md#measuring-current)).
 
 | add | expected (rough, update with your numbers) | if it fails |
 |---|---|---|
@@ -148,7 +151,7 @@ shots with the flash armed, at the 8 s cooldown, 10 times.
 
 | watch | expected | if it fails |
 |---|---|---|
-| rail during the pulse (meter min / scope) | stays ≥ 4.6 V | larger/closer capacitor, shorter flash wires, lower WiFi power |
+| rail during the pulse (multimeter on V⎓ with MIN/MAX, switch on so the meter is not in line; or a scope) | stays ≥ 4.6 V (a multimeter only hints; no reset is the real check) | larger/closer capacitor, shorter flash wires, lower WiFi power |
 | resets | none (`reset=brownout` would appear on the next boot) | [Power](TROUBLESHOOTING.md#power) |
 | refused pulses inside 8 s | `evt=refused verdict=cooldown` | – (that is the guard working) |
 | connector warmth after 10 flashes | warm OK, **hot = stop** | thicker/shorter wires, better contacts |

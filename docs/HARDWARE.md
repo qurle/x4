@@ -23,7 +23,8 @@ reasoned but not confirmed. **Not sure** = unknown. Research date 2026-10-31.
 | 13 | **Smartbuy microSDHC 16 GB Class 10** | 1 | on hand | goes in the **Core**; 16 GB = the CoreS3 documented maximum (OK), FAT32 |
 
 Suggested extras (not required): crimp ferrules 0.5 mm² or Wago **221-415** lever connectors
-(they take stranded wire), a USB power meter (5 V, ≥ 3 A), a multimeter with continuity beeper.
+(they take stranded wire), a multimeter with continuity beeper and a 10 A current jack,
+crocodile-clip leads.
 
 ## CoreS3-SE
 

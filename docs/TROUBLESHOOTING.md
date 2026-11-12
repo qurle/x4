@@ -8,7 +8,7 @@ and look up the first `err=` in [LOGGING.md](LOGGING.md#error-codes).
 | symptom | likely cause | check | fix |
 |---|---|---|---|
 | nothing powers on | bank asleep; breakout lacks CC resistors; switch/polarity | rail voltage with nothing attached; CC1/CC2 → GND ≈ 5.1 kΩ | press the bank button; use bank USB-A + A-to-C cable; fix wiring |
-| boards reset when the flash fires or several cameras start | rail sag → brown-out | next boot shows `reset=brownout` / `err=103`; USB meter min voltage; web page `vbus_mv` | capacitor closer to the loads, shorter/thicker branch wires, better Wago contacts, lower `wifi_tx_qdbm` (e.g. 60), `xfer_parallel=1` |
+| boards reset when the flash fires or several cameras start | rail sag → brown-out | next boot shows `reset=brownout` / `err=103`; multimeter MIN on the rail (V⎓, if it has MIN/MAX; slow, misses short dips); web page `vbus_mv` | capacitor closer to the loads, shorter/thicker branch wires, better Wago contacts, lower `wifi_tx_qdbm` (e.g. 60), `xfer_parallel=1` |
 | bank shuts off at switch-on | inrush (2200 µF + 6 loads) trips its over-current protection | switch on 10×; does it recover? | pre-charge resistor bypassed after ~1 s, smaller capacitor (470–1000 µF), switch loads in two groups. See [POWER §4](POWER.md#4-known-risks-and-mitigations) |
 | bank shuts off after minutes of idle | low-current auto-off | measure idle current | x4 idle is ≈ 0.7 A, normally enough; if not, *Not sure* the A1653 has a "trickle" mode: check its manual |
 | a Wago terminal or Grove plug gets **hot** | high resistance contact (stranded wire in a solid-only push-in, half-inserted plug) | touch test after a flash burst; tug test | redo with solid pigtail/ferrule/Wago 221; re-seat plugs. Warm is OK, hot is not |

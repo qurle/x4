@@ -17,7 +17,7 @@ Every step is a card with the same parts:
 |---|---|
 | **Rig** | what is wired and powered during the step |
 | **Flash** | which firmware goes on which board. Explained in full at step 1, then shorter at each later step |
-| **Measure** | multimeter / USB meter checks |
+| **Measure** | multimeter checks: volts, continuity, current |
 | **Read** | which serial lines or on-screen lines tell you it worked |
 | **Pass** | all of these, or don't go on |
 | **If not** | the first things to check, plus a link to the details |
@@ -85,9 +85,10 @@ cables: the rig needs **seven** (Core, button, flash, four cameras). Each unit c
 (*Not sure* the SE box has one too).
 
 **Tools.**
-- A multimeter with a continuity beeper.
-- A USB power meter (5 V, ≥ 3 A) that shows its minimum voltage, between the bank and the
-  breakout from step 5 on.
+- A multimeter with a continuity beeper and a **10 A current jack** (most have one, marked
+  `10A` or `A`). A MIN/MAX button helps in step 7 but isn't required.
+- Two crocodile-clip leads (or clip-on tips for the probes), so the meter can stay in the circuit
+  hands-free when it measures current ([Measuring current](#measuring-current)).
 - Wire cutter/stripper, heat-shrink, a soldering iron for the pigtails
   ([WIRING: connectors](WIRING.md#connectors)).
 - A data USB-C cable (some cables only charge; they give no serial port).
@@ -121,18 +122,50 @@ simulator**, where you can click through the real UI on your computer.
 
 ### Multimeter primer
 
-Black probe in **COM**, red in **VΩ**. Never the A / mA jack for these checks: in a current jack
-the meter is a short circuit across whatever you touch.
+Black probe in **COM**, red in **VΩ** for everything except current. In a current jack the meter
+is a near short circuit: with the red probe in a current jack, **never** touch +5 V and GND at the
+same time, and put the probe back in VΩ as soon as the current reading is done.
 
 | mode | symbol | used for | rule |
 |---|---|---|---|
 | continuity | 🔊 / diode-beep | shorts, "is this wire connected to that" | power **off**, bank unplugged |
 | resistance | Ω (20 kΩ range) | the breakout's CC resistors | **unpowered only**: ohms read wrong on a live circuit ([HARDWARE](HARDWARE.md#recorded-on-bring-up-fill-in) has an example) |
 | DC volts | V⎓ (20 V range or auto) | rail, Port A, button and flash signals | red on the point, black on GND |
+| DC current | A⎓, red probe in the **10 A** jack | rail current (step 5 on), current per board | always **in series**: the current flows *through* the meter. Never across +5 V and GND ([below](#measuring-current)) |
 
 Grove sockets are too small to probe safely. Measure on the loose end of a Grove cable that is
 plugged into the port (you make one in Workshop A). Keep the loose wire ends apart and taped,
 except the two you're probing.
+
+### Measuring current
+
+The meter has to sit **in** the +5 V line, so the rig's current runs through it. The rail switch
+makes that easy:
+
+1. Rail switch **off**. Dial to **A⎓**, red lead moved to the **10 A** jack, black in COM.
+2. Clip the two leads onto the **two terminals of the rail switch**. Red/black order only
+   changes the sign of the reading.
+3. The switch is open, so the current now flows through the meter: the rig powers up and
+   the meter shows its current. Read the typical value over ~10 s (WiFi makes it jump).
+4. Done: switch **on** (that bypasses the meter, so the rig stays powered), unclip, red lead
+   back to **VΩ**.
+
+If the switch terminals can't take a clip: pull the red wire coming from the switch out of its
+Wago port, push a short solid wire stub into that port, and clip the meter between the wire end
+and the stub. Current of **one board**: the same trick on that board's red branch wire only.
+
+Know the limits:
+- **Time limit on the 10 A jack.** Many meters allow high currents only for a short time
+  (the label near the jack often says something like "10 A max 10 s / 15 min"; ASSUMPTION,
+  read yours). The full rig's ~1–1.5 A is under most limits, but take the reading and bypass.
+- **The meter costs voltage.** It and its leads add resistance (often around 0.1 Ω; Not sure for
+  yours), so at 1.5 A the rail gets ~0.15 V less. Don't fire the flash or run sag tests with the
+  meter in line; a reset then may be the meter's fault, not the rig's.
+- **No peaks, no minimum.** A meter averages over a fraction of a second; it can't show the flash
+  pulse, the switch-on inrush, or the minimum voltage. For those: the board's own `vbus_mv`
+  reading, the meter's MIN/MAX in **volts** mode, or a shunt + scope
+  ([DEBUGGING](DEBUGGING.md#measuring-current-with-the-flash-firing)).
+- **Never** in the mA / µA jack: its fuse is for small currents and blows at the Core's draw.
 
 ---
 
@@ -357,7 +390,8 @@ From here, while the Core runs on the rail there is **no serial log**: USB is un
 **The screen is your log.** That's why every step firmware prints its state on screen.
 
 **Rig:** the Port A cable's red/black go into the rail blocks (+5 V and GND). Yellow and white
-stay taped. USB power meter between the bank and the breakout.
+stay taped. Meter ready for current: leads on the rail switch, as in
+[Measuring current](#measuring-current).
 
 **Flash:** USB swap with **`s05-rail`**. You can watch it on USB first (it runs there too), but
 the test is on the rail.
@@ -365,7 +399,9 @@ the test is on the rail.
 **Measure:**
 - Before switching on: continuity +5 V ↔ GND once more (**no beep**: you just added a branch).
 - After switching on: DC V at the blocks ≈ the no-load value from Workshop B.
-- USB meter: current. About 0.15–0.3 A (ASSUMPTION; write yours down).
+- Current: switch **off** with the meter clipped across it, so the Core runs through the meter.
+  About 0.15–0.3 A (ASSUMPTION; write yours down). Then switch **on**, unclip, red lead back to
+  VΩ. The 10× on/off test below is done **without** the meter.
 
 **Read (screen):**
 ```
@@ -444,7 +480,7 @@ Only if step 2 measured G2 at about 0 V.
 | watch | expected | if not |
 |---|---|---|
 | at switch-on | flash stays dark | lights at boot: **switch off and unplug it now**, G2 is pulled up (step 2) |
-| USB meter min voltage during a flash | ≥ 4.6 V | bigger/closer capacitor, shorter wires. A USB meter is too slow to see the true peak ([DEBUGGING](DEBUGGING.md#measuring-current-with-the-flash-firing)) |
+| rail during a flash: meter on **DC volts** across the blocks, switch **on** (meter not in line), MIN/MAX on if it has one | ≥ 4.6 V | bigger/closer capacitor, shorter wires. A multimeter is too slow to see the true dip: no MIN/MAX, or a reading above 4.6 V, doesn't prove it. The real pass is "no reset" below ([DEBUGGING](DEBUGGING.md#measuring-current-with-the-flash-firing)) |
 | connector after 10 flashes, 8 s apart | warm is fine, **hot = stop** | thicker / shorter wires, better contacts |
 
 **Read (screen):** *ARMED (tap to disarm)*, *fired #N*, *refused: cooling down*, *next flash in
@@ -585,7 +621,9 @@ at the same instant is what the full firmware adds ([PROTOCOL](PROTOCOL.md)).
 - Switch the rig off and on 10 times with all four attached: no bank shut-off, and no board
   restarting by itself (inrush, [POWER §4](POWER.md#4-known-risks-and-mitigations)).
 
-**Measure:** rail current at idle on the USB meter, about 1–1.5 A (ASSUMPTION).
+**Measure:** rail current at idle with the meter across the open switch
+([Measuring current](#measuring-current)), about 1–1.5 A (ASSUMPTION). Read it and bypass
+(switch on) within your meter's time limit. Don't shoot or stream with the meter in line.
 
 **Save:** [MEASUREMENTS: rig total](MEASUREMENTS.md#rig-total).
 
@@ -736,10 +774,10 @@ Stuck: Core → hold RST ~3 s (green LED). Camera → G0 jumper to GND while plu
 | Workshop C | button white ↔ GND, rail on | ≈ 3.3 V released, ≈ 0 V pressed |
 | Workshop D | flash yellow ↔ GND, rail on, Core unplugged | ≈ 0 V |
 | Workshop E | each red ↔ +5 V, each black ↔ GND | beep |
-| step 5 on | USB meter: rail current and minimum voltage | [MEASUREMENTS](MEASUREMENTS.md) |
-| step 7 on | rail minimum during a flash | ≥ 4.6 V |
+| step 5 on | A⎓ in the 10 A jack, leads across the **open** rail switch | Core ≈ 0.15–0.3 A, full rig ≈ 1–1.5 A ([MEASUREMENTS](MEASUREMENTS.md)) |
+| step 7 on | V⎓ across the blocks during a flash, switch on, MIN/MAX if any | ≥ 4.6 V (a hint, not proof) |
 
-More methods (shunt + scope for the flash, current per device): [DEBUGGING](DEBUGGING.md#multimeter-and-usb-meter).
+More methods (shunt + scope for the flash, current per device): [DEBUGGING](DEBUGGING.md#multimeter).
 
 ### Log lines worth knowing
 
