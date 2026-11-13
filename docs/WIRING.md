@@ -96,6 +96,8 @@ The rail uses **Wago 221 lever connectors** (owner, 2026-11-13; it was 2273 push
   or keep a solid/20 AWG pigtail soldered on. Then tug-test.
 - **Tug-test every connection** with the lever closed. Connection quality, not gauge, is the
   limit. Do not tin stranded wire for clamp terminals (solder creeps, the contact loosens).
+- How to solder the breakout leads, splices and pigtails, and how to check them:
+  [SOLDERING.md](SOLDERING.md).
 - **Ports.** Each net has 9 connections (source, 4 cams, Core, flash, button, cap). The +5 V net
   needs one more free port for the meter, so 10. Join blocks with short jumpers: two 5-port
   blocks give 8 usable ports (2 go to the jumper), three give 11. The **IN node** is one more

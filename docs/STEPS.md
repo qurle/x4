@@ -38,12 +38,13 @@ wire the flash before you trust anything else.
 Tick these in your copy as you go.
 
 - [ ] [Level 0: gear up](#level-0-gear-up)
+- [ ] [Workshop 0: learn to solder](#workshop-0-learn-to-solder)
 - [ ] [1. Hello](#1-hello): your first flash
 - [ ] [Workshop A: the Port A cable](#workshop-a-the-port-a-cable)
 - [ ] [2. The 5 V output is off](#2-the-5-v-output-is-off)
 - [ ] [3. microSD](#3-microsd)
 - [ ] [4. Touch](#4-touch)
-- [ ] [Workshop B: the power rail](#workshop-b-the-power-rail)
+- [ ] [Workshop B: the power rail](#workshop-b-the-power-rail) (leads, power check, rail)
 - [ ] [5. Core on the rail](#5-core-on-the-rail)
 - [ ] [Workshop C: button lead](#workshop-c-button-lead)
 - [ ] [6. Mini Button](#6-mini-button)
@@ -89,7 +90,9 @@ cables: the rig needs **seven** (Core, button, flash, four cameras). Each unit c
   `10A` or `A`). No clip leads needed: for current the probe tips are clamped in Wago 221 ports
   ([Measuring current](#measuring-current)).
 - Wago 221 lever connectors for the rail ([WIRING: connectors](WIRING.md#connectors)).
-- Wire cutter/stripper, heat-shrink; a soldering iron only if you pigtail the thin Grove wires.
+- Wire cutter/stripper, heat-shrink, a temperature-controlled soldering iron, rosin-core solder
+  and a flux pen: the USB-C breakout needs two soldered leads, plus a few wire splices. Full list:
+  [SOLDERING: kit](SOLDERING.md#kit).
 - A data USB-C cable (some cables only charge; they give no serial port).
 - M5's Grove-to-USB-C adapter for the cameras (step 8 on).
 
@@ -179,6 +182,41 @@ Know the limits:
 
 ---
 
+## Workshop 0: learn to solder
+
+The rig needs only a few solder joints: two leads on the USB-C breakout (unavoidable: it has
+bare pads), maybe two switch lugs, and a few wire splices
+([SOLDERING: what gets soldered](SOLDERING.md#what-gets-soldered)). None are on the M5 boards.
+Practice first, on things you can afford to ruin: scrap wire and one of the **spare** breakouts
+(you have five and the rig uses one).
+
+Read [SOLDERING](SOLDERING.md) once: safety, the one technique, recipes R1–R3, and the "is the
+joint good?" table.
+
+1. **Three splices** (recipe R3) on scrap: 20 AWG to 20 AWG, then two with a thin wire (an old
+   Grove cable or any thin stranded wire) to solid core. Heat-shrink on every one.
+2. **Two pad joints** (recipe R2) on a **spare breakout**: a red lead on VBUS, a black on GND.
+   Glue or tie them down.
+3. Check each joint against [is the joint good?](SOLDERING.md#is-the-joint-good)
+
+**Measure** (nothing powered):
+
+| check | expected |
+|---|---|
+| each splice end to end | beep, and it stays beeping while you flex the joint |
+| spare breakout: VBUS ↔ GND | **no beep** |
+| spare breakout: VBUS ↔ CC1, CC2, D+, D− | no beep |
+| spare breakout: pad ↔ far end of its lead | beep |
+
+**Pass:** every joint passes the table and survives a gentle tug. Bad ones get redone, which is
+the practice. You're not ready while a joint "probably" holds.
+
+**Optional, if you have the 47 Ω ≥ 1 W resistor:** power the spare breakout from the bank and do
+the [power check](SOLDERING.md#prove-the-power-path) P2–P4b on it. That's the same test you'll
+do on the real one in Workshop B, with nothing at stake.
+
+---
+
 ## 1. Hello
 
 Your first flash. This one is spelled out in full; later steps only say what changes.
@@ -254,7 +292,8 @@ step 2 measures through it.
 1. Take one Grove cable. Cut off one plug and strip ~8 mm of each wire.
 2. Make the ends ready for the Wago 221s later: strip red and black ~22 mm and fold the bare
    end double (Grove wire is thinner than the 221 is rated for), or solder a short 20 AWG
-   pigtail on and heat-shrink it ([WIRING: connectors](WIRING.md#connectors)).
+   pigtail on (recipe [R3](SOLDERING.md#r3-splice-and-pigtail-wire-to-wire)) and heat-shrink it
+   ([WIRING: connectors](WIRING.md#connectors)).
 3. Tape each of the four ends separately. They must not touch each other.
 4. Label it "CORE Port A".
 
@@ -354,14 +393,48 @@ how fast photos can be stored.
 ## Workshop B: the power rail
 
 The rail is power bank → USB-C breakout → IN node → switch → Wago blocks, with the 2200 µF
-capacitor across it. Build it with **no boards attached** and the bank unplugged.
+capacitor across it. Build it in three parts, each checked before the next: **B1** leads on the
+breakout, **B2** proof that the bank's power gets through and stays on, **B3** the rail itself.
+**No M5 boards attached** during the whole workshop.
+
+### B1. Breakout leads
+
+Bank unplugged.
+
+1. Write down the breakout's pad markings, then do the [P2 check](SOLDERING.md#prove-the-power-path)
+   on the **bare** breakout: bank in, probes on the VBUS and GND pads, both plug orientations.
+   Note which orientation gives 5 V, and whether the bank switches itself off within a minute
+   with nothing connected. Bank out again.
+2. Solder a red 20 AWG lead to **VBUS** and a black to **GND**
+   ([recipe R2](SOLDERING.md#r2-wire-to-a-breakout-pad-vbus-gnd)). Leave CC, D+ and D− alone.
+3. **Fix the breakout down** (screw, zip tie or hot glue onto the foam board or a scrap of
+   wood), with the leads tied down next to it. The bank's built-in plug otherwise levers the small
+   socket every time the bank moves.
+
+### B2. Power check: the bank stays on
+
+Do [P3, P4 and P4b](SOLDERING.md#prove-the-power-path) on the real breakout: continuity, then
+5 V at the leads' far ends, then the **wiggle test**. Flex each joint and each wire, and gently
+move the bank in its socket, while you watch the meter.
+
+**Pass:** the reading never drops, in the orientation you'll use. Use the meter's MIN/MAX mode if
+it has one.
+
+**If not:** the bank turning off is the most common problem here. *When* it turns off tells you
+why: [the bank keeps turning off](SOLDERING.md#the-bank-keeps-turning-off). Don't go on to B3
+until this passes: everything after this step depends on that power staying on.
+
+### B3. The rail
+
+Bank unplugged.
 
 1. Read the [WIRING diagram and pin table](WIRING.md#pin-table) once, top to bottom.
 2. Wago 221 blocks per net, joined with short 20 AWG jumpers: **+5 V needs ≥ 10 ports**, **GND
    ≥ 9** (three 5-port blocks per net give 11; [WIRING: connectors](WIRING.md#connectors)).
-3. Breakout V/VBUS → **IN node** (a small 221, e.g. 3-port) → **switch** → +5 V blocks (red 20 AWG).
-   The switch goes in +5 V only. Keep one IN port and one +5 V port **free**: that's where the
-   meter goes ([Measuring current](#measuring-current)). Breakout G/GND → GND blocks (black 20 AWG).
+3. Breakout red lead → **IN node** (a small 221, e.g. 3-port) → **switch** → +5 V blocks (red
+   20 AWG). The switch goes in +5 V only (solder lugs: [recipe R4](SOLDERING.md#r4-switch-lugs)).
+   Keep one IN port and one +5 V port **free**: that's where the meter goes
+   ([Measuring current](#measuring-current)). Breakout black lead → GND blocks.
 4. The capacitor goes **across** the rail: + leg to +5 V, **stripe (−) to GND**. Never in series.
 5. Every wire in with the lever closed, then a **tug test**. Thin Grove ends folded double or
    pigtailed ([WIRING: connectors](WIRING.md#connectors)).
@@ -378,7 +451,8 @@ capacitor across it. Build it with **no boards attached** and the bank unplugged
 
 Then run the [printable pre-power checklist](WIRING.md#printable-pre-power-checklist).
 
-**Save:** CC values, capacitor and switch ratings in [HARDWARE](HARDWARE.md#recorded-on-bring-up-fill-in).
+**Save:** breakout pads, working orientation, the bank's no-load turn-off time, CC values,
+capacitor and switch ratings in [HARDWARE](HARDWARE.md#recorded-on-bring-up-fill-in).
 
 ---
 
@@ -415,6 +489,13 @@ the test is on the rail.
 - Current: switch **off** with the meter in place, so the Core runs through the meter.
   About 0.15–0.3 A (ASSUMPTION; write yours down). Then bank out, probes out, red lead back to
   VΩ. The 10× on/off test below is done **without** the meter.
+- **Drop test** ([P5](SOLDERING.md#prove-the-power-path)), switch **on**, meter back on V⎓ (not in
+  the current jack): both probes on the same net. Red on the breakout's VBUS pad, black on a +5 V
+  block: under ~0.05 V. Then red on a GND block, black on the breakout's GND pad: same.
+- **Wiggle test on the rail:** tap the screen (resets *min*, *max* and *dips*), then flex every
+  joint and wire on the power path, and gently move the bank in its socket. *dips* must stay
+  **0** and *min* must stay within ~0.1 V of the normal reading. The firmware reads the 5 V input
+  every ~5 ms and counts every drop below 4.5 V as a dip.
 
 **Read (screen):**
 ```
@@ -423,9 +504,11 @@ boots: N, brownouts: 0
 5V input: 4950 mV (min …, max …)
 outputs off: SAFE
 uptime: … s
+dips <4.5V: 0 (tap = reset)
 ```
-(Over USB the same appears as `rail boot reset=… boots=… brownouts=…` and
-`rail uptime_s=… vbus_mv=… min_mv=… safe=1` every 2 s.)
+(Over USB the same appears as `rail boot reset=… boots=… brownouts=…`,
+`rail uptime_s=… vbus_mv=… min_mv=… max_mv=… dips=… safe=1` every 2 s, and a
+`rail dip mv=… dips=…` line the moment a dip happens.)
 
 **Pass:**
 - Boots by itself on switch-on. *last reset: power on*.
@@ -434,9 +517,12 @@ uptime: … s
 - Switch off and on 10 times: *boots* goes up by 10, *brownouts* stays 0.
 
 **If not:** no boot → Grove contact and polarity, then the bank (some banks sleep at low
-current: press their button). *BROWNOUT* → [TROUBLESHOOTING: power](TROUBLESHOOTING.md#power).
+current: press their button). *BROWNOUT* or *min* drops when you wiggle → a joint or contact on
+the power path ([the bank keeps turning off](SOLDERING.md#the-bank-keeps-turning-off),
+[TROUBLESHOOTING: power](TROUBLESHOOTING.md#power)).
 
-**Save:** Core current in [MEASUREMENTS: current per device](MEASUREMENTS.md#current-per-device-5-v-rail).
+**Save:** Core current in [MEASUREMENTS: current per device](MEASUREMENTS.md#current-per-device-5-v-rail),
+drops in [MEASUREMENTS: rail and joints](MEASUREMENTS.md#rail-and-joints).
 
 ---
 
@@ -447,8 +533,8 @@ current: press their button). *BROWNOUT* → [TROUBLESHOOTING: power](TROUBLESHO
 3. **Pre-check, Core unplugged:** rail on, DC V **white → GND**: about **3.3 V released, about
    0 V pressed**. About 5 V means a different design: **don't** connect it to the Core
    ([HARDWARE](HARDWARE.md#mini-button-unit)).
-4. Rail off. Join the button's white to the Port A cable's white (solder + heat-shrink, or a
-   small lever connector).
+4. Rail off. Join the button's white to the Port A cable's white (splice
+   [R3](SOLDERING.md#r3-splice-and-pigtail-wire-to-wire) + heat-shrink, or a small lever connector).
 
 **Save:** released / pressed volts in [HARDWARE](HARDWARE.md#recorded-on-bring-up-fill-in).
 
@@ -641,7 +727,13 @@ at the same instant is what the full firmware adds ([PROTOCOL](PROTOCOL.md)).
 ([Measuring current](#measuring-current)), about 1–1.5 A (ASSUMPTION). Read it and bypass
 (switch on) within your meter's time limit. Don't shoot or stream with the meter in line.
 
-**Save:** [MEASUREMENTS: rig total](MEASUREMENTS.md#rig-total).
+**Drop test** again at this load ([P5](SOLDERING.md#prove-the-power-path)), switch on, meter on V⎓:
+breakout VBUS pad → +5 V block, and GND block → breakout GND pad, under ~0.15 V each. After
+10 minutes, touch the joints, the switch and the Wago blocks: warm is fine, **hot = stop** and
+redo that one.
+
+**Save:** [MEASUREMENTS: rig total](MEASUREMENTS.md#rig-total) and
+[rail and joints](MEASUREMENTS.md#rail-and-joints).
 
 ---
 
@@ -783,6 +875,9 @@ Stuck: Core → hold RST ~3 s (green LED). Camera → G0 jumper to GND while plu
 |---|---|---|
 | step 2 | Port A red ↔ black, Core on USB | ≈ 0 V |
 | step 2 | Port A yellow (G2) ↔ black | ≈ 0 V |
+| Workshop 0 | each practice joint end to end / to its neighbours | beep / no beep |
+| Workshop B1 | bare breakout VBUS ↔ GND pads, bank in, both orientations | 4.75–5.25 V (note which) |
+| Workshop B2 | leads' far ends, bank in, wiggle everything | steady 5 V, never drops |
 | Workshop B | +5 V ↔ GND continuity, unpowered | no beep |
 | Workshop B | CC1, CC2 → GND, breakout unplugged | ≈ 5.1 kΩ each |
 | Workshop B | rail, no load | 4.75–5.25 V |
@@ -792,6 +887,8 @@ Stuck: Core → hold RST ~3 s (green LED). Camera → G0 jumper to GND while plu
 | Workshop E | each red ↔ +5 V, each black ↔ GND | beep |
 | Workshop B | IN node ↔ GND, switch off | ≈ no-load value (IN is always live) |
 | step 5 on | A⎓ in the 10 A jack, probes in the IN and +5 V free ports, switch **off**; bank out while you place them | Core ≈ 0.15–0.3 A, full rig ≈ 1–1.5 A ([MEASUREMENTS](MEASUREMENTS.md)) |
+| step 5 | drop: breakout pad → Wago block, same net, each side, switch on, V⎓ | < ~0.05 V |
+| step 11 | the same drop at full rig load | < ~0.15 V |
 | step 7 on | the *dip* line on screen; else V⎓ across the blocks with MIN/MAX | ≥ 4.6 V |
 
 More methods (shunt + scope for the flash, current per device): [DEBUGGING](DEBUGGING.md#multimeter).
@@ -804,6 +901,7 @@ More methods (shunt + scope for the flash, current per device): [DEBUGGING](DEBU
 | `hello … psram_mb=8` | board settings right |
 | `sd bench mhz=25 … verify=1` | card writes and reads back at the firmware's 25 MHz |
 | `rail boot reset=power on … brownouts=0` | clean start on the rail |
+| `rail dip mv=…` | the 5 V input fell below 4.5 V: a loose joint or plug on the power path |
 | `flash refused reason=cooldown` | the guard working, not a fault |
 | `cam sensor pid=0x039e … ok=1` | right camera sensor |
 | `joined … ip=192.168.4.1N` | camera N is on the Core's WiFi |
