@@ -37,7 +37,7 @@ Mini Button, powered by an Anker power bank through a USB-C breakout rail. Start
 ```bash
 cd core && pio run && pio test -e native        # core, core-hello, hello-ui + 35 host tests
 cd camera && pio run                             # cam1..cam4, cam-hello
-cd steps && pio run                              # 15 bring-up envs (slow, ~5 min)
+cd steps && pio run                              # 16 bring-up envs (slow, ~5 min)
 python tools/gen_docs.py --check && python tools/gen_tokens.py --check && python tools/gen_figma_assets.py --check && python tools/gen_assets.py --check
 python tools/ui_sim/run.py                       # UI on the PC vs Figma: look at tools/ui_sim/out/index.html
 cd site && npm ci && npm run build               # website: landing page + docs/
@@ -92,3 +92,6 @@ renders are in the repo. `/nodes` can be rate-limited the same way (seen 2026-11
 2. UI positions are checked against Figma in the simulator (`tools/ui_sim`, docs/DEVELOP.md §3).
    Still to do on the panel: speed, colours, touch feel.
 3. Optional: split the CI `steps / all` job into parallel jobs (it takes ~10 of the 10.5 min).
+4. Motion blur indoors (owner, 2026-11-13; OPEN_QUESTIONS Q21): step 15 `s15-cam-exposure` tests
+   manual exposure/gain through the camera's registers. Waiting for the owner's results; they
+   decide whether the full firmware gets exposure options and a strobe-flash experiment.
