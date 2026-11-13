@@ -5,7 +5,7 @@ across the open rail switch, [STEPS: measuring current](STEPS.md#measuring-curre
 serial log (`tools/x4log.py`) and the web page. Keep the date and
 firmware git hash on every row. Estimates from the brief are in *italics*.
 
-Tools: multimeter with a 10 A jack (MIN/MAX helps), crocodile-clip leads, phone with 240 fps slow
+Tools: multimeter with a 10 A jack (MIN/MAX helps), phone with 240 fps slow
 motion, optionally a cheap scope for the flash and rail sag. A multimeter gives averages: leave
 peak and min columns empty unless a scope or MIN/MAX measured them (say which in notes).
 
@@ -36,7 +36,7 @@ Runtime per bank charge ≈ usable bank energy ÷ rig total below (see [POWER](P
 
 ## Flash
 
-| pulse_ms | rail min V during pulse | resets? | light duration (slow-mo) | connector temp after 10 | date |
+| pulse_ms | rail min V during pulse (`s07` dip line: min, changes/reads) | resets? | light duration (slow-mo) | connector temp after 10 | date |
 |---|---|---|---|---|---|
 | 50 (test) | | | | | |
 | 100 (default) | | | | | |

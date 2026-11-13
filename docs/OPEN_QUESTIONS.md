@@ -12,7 +12,7 @@ Items marked ⚠ could cost a component if the default is wrong; their default i
 | Q5 | Flash mode trigger semantics on the real unit | slide switch FLASH, one rising edge, EN high for `flash_pulse_ms` (100 ms), hardware timeout ≈ 220 ms as backstop | scope or 240 fps slow-mo at bring-up step 5 | no |
 | Q6 | What would a second button / scroll wheel be? | GPIO buttons on G8/G9; quadrature wheel on G5/G6 (stub driver); I2C units need Port A moved | owner picks parts | no |
 | Q7 | ⚠ Mini Button Unit exact model/circuit | Unit Button–style 10k/20k divider, active low, 5 V VCC → 3.33 V released | measure (bring-up step 2); if ≈ 5 V released, power it from 3.3 V via a level-safe design or use a bare switch to GND | no |
-| Q8 | Wago 2273 is solid-wire-only; OK to add solid pigtails / ferrules, or buy Wago 221? | solid pigtails soldered to stranded/Grove wires | owner | no |
+| Q8 | ~~Wago 2273 is solid-wire-only: pigtails, ferrules or Wago 221?~~ **answered 2026-11-13**: Wago 221 (owner). Grove ends folded double or pigtailed ([WIRING](WIRING.md#connectors)) | – | – | closed |
 | Q9 | CamS3 hardware revision of the units you buy (0x01 new / 0xFF old) | new revision assumed; old logs `err=206` | boot log | only for old units |
 | Q10 | MEGA_CCM JPEG quality values (0/1/2?) and resulting 5 MP sizes | `cam_quality=1` (default), 2.5 MB buffers | `cam-hello` bench at each value | no |
 | Q11 | Bank low-current auto-off threshold, trickle mode | x4 idle ≈ 0.7 A, assumed safe | bring-up step 8 | no |

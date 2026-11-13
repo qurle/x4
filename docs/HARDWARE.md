@@ -16,15 +16,14 @@ reasoned but not confirmed. **Not sure** = unknown. Research date 2026-10-31.
 | 6 | power switch | 1 | on hand | must be ≥ 5 A DC; in +5 V only |
 | 7 | 2200 µF electrolytic capacitor | ≥1 | on hand | **rated 15 V** (owner, 2026-10-31): OK, ≥ 10 V needed; low-ESR expected |
 | 8 | USB-C breakout with inline capacitors | 5 (1 used) | on hand | only one used (bank input); **CC resistors present** (owner, 2026-10-31) → C-to-C from the bank works; inline capacitor value/side still unknown → bring-up step 1 |
-| 9 | Wago **2273-208** (8-port push-in) | several | on hand | **solid conductors only** per Wago data, 0.5–2.5 mm² (≈ 20–14 AWG); two per net |
+| 9 | Wago **221** lever connectors | several | on hand (owner, 2026-11-13) | used for the rail now: ≥ 10 ports on +5 V, ≥ 9 on GND (blocks jumpered), plus a 3-port IN node. Sizes on hand: ___. 2273-208 push-ins (solid wire only) are no longer used |
 | 10 | 20 AWG stranded wire | bunch | on hand | 0.52 mm², ≈ 33 mΩ/m |
 | 11 | Dupont cables | various | on hand | fit the M5-Bus header (2.54 mm) |
 | 12 | Grove cables (in box) | per unit | come with the units | HY2.0-4P |
 | 13 | **Smartbuy microSDHC 16 GB Class 10** | 1 | on hand | goes in the **Core**; 16 GB = the CoreS3 documented maximum (OK), FAT32 |
 
-Suggested extras (not required): crimp ferrules 0.5 mm² or Wago **221-415** lever connectors
-(they take stranded wire), a multimeter with continuity beeper and a 10 A current jack,
-crocodile-clip leads.
+Suggested extras (not required): crocodile-clip leads (nice to have; the meter works without
+them, clamped in a Wago 221 port), a multimeter with continuity beeper and a 10 A current jack.
 
 ## CoreS3-SE
 

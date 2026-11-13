@@ -86,11 +86,10 @@ cables: the rig needs **seven** (Core, button, flash, four cameras). Each unit c
 
 **Tools.**
 - A multimeter with a continuity beeper and a **10 A current jack** (most have one, marked
-  `10A` or `A`). A MIN/MAX button helps in step 7 but isn't required.
-- Two crocodile-clip leads (or clip-on tips for the probes), so the meter can stay in the circuit
-  hands-free when it measures current ([Measuring current](#measuring-current)).
-- Wire cutter/stripper, heat-shrink, a soldering iron for the pigtails
-  ([WIRING: connectors](WIRING.md#connectors)).
+  `10A` or `A`). No clip leads needed: for current the probe tips are clamped in Wago 221 ports
+  ([Measuring current](#measuring-current)).
+- Wago 221 lever connectors for the rail ([WIRING: connectors](WIRING.md#connectors)).
+- Wire cutter/stripper, heat-shrink; a soldering iron only if you pigtail the thin Grove wires.
 - A data USB-C cable (some cables only charge; they give no serial port).
 - M5's Grove-to-USB-C adapter for the cameras (step 8 on).
 
@@ -139,31 +138,42 @@ except the two you're probing.
 
 ### Measuring current
 
-The meter has to sit **in** the +5 V line, so the rig's current runs through it. The rail switch
-makes that easy:
+The meter has to sit **in** the +5 V line, so the rig's current runs through it. The rail is built
+for that (Workshop B): a small **IN** Wago between the breakout and the switch, with one free
+port, and one free port on the **+5 V rail**. The meter goes between those two free ports, so it
+sits **across the switch**:
 
-1. Rail switch **off**. Dial to **A⎓**, red lead moved to the **10 A** jack, black in COM.
-2. Clip the two leads onto the **two terminals of the rail switch**. Red/black order only
-   changes the sign of the reading.
-3. The switch is open, so the current now flows through the meter: the rig powers up and
-   the meter shows its current. Read the typical value over ~10 s (WiFi makes it jump).
-4. Done: switch **on** (that bypasses the meter, so the rig stays powered), unclip, red lead
-   back to **VΩ**.
+1. **Bank unplugged**, rail switch **off**. Wait ~10 s so the capacitor drains into the boards.
+2. Dial to **A⎓**, red lead in the **10 A** jack, black in COM.
+3. Open the lever of the IN node's free port, push the **red probe tip** in, close the lever. Same
+   with the **black probe tip** in the +5 V rail's free port. Tug gently: it must not slide out.
+   (Order only changes the sign. Not sure every probe tip grips well: they're tapered. If one
+   wiggles, wrap 4–5 turns of bare solid wire tightly around the tip and clamp the wire instead.)
+4. Plug the bank in. The switch is open, so the current runs through the meter: the rig powers
+   up and the meter shows its current. Read the typical value over ~10 s (WiFi makes it jump).
+5. Between readings: switch **on**. That bypasses the meter (it reads ~0) and lifts its time
+   limit, without a power cut. Switch **off** again for the next reading.
+6. Done: **unplug the bank first**, then take both probes out, red lead back to **VΩ**.
 
-If the switch terminals can't take a clip: pull the red wire coming from the switch out of its
-Wago port, push a short solid wire stub into that port, and clip the meter between the wire end
-and the stub. Current of **one board**: the same trick on that board's red branch wire only.
+Why the bank comes out first: with the red lead in the 10 A jack, the two probe tips are joined
+through the meter. While one is clamped in a live port, the loose tip is live too, and touching
+GND with it shorts the bank.
+
+Current of **one board**: open the lever on that board's red wire, take the wire out, clamp it
+into a spare small Wago with the red probe, and the black probe into the rail's free port. Same
+rule: bank unplugged while you set it up.
 
 Know the limits:
 - **Time limit on the 10 A jack.** Many meters allow high currents only for a short time
   (the label near the jack often says something like "10 A max 10 s / 15 min"; ASSUMPTION,
-  read yours). The full rig's ~1–1.5 A is under most limits, but take the reading and bypass.
+  read yours). The full rig's ~1–1.5 A is under most limits, but take the reading and bypass
+  (step 5 above).
 - **The meter costs voltage.** It and its leads add resistance (often around 0.1 Ω; Not sure for
   yours), so at 1.5 A the rail gets ~0.15 V less. Don't fire the flash or run sag tests with the
   meter in line; a reset then may be the meter's fault, not the rig's.
 - **No peaks, no minimum.** A meter averages over a fraction of a second; it can't show the flash
-  pulse, the switch-on inrush, or the minimum voltage. For those: the board's own `vbus_mv`
-  reading, the meter's MIN/MAX in **volts** mode, or a shunt + scope
+  pulse, the switch-on inrush, or the minimum voltage. For those: the Core's own reading (step 7
+  shows the dip during a flash), the meter's MIN/MAX in **volts** mode, or a shunt + scope
   ([DEBUGGING](DEBUGGING.md#measuring-current-with-the-flash-firing)).
 - **Never** in the mA / µA jack: its fuse is for small currents and blows at the Core's draw.
 
@@ -242,8 +252,9 @@ four wires split at the other end ([WIRING: diagram](WIRING.md#diagram)). Make i
 step 2 measures through it.
 
 1. Take one Grove cable. Cut off one plug and strip ~8 mm of each wire.
-2. Make the ends ready for the Wago blocks later: solder a short solid-core pigtail to red and
-   black, heat-shrink the joints ([WIRING: connectors](WIRING.md#connectors)).
+2. Make the ends ready for the Wago 221s later: strip red and black ~22 mm and fold the bare
+   end double (Grove wire is thinner than the 221 is rated for), or solder a short 20 AWG
+   pigtail on and heat-shrink it ([WIRING: connectors](WIRING.md#connectors)).
 3. Tape each of the four ends separately. They must not touch each other.
 4. Label it "CORE Port A".
 
@@ -342,17 +353,18 @@ how fast photos can be stored.
 
 ## Workshop B: the power rail
 
-The rail is power bank → USB-C breakout → switch → Wago blocks, with the 2200 µF capacitor
-across it. Build it with **no boards attached** and the bank unplugged.
+The rail is power bank → USB-C breakout → IN node → switch → Wago blocks, with the 2200 µF
+capacitor across it. Build it with **no boards attached** and the bank unplugged.
 
 1. Read the [WIRING diagram and pin table](WIRING.md#pin-table) once, top to bottom.
-2. Two Wago 2273-208 blocks per net, joined with a short solid wire: one pair for **+5 V**, one for
-   **GND**.
-3. Breakout V/VBUS → **switch** → +5 V blocks (red 20 AWG). The switch goes in +5 V only.
-   Breakout G/GND → GND blocks (black 20 AWG).
+2. Wago 221 blocks per net, joined with short 20 AWG jumpers: **+5 V needs ≥ 10 ports**, **GND
+   ≥ 9** (three 5-port blocks per net give 11; [WIRING: connectors](WIRING.md#connectors)).
+3. Breakout V/VBUS → **IN node** (a small 221, e.g. 3-port) → **switch** → +5 V blocks (red 20 AWG).
+   The switch goes in +5 V only. Keep one IN port and one +5 V port **free**: that's where the
+   meter goes ([Measuring current](#measuring-current)). Breakout G/GND → GND blocks (black 20 AWG).
 4. The capacitor goes **across** the rail: + leg to +5 V, **stripe (−) to GND**. Never in series.
-5. Every stranded or Grove wire gets a solid pigtail (or ferrule / Wago 221), then a
-   **tug test** ([WIRING: connectors](WIRING.md#connectors)).
+5. Every wire in with the lever closed, then a **tug test**. Thin Grove ends folded double or
+   pigtailed ([WIRING: connectors](WIRING.md#connectors)).
 
 **Measure** (in this order):
 
@@ -362,6 +374,7 @@ across it. Build it with **no boards attached** and the bank unplugged.
 | CC resistors | Ω, breakout **unplugged**, CC1 → GND and CC2 → GND | ≈ 5.1 kΩ each | none: use the bank's USB-A port + an A-to-C cable. CC2 still off 5.1 kΩ: the plug may work in one orientation only ([HARDWARE](HARDWARE.md#recorded-on-bring-up-fill-in)) |
 | rail, no load | bank in, switch on, DC V across the blocks | **4.75–5.25 V** | 0 V: switch, CC, or the bank is asleep (press its button). > 5.3 V: stop |
 | switch | switch off, DC V | ≈ 0 V | wired across GND instead of in +5 V |
+| IN node | switch off, DC V IN ↔ GND | ≈ the no-load value | IN is live whenever the bank is in: treat it like the rail |
 
 Then run the [printable pre-power checklist](WIRING.md#printable-pre-power-checklist).
 
@@ -390,7 +403,7 @@ From here, while the Core runs on the rail there is **no serial log**: USB is un
 **The screen is your log.** That's why every step firmware prints its state on screen.
 
 **Rig:** the Port A cable's red/black go into the rail blocks (+5 V and GND). Yellow and white
-stay taped. Meter ready for current: leads on the rail switch, as in
+stay taped. Meter ready for current: probes in the IN and +5 V free ports, as in
 [Measuring current](#measuring-current).
 
 **Flash:** USB swap with **`s05-rail`**. You can watch it on USB first (it runs there too), but
@@ -399,8 +412,8 @@ the test is on the rail.
 **Measure:**
 - Before switching on: continuity +5 V ↔ GND once more (**no beep**: you just added a branch).
 - After switching on: DC V at the blocks ≈ the no-load value from Workshop B.
-- Current: switch **off** with the meter clipped across it, so the Core runs through the meter.
-  About 0.15–0.3 A (ASSUMPTION; write yours down). Then switch **on**, unclip, red lead back to
+- Current: switch **off** with the meter in place, so the Core runs through the meter.
+  About 0.15–0.3 A (ASSUMPTION; write yours down). Then bank out, probes out, red lead back to
   VΩ. The 10× on/off test below is done **without** the meter.
 
 **Read (screen):**
@@ -429,7 +442,7 @@ current: press their button). *BROWNOUT* → [TROUBLESHOOTING: power](TROUBLESHO
 
 ## Workshop C: button lead
 
-1. Grove cable into the Mini Button. Cut the far plug, strip, pigtail red/black.
+1. Grove cable into the Mini Button. Cut the far plug, strip, fold red/black double (or pigtail).
 2. Red → +5 V block, black → GND block. White loose and taped. Yellow is not used: tape it.
 3. **Pre-check, Core unplugged:** rail on, DC V **white → GND**: about **3.3 V released, about
    0 V pressed**. About 5 V means a different design: **don't** connect it to the Core
@@ -480,16 +493,19 @@ Only if step 2 measured G2 at about 0 V.
 | watch | expected | if not |
 |---|---|---|
 | at switch-on | flash stays dark | lights at boot: **switch off and unplug it now**, G2 is pulled up (step 2) |
-| rail during a flash: meter on **DC volts** across the blocks, switch **on** (meter not in line), MIN/MAX on if it has one | ≥ 4.6 V | bigger/closer capacitor, shorter wires. A multimeter is too slow to see the true dip: no MIN/MAX, or a reading above 4.6 V, doesn't prove it. The real pass is "no reset" below ([DEBUGGING](DEBUGGING.md#measuring-current-with-the-flash-firing)) |
+| the **dip** line on screen after each flash: the lowest 5 V reading the Core saw during the pulse and 100 ms after | ≥ 4.6 V (green) | bigger/closer capacitor, shorter wires. *reading never changed* = the Core's ADC is too slow to tell (Not sure yet how fast it is): then use the meter on **DC volts** across the blocks with MIN/MAX, which is only a hint. The real pass is still "no reset" below ([DEBUGGING](DEBUGGING.md#measuring-current-with-the-flash-firing)) |
 | connector after 10 flashes, 8 s apart | warm is fine, **hot = stop** | thicker / shorter wires, better contacts |
 
 **Read (screen):** *ARMED (tap to disarm)*, *fired #N*, *refused: cooling down*, *next flash in
-x.x s*.
+x.x s*, *dip: min 4710 mV (before 4980), 6/140* (lowest reading, the reading just before the
+flash, how often the value changed / how many reads). Over USB the same is in
+`flash fired … vbus_min_mv=… changes=… reads=…`.
 
 **Pass:** one flash per press, refusals inside 8 s, and no reset (the screen doesn't go back to
 the title).
 
-**Save:** the 50 ms row in [MEASUREMENTS: flash](MEASUREMENTS.md#flash).
+**Save:** the 50 ms row in [MEASUREMENTS: flash](MEASUREMENTS.md#flash), with the dip's
+*changes/reads* (it tells us whether the Core's own reading is fast enough to trust).
 
 ---
 
@@ -569,7 +585,7 @@ with a reply time, typically < 50 ms (ASSUMPTION; write yours down).
 Four leads, one per camera, each its own branch (star, never daisy-chained).
 
 1. Grove cable per camera, plug stays at the camera end. Far end: red → +5 V, black → GND
-   (pigtails).
+   (ends folded double or pigtailed).
 2. **Yellow and white: cut short, insulate each, tape them, and mark them with tape** so nobody
    "fixes" them later. They are the camera's USB D+/D− and must never touch the rail
    ([WIRING: pin table](WIRING.md#pin-table)).
@@ -621,7 +637,7 @@ at the same instant is what the full firmware adds ([PROTOCOL](PROTOCOL.md)).
 - Switch the rig off and on 10 times with all four attached: no bank shut-off, and no board
   restarting by itself (inrush, [POWER §4](POWER.md#4-known-risks-and-mitigations)).
 
-**Measure:** rail current at idle with the meter across the open switch
+**Measure:** rail current at idle with the meter in the IN and +5 V free ports, switch open
 ([Measuring current](#measuring-current)), about 1–1.5 A (ASSUMPTION). Read it and bypass
 (switch on) within your meter's time limit. Don't shoot or stream with the meter in line.
 
@@ -774,8 +790,9 @@ Stuck: Core → hold RST ~3 s (green LED). Camera → G0 jumper to GND while plu
 | Workshop C | button white ↔ GND, rail on | ≈ 3.3 V released, ≈ 0 V pressed |
 | Workshop D | flash yellow ↔ GND, rail on, Core unplugged | ≈ 0 V |
 | Workshop E | each red ↔ +5 V, each black ↔ GND | beep |
-| step 5 on | A⎓ in the 10 A jack, leads across the **open** rail switch | Core ≈ 0.15–0.3 A, full rig ≈ 1–1.5 A ([MEASUREMENTS](MEASUREMENTS.md)) |
-| step 7 on | V⎓ across the blocks during a flash, switch on, MIN/MAX if any | ≥ 4.6 V (a hint, not proof) |
+| Workshop B | IN node ↔ GND, switch off | ≈ no-load value (IN is always live) |
+| step 5 on | A⎓ in the 10 A jack, probes in the IN and +5 V free ports, switch **off**; bank out while you place them | Core ≈ 0.15–0.3 A, full rig ≈ 1–1.5 A ([MEASUREMENTS](MEASUREMENTS.md)) |
+| step 7 on | the *dip* line on screen; else V⎓ across the blocks with MIN/MAX | ≥ 4.6 V |
 
 More methods (shunt + scope for the flash, current per device): [DEBUGGING](DEBUGGING.md#multimeter).
 

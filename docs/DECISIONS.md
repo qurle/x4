@@ -85,6 +85,20 @@ Runtime XML is paid and removed from open-source LVGL, so XML = compile-time exp
 **Context.** The Figma MCP returned "no access to this file" (connector on the work account).
 **Decision.** Build on placeholder tokens; ask the owner. Superseded once access worked.
 
+## ADR-020 Wago 221 rail with an IN node; current with the multimeter
+**Context.** The owner moved the rail from Wago 2273 push-ins to Wago 221 lever connectors and
+has a multimeter but no USB power meter and no clip leads (2026-11-13). **Decision.** Rail on
+Wago 221 blocks (jumpered: ≥ 10 ports on +5 V, ≥ 9 on GND). A small **IN node** between the
+breakout and the switch keeps one free port; the +5 V rail keeps another. For current, the
+probe tips are clamped in those two ports (meter across the open switch, switch on = bypass),
+with the bank unplugged while placing or removing them. `s07-flash` reads the Core's own 5 V
+input during the pulse (pulse now ended by an esp_timer, so the reads can't stretch it) and
+shows the dip. **Consequences.** No pigtails for 20 AWG stranded wire; thin Grove ends folded
+double or pigtailed (gauge Not sure). The IN node is live whenever the bank is plugged in.
+Whether the AXP2101's VBUS reading is fast enough for a 50 ms dip is Not sure: the step shows
+how often the value changed. **Rejected:** USB power meter (not on hand), holding probes by
+hand (a slip powers the rig off or shorts the rail).
+
 ## ADR-019 Flat counter-named photos, settings inside the JPEG
 **Context.** Shots were folders (`/x4/shots/S000042/cam1.jpg` … + `shot.json`). The owner doesn't
 want folders or an extra file per shot (2026-11-11). A date in the name was considered: the SE's

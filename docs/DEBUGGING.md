@@ -48,14 +48,17 @@ Three independent methods; use at least two.
 
 - Continuity before power (rail-to-rail must not beep), polarity per branch.
 - DC volts at the rail with no load, with all loads, and at the Core's Port A pins.
-- Rail current: A⎓, red lead in the **10 A** jack, leads clipped across the **open** rail switch
-  so the whole rig runs through the meter; switch on afterwards to bypass it. Steps and limits
+- Rail current: A⎓, red lead in the **10 A** jack, probe tips clamped in the free ports of the
+  IN node and the +5 V rail (across the switch), switch **off**: the whole rig runs through the
+  meter; switch on to bypass it. Bank unplugged while placing or removing the probes. Steps and limits
   (time limit of the 10 A jack, the meter's own voltage drop):
   [STEPS: measuring current](STEPS.md#measuring-current).
-- Current per device: the meter in that board's red branch wire only (wire out of its Wago port,
-  meter between the wire and a solid stub in the same port), everything else as usual.
+- Current per device: the meter in that board's red branch wire only (wire out of the rail,
+  clamped with the red probe in a spare small Wago; black probe in the rail's free port).
 - What a multimeter can't show: peaks (flash pulse, WiFi bursts, switch-on inrush) and the minimum
-  rail voltage. The MIN/MAX button in volts mode catches some of a dip, not all of it.
+  rail voltage. The MIN/MAX button in volts mode catches some of a dip, not all of it. For the
+  flash dip, `s07-flash` logs the Core's own lowest 5 V reading (`vbus_min_mv`, and `changes` to
+  show whether that reading is fast enough).
 
 ## Measuring current with the flash firing
 
