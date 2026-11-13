@@ -1,8 +1,8 @@
 # Enclosure
 
 The owner's renders (brief Appendix C, images 2 and 3) are a **rough sketch of intent, not a
-source of truth**: they show 5-port blocks and two buttons, while the real parts are Wago
-2273-208 and one Mini Button. Use them for the general feel and envelope only.
+source of truth**: they show two buttons, while the real rig has one Mini Button (the 5-port
+blocks happen to match the Wago 221s now on the rail). Use them for the general feel and envelope only.
 
 What the renders show (described, the images were not provided as files; add them to
 `docs/assets/` if you want them versioned):

@@ -44,19 +44,27 @@ Three independent methods; use at least two.
    the spread of `rx` vs `at` tells you whether the trigger lead (`trig_lead_ms`) is long enough.
    If any camera's `rx` is after `at`, it logs `evt=unscheduled late_us=` → raise the lead.
 
-## Multimeter and USB meter
+## Multimeter
 
 - Continuity before power (rail-to-rail must not beep), polarity per branch.
 - DC volts at the rail with no load, with all loads, and at the Core's Port A pins.
-- USB meter between bank and breakout: average and peak current; most meters show min voltage.
-- Current per device: put the USB meter in that board's branch only (via a spare breakout or a
-  meter with screw terminals), everything else unplugged.
+- Rail current: A⎓, red lead in the **10 A** jack, probe tips clamped in the free ports of the
+  IN node and the +5 V rail (across the switch), switch **off**: the whole rig runs through the
+  meter; switch on to bypass it. Bank unplugged while placing or removing the probes. Steps and limits
+  (time limit of the 10 A jack, the meter's own voltage drop):
+  [STEPS: measuring current](STEPS.md#measuring-current).
+- Current per device: the meter in that board's red branch wire only (wire out of the rail,
+  clamped with the red probe in a spare small Wago; black probe in the rail's free port).
+- What a multimeter can't show: peaks (flash pulse, WiFi bursts, switch-on inrush) and the minimum
+  rail voltage. The MIN/MAX button in volts mode catches some of a dip, not all of it. For the
+  flash dip, `s07-flash` logs the Core's own lowest 5 V reading (`vbus_min_mv`, and `changes` to
+  show whether that reading is fast enough).
 
 ## Measuring current with the flash firing
 
-A USB meter's sampling is too slow to see a 100 ms pulse's true peak but shows the dip. Better:
-a 0.1 Ω shunt in the flash's GND branch and a scope (100 mV = 1 A), or a clamp meter on the 20 AWG
-branch. Record rail minimum with the scope probe on the capacitor. Fire at the 8 s cooldown, 10×.
+A multimeter's sampling is too slow to see a 100 ms pulse's true peak, and in series it adds its
+own voltage drop to the dip. Better: a 0.1 Ω shunt in the flash's GND branch and a scope
+(100 mV = 1 A), or a DC clamp meter on the 20 AWG branch. Record rail minimum with the scope probe on the capacitor. Fire at the 8 s cooldown, 10×.
 
 ## Common investigations
 

@@ -1,30 +1,29 @@
 # Soldering: the rig's joints, and proving they carry power
 
-You need about 20 solder joints for the whole rig, and none of them are on the M5 boards. They
-are wires to wires, two wires to the USB-C breakout, and maybe two to the switch. This page shows
-how to make each kind, how to tell a good joint from a bad one, and how to prove the power path
-works **before** anything valuable is connected to it.
+With the Wago 221 lever rail you need only a handful of solder joints, and none of them are on
+the M5 boards: **two leads on the USB-C breakout** (the one you can't avoid), maybe two switch
+lugs, and a few wire-to-wire splices. This page shows how to make each kind, how to tell a good
+joint from a bad one, and how to prove the power path works **before** anything valuable is
+connected to it.
 
 New to soldering? Do [Workshop 0](STEPS.md#workshop-0-learn-to-solder) of the play-through
 first: practice on scrap wire and on one of the spare breakouts (you have five and use one).
 
 ## What gets soldered
 
-| # | joint | wire | play-through |
+| joint | wire | must solder? | play-through |
 |---|---|---|---|
-| 1 | breakout #1 **VBUS** pad → red lead | 20 AWG red | [Workshop B](STEPS.md#workshop-b-the-power-rail) |
-| 2 | breakout #1 **GND** pad → black lead | 20 AWG black | Workshop B |
-| 3–4 | power switch lugs (only if your switch has solder lugs) | 20 AWG red | Workshop B |
-| 5–6 | Port A cable red/black → solid pigtails | Grove → 20–22 AWG solid | [Workshop A](STEPS.md#workshop-a-the-port-a-cable) |
-| 7–8 | button red/black → pigtails | Grove → solid | [Workshop C](STEPS.md#workshop-c-button-lead) |
-| 9 | button white ↔ Port A white | Grove ↔ Grove | Workshop C |
-| 10–11 | flash red/black → 20 AWG branch | Grove → 20 AWG | [Workshop D](STEPS.md#workshop-d-flash-branch) |
-| 12 | flash yellow ↔ Port A yellow | Grove ↔ Grove | Workshop D |
-| 13–20 | camera leads red/black → pigtails (×4) | Grove → solid | [Workshop E](STEPS.md#workshop-e-camera-leads) |
-| – | stranded 20 AWG ends going into a Wago 2273 | → solid pigtail, or use a Wago 221 instead | wherever it happens |
+| breakout #1 **VBUS** pad → red lead | 20 AWG red | **yes**: the breakout has bare pads | [Workshop B1](STEPS.md#b1-breakout-leads) |
+| breakout #1 **GND** pad → black lead | 20 AWG black | **yes** | Workshop B1 |
+| power switch lugs | 20 AWG red | only if your switch has solder lugs (not screw terminals) | [Workshop B3](STEPS.md#b3-the-rail) |
+| button white ↔ Port A white | Grove ↔ Grove | splice, or a small lever connector | [Workshop C](STEPS.md#workshop-c-button-lead) |
+| flash yellow ↔ Port A yellow | Grove ↔ Grove | splice, or a small lever connector | [Workshop D](STEPS.md#workshop-d-flash-branch) |
+| flash red/black → its own 20 AWG branch | Grove → 20 AWG | splice, or a 2-port 221 | Workshop D |
+| Grove red/black ends into the rail (Port A, button, 4 cameras) | Grove → Wago 221 | **optional**: fold the bare end double, or solder a short 20 AWG pigtail | [Workshops A](STEPS.md#workshop-a-the-port-a-cable), C, E |
 
-Why pigtails at all: the Wago 2273 blocks are made for **solid** wire only (VERIFIED, Wago data
-sheet, see [WIRING: connectors](WIRING.md#connectors)). Stranded and Grove wire may not grip.
+Why the Grove ends need care: the 221 takes stranded wire, but Grove wire is probably thinner
+than its rated minimum (ASSUMPTION, see [WIRING: connectors](WIRING.md#connectors)). Folding the
+bare end double usually does it. A pigtail is the sure way, and good practice for the breakout.
 
 ## Safety (read once)
 
@@ -79,8 +78,9 @@ lot or the flux burns off instantly, go down.
 Strip 5–8 mm, twist the strands tight, add flux, heat the wire and let solder soak into it. Stop
 as soon as it's wet all round. A tinned end is stiff and silver with the strands still visible.
 
-Tin wire **only** where it gets soldered. A tinned end must **not** go into a push-in terminal:
-the solder creeps under pressure and the contact loosens ([WIRING](WIRING.md#connectors)).
+Tin wire **only** where it gets soldered. A tinned end must **not** go into a Wago or any other
+clamp terminal: the solder creeps under pressure and the contact loosens
+([WIRING](WIRING.md#connectors)).
 
 ### R2. Wire to a breakout pad (VBUS, GND)
 
@@ -145,7 +145,7 @@ This is how you know the power actually gets through, and that it **stays** ther
 | **P3** leads | the two leads soldered (R2), bank unplugged | beep: pad ↔ far end of each lead; **no** beep VBUS ↔ GND | beeps / no beep |
 | **P4** leads, powered | bank in; leads' far ends apart and taped. Optional: the 47 Ω load across the ends | DC V at the far ends of the leads | the same voltage as P2 |
 | **P4b** wiggle test | as P4. Use the meter's MIN/MAX mode if it has one | watch the reading while you flex each joint, each wire, and gently move **the bank in the socket** | the reading never drops. It drops when you move a wire → that joint. It drops when you move the bank → see below |
-| **P5** drop under load | rail built, Core on it ([step 5](STEPS.md#5-core-on-the-rail)); later the full rig ([step 11](STEPS.md#11-four-cameras)) | **both probes on the same net**: red on the breakout VBUS pad, black on the +5 V Wago block. Then the same on GND (red on the GND Wago, black on the breakout GND pad) | under ~0.05 V each at Core load, under ~0.15 V each with the full rig. More than ~0.2 V: a bad joint, a loose Wago or a poor switch contact. Feel for the warm spot |
+| **P5** drop under load | rail built, Core on it ([step 5](STEPS.md#5-core-on-the-rail)); later the full rig ([step 11](STEPS.md#11-four-cameras)). Switch **on**, meter on V⎓ (not in the current jack) | **both probes on the same net**: red on the breakout VBUS pad, black on a +5 V block. That spans the lead, the IN node, the switch and the jumpers. Then GND: red on a GND block, black on the breakout GND pad | under ~0.05 V each at Core load, under ~0.15 V each with the full rig. More than ~0.2 V: a bad joint, a loose Wago or a poor switch contact. Feel for the warm spot |
 
 Why P5 works: both probes sit on one wire, so the meter shows only the voltage lost along it.
 20 AWG loses about 33 mΩ per metre, so 30 cm at 1.5 A is about 15 mV. A bad joint of 0.1 Ω
@@ -188,4 +188,4 @@ When exactly it turns off tells you why.
   (the 30–90 mA minimum and the auto-shutoff). These are general articles, not A1653-specific; the
   A1653 manual couldn't be read from the build environment.
   https://service.anker.com/article-description/What-is-Trickle-Charging-Mode
-- Wago 2273 data (solid conductors only): see [POWER: sources](POWER.md#6-sources).
+- Wago 221 (stranded wire, rated cross-sections): see [WIRING: connectors](WIRING.md#connectors).

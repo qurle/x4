@@ -3,11 +3,19 @@
 // Wiring: step 6 wiring, plus Flashlight red/black -> rail and Flashlight yellow (EN) -> Port A
 //         yellow (G2). Flashlight slide switch on FLASH. Only after step 2 measured G2 at ~0 V.
 // Use: tap the screen to ARM (auto-disarms after 60 s), press the Mini Button to fire.
-// Pass: one short flash per press; presses inside 8 s are refused on screen; no reset; the rail
-//       (USB meter / multimeter min) stays above ~4.6 V during the flash.
+// Pass: one short flash per press; presses inside 8 s are refused on screen; no reset; the
+//       Core's own 5 V reading stays above ~4.6 V during the flash ("dip" line on screen).
+//
+// The dip: while the flash is on (and 100 ms after), the Core reads its 5 V input (AXP2101 VBUS
+// ADC over I2C) as often as it can and keeps the lowest value. How often that ADC updates is
+// Not sure, so it also counts how often the value changed: 0 changes = too slow to tell.
+// The pulse is ended by a one-shot esp_timer, not by this loop, so slow reads can't stretch it.
+#include <esp_timer.h>
+
 #include "core_common.h"
 
 constexpr uint32_t kPulseMs = 50;          // well under the 150 ms hard cap of the real firmware
+constexpr uint32_t kAfterMs = 100;         // keep reading this long after the pulse (recovery)
 constexpr uint32_t kCooldownMs = 8000;
 constexpr uint32_t kArmTimeoutMs = 60000;
 
@@ -16,17 +24,46 @@ uint32_t g_armedAt = 0;
 uint32_t g_lastFlash = 0;
 bool g_everFired = false;
 uint32_t g_count = 0;
+esp_timer_handle_t g_pulseEnd = nullptr;
+
+struct Dip {
+  int beforeMv = 0, minMv = 0, afterMv = 0;
+  uint32_t reads = 0, changes = 0;
+  bool measured = false;
+} g_dip;
+
+void endPulse(void*) { digitalWrite(pins::kFlashEn, LOW); }  // runs in the esp_timer task
 
 void fire() {
-  // Blocking on purpose: nothing can run between HIGH and LOW, so the pin cannot stay high
-  // because some other code got stuck.
+  Dip d;
+  d.beforeMv = M5.Power.getVBUSVoltage();
   digitalWrite(pins::kFlashEn, HIGH);
-  delay(kPulseMs);
-  digitalWrite(pins::kFlashEn, LOW);
+  if (g_pulseEnd && esp_timer_start_once(g_pulseEnd, (uint64_t)kPulseMs * 1000) == ESP_OK) {
+    int64_t t0 = esp_timer_get_time();
+    int last = d.beforeMv;
+    d.minMv = d.beforeMv;
+    while (esp_timer_get_time() - t0 < (int64_t)(kPulseMs + kAfterMs) * 1000) {
+      int v = M5.Power.getVBUSVoltage();
+      d.reads++;
+      if (v != last) d.changes++;
+      last = v;
+      if (v > 0 && v < d.minMv) d.minMv = v;
+    }
+    d.afterMv = last;
+    d.measured = true;
+  } else {
+    // No timer: the old way, blocking, nothing between HIGH and LOW. No dip reading.
+    delay(kPulseMs);
+  }
+  digitalWrite(pins::kFlashEn, LOW);  // already low via the timer; second guard
   g_lastFlash = millis();
   g_everFired = true;
   g_count++;
-  Serial.printf("flash fired pulse_ms=%lu count=%lu\n", (unsigned long)kPulseMs, (unsigned long)g_count);
+  g_dip = d;
+  Serial.printf("flash fired pulse_ms=%lu count=%lu dip_measured=%d vbus_before_mv=%d vbus_min_mv=%d "
+                "vbus_after_mv=%d reads=%lu changes=%lu window_ms=%lu\n",
+                (unsigned long)kPulseMs, (unsigned long)g_count, d.measured, d.beforeMv, d.minMv, d.afterMv,
+                (unsigned long)d.reads, (unsigned long)d.changes, (unsigned long)(kPulseMs + kAfterMs));
 }
 
 void setup() {
@@ -34,6 +71,14 @@ void setup() {
   pinMode(pins::kFlashEn, OUTPUT);
   digitalWrite(pins::kFlashEn, LOW);
   pinMode(pins::kButton, INPUT_PULLUP);
+  esp_timer_create_args_t a = {};
+  a.callback = endPulse;
+  a.dispatch_method = ESP_TIMER_TASK;
+  a.name = "flash_end";
+  if (esp_timer_create(&a, &g_pulseEnd) != ESP_OK) {
+    g_pulseEnd = nullptr;
+    Serial.println("flash timer create failed: dip reading off");
+  }
   screenTitle("step 7: guarded flash");
 }
 
@@ -83,4 +128,10 @@ void loop() {
     if (!b.safe()) b = forcePowerOutputsOff();
     screenLine(3, TFT_WHITE, "5V input: %d mV", b.vbusMv);
   }
+  if (!g_dip.measured) return;
+  if (!g_dip.changes)
+    screenLine(4, TFT_ORANGE, "dip: reading never changed (too slow)");
+  else
+    screenLine(4, g_dip.minMv >= 4600 ? TFT_GREEN : TFT_RED, "dip: min %d mV (before %d), %lu/%lu",
+               g_dip.minMv, g_dip.beforeMv, (unsigned long)g_dip.changes, (unsigned long)g_dip.reads);
 }

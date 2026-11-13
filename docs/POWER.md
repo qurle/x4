@@ -16,8 +16,8 @@
 3. The rig's worst-case peak (4 cameras + Core + flash) is **close to the bank's 3 A limit**.
    Measure it at bring-up step 4/5 before trusting it ([MEASUREMENTS.md](MEASUREMENTS.md)).
 4. **Flash cooldown is 8 s minimum** (M5 recommends 8–15 s), not the 1 s in the brief.
-5. **Wago 2273 is rated for solid wire only.** Stranded 20 AWG and Grove wires need solid
-   pigtails, ferrules or a lever connector (Wago 221). See [WIRING.md](WIRING.md#connectors).
+5. **Wago 221 lever connectors** hold the rail (owner, 2026-11-13). Stranded 20 AWG goes
+   straight in; the thin Grove wires get folded double or pigtailed. See [WIRING.md](WIRING.md#connectors).
 
 No finding forces a plan change; nothing here needs the owner's decision before the first
 power-up. Two items need a measurement at bring-up (Port A idle voltage, rail sag with flash).
@@ -27,8 +27,9 @@ power-up. Two items need a measurement at bring-up (Port A idle voltage, rail sa
 ```
 Anker Nano 5000 (USB-C out, 5 V ⎓ 3 A, no PD negotiation)
   └─ USB-C breakout #1 (the ONE in use; must have 5.1 kΩ CC pull-downs)
-       └─ power switch (+5 V line only, ≥ 5 A DC)
-            ├─ +5 V rail: Wago 2273-208 ×2 (jumpered)          GND rail: Wago 2273-208 ×2
+       └─ IN node: Wago 221 (breakout red, switch, 1 free port for the meter)
+          └─ power switch (+5 V line only, ≥ 5 A DC)
+            ├─ +5 V rail: Wago 221 blocks (jumpered)            GND rail: Wago 221 blocks (jumpered)
             │    ├── Cam1 Grove red  ─┐                              ├── Cam1 Grove black
             │    ├── Cam2 Grove red   │ star: one branch per load     ├── Cam2 …
             │    ├── Cam3 Grove red   │                              ├── Cam3 …
@@ -174,7 +175,7 @@ bank supplies the flash pulse itself. Don't expect it to "power the flash".
 | PD voltage | a PD trigger would ask for 9 V | the breakout has no PD controller, so the bank stays at 5 V (vSafe5V). **Never** use a PD trigger board on this rail | measure 5.0 V at the rail |
 | Wrong polarity / shorts | swapped red/black or a stray strand | continuity +5 V ↔ GND must NOT beep before first power-up; capacitor stripe to GND | bring-up step 1 |
 | Breakout inline capacitors | position/value/voltage unknown | inspect, read markings, record in [HARDWARE.md](HARDWARE.md) | bring-up step 1 |
-| Loose push-in contacts | Wago 2273 is solid-wire-only (Wago datasheet); stranded/Grove wire may not grip | solid pigtails, ferrules or Wago 221; tug-test every wire | bring-up step 1 |
+| Loose contacts | thin Grove wires may sit under the Wago 221's minimum wire size (Not sure of their gauge) | fold Grove ends double or pigtail them; lever closed; tug-test every wire | bring-up step 1 |
 | Port A pull-ups on G2 (flash EN) | if the SE had pull-ups on Port A, the flash EN would idle high before firmware drives it low | firmware drives G2 low from a static constructor; the AW3641 flash timeout (~220 ms) bounds any accidental flash; bring-up step 3 measures G2 idle voltage. If it idles high, move flash EN to M-Bus G7 (`kFlashEnAlt`) | bring-up step 3 |
 | Mini Button divider at 5 V | Unit Button outputs ~2/3 VCC = 3.33 V released (10k/20k divider) into a 3.3 V GPIO | under the ESP32-S3 absolute max (VDD + 0.3 V). If your unit reads ~5 V on the signal wire, STOP: it is a different design | bring-up step 2 |
 | Thermal | the cameras' ESP32-S3-WROOM-1-**N16R8** is the **65 °C ambient** version (VERIFIED: Espressif module datasheet ordering table, "N16R8 (65 °C)"; 85 °C only with PSRAM ECC enabled, which costs 1/16 of the PSRAM). Four cameras in a closed box can get there | die-temperature warning at 70 °C and throttle at 80 °C (die runs hotter than ambient; thresholds are ASSUMPTIONS to calibrate); vents in the enclosure ([ENCLOSURE](ENCLOSURE.md)); no long streaming | bring-up step 8 |
@@ -206,7 +207,7 @@ bank supplies the flash pulse itself. Don't expect it to "power the flash".
   and page https://docs.m5stack.com/en/unit/Unit_FlashLight (8–15 s interval note)
 - Awinic AW3641EDNR: https://www.awinic.com/en/productDetail/AW3641EDNR (datasheet V1.4)
 - Anker Nano Power Bank A1653: https://www.anker.com/ca/products/a1653-usb-c-portable-charger-5000mah
-- Wago 2273 series data (solid conductors): https://www.wago.com/2273-208 and distributor sheet
-  https://www.tlc-direct.co.uk/Technical/DataSheets/Wago/Wago_202.pdf
+- Wago 221 series (lever connectors): https://www.wago.com/221-415 (wire range not re-checked
+  for this repo; see WIRING "Connectors"). Earlier 2273 data: https://www.wago.com/2273-208
 - Espressif ESP32-S3-WROOM-1 datasheet (ordering table, N16R8 = 65 °C):
   https://www.espressif.com/sites/default/files/documentation/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf
