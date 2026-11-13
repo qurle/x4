@@ -70,8 +70,8 @@ Cameras: `--upload-port x4cam-cam2.local` or their IP (shown on the web page). O
 
 | check | expected | if it fails |
 |---|---|---|
-| continuity +5V rail ↔ GND rail | **no beep** | find the short before anything else ([TROUBLESHOOTING](TROUBLESHOOTING.md#power)) |
-| polarity: each red to +5V, black to GND, cap stripe to GND | beeps where expected | re-wire |
+| ohms +5V rail ↔ GND rail ([how](STEPS.md#connected-or-shorted-check-with-ohms)) | **OL** or climbing, never < ~5 Ω | find the short before anything else ([TROUBLESHOOTING](TROUBLESHOOTING.md#power)) |
+| polarity: each red to +5V, black to GND, cap stripe to GND | ≈ 0 Ω where expected | re-wire |
 | USB-C breakout CC1/CC2 to GND | ≈ 5.1 kΩ each (or resistors marked "512") | none: use bank USB-A + A-to-C cable, or add 5.1 kΩ |
 | breakout inline capacitor: value, voltage, side | recorded in HARDWARE.md | – |
 | bank on, switch on, nothing attached: rail voltage | **4.75–5.25 V** | 0 V: CC resistors / switch / bank asleep (press its button); > 5.3 V: stop, wrong source |
