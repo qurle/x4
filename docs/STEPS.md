@@ -873,22 +873,35 @@ dim light it picks a long exposure. For action shots and dark parties the rig ne
 exposures. This step finds out how much control the camera gives us. It's an experiment: the
 result decides what the full firmware can offer, it isn't a pass/fail of your hardware.
 
-**What's known:**
+**What's known** (details and sources: [RESEARCH §2](RESEARCH.md#2-unit-cams3-5mp)):
 - Freezing people in motion usually takes about 1/250 s (4 ms) or shorter (general photography
-  rule of thumb, ASSUMPTION for this camera). A shorter exposure collects less light, so indoors
-  the photo gets **darker**, or **noisier** if the gain is raised to compensate. No setting avoids
-  that trade; only more light does.
-- The camera library has three exposure controls for this module (VERIFIED, esp32-camera
-  `sensors/mega_ccm.c`): AE mode (register 0x0130), gain (0x0131), exposure (0x0133 high byte,
-  0x0134 low byte). Its own exposure setter has a bug (it writes the high byte into both
-  registers), so this firmware writes the registers directly.
-- **Not sure:** the units of exposure and gain, their ranges, whether manual exposure is honoured
-  at all, and which mode value means manual. The library writes 1 to "enable" AE, so 1 = auto and
-  0 = manual is the likely reading (ASSUMPTION).
+  rule of thumb, ASSUMPTION for this camera). Shorter exposure = less light: indoors the photo
+  gets **darker**, or **noisier** if the gain goes up. Only more light avoids that trade.
+- The library we build with handles this camera's exposure badly (its exposure setter writes the
+  wrong byte, VERIFIED). This firmware writes the camera's registers itself.
+- What the registers mean comes from **another project's driver** that was worked out on this
+  unit ([hbentel/M5Stack-Unit-CamS3-5MP](https://github.com/hbentel/M5Stack-Unit-CamS3-5MP)),
+  not from M5:
+
+| register | per hbentel | still Not sure |
+|---|---|---|
+| 0x0125 exposure compensation | levels 0–6 = 0, +1, −1, +2, −2, +3, −3 | whether −3 shortens the exposure or only darkens |
+| 0x0130 AGC mode | **0 = auto, 1 = manual** | |
+| 0x0131 manual gain | their driver caps it at 6 | the real range |
+| 0x0132 AE mode | defined, never used | meaning |
+| 0x0133 / 0x0134 manual exposure (high / low byte) | | units, range, whether it's honoured |
+
+- Two warnings from the same project, which this firmware follows: **reading registers while the
+  camera streams makes it fall back to 320×240** (or hang its control bus), so nothing here reads
+  them back. And **writes right after power-up can be ignored**: if a setting seems to do nothing
+  just after boot, wait a minute and *Apply* again.
+- The frame rate scales with the camera's clock: at VGA about 9.4 / 15 / 18.8 fps at 10 / 16 /
+  20 MHz, "and higher clocks shorten per-frame exposure" (per hbentel). In dim light auto
+  exposure probably stretches to the whole frame time, so a faster clock (and a smaller size,
+  which runs at more fps) could mean less blur: ASSUMPTION, this step tests it.
 - The Flashlight stays lit for its whole pulse (50–150 ms), so as used today it can't freeze
-  motion. Used as a *strobe* (a short pulse in a dark room while the exposure is open) it might,
-  but that needs the flash timed to each camera's exposure. That's a later experiment, and only
-  worth it if manual exposure works here.
+  motion. As a *strobe* (a short pulse in a dark room while the exposure is open) it might: a
+  later experiment, if manual exposure works here.
 
 **Rig:** one camera on the Grove-to-USB-C adapter, like step 8.
 
@@ -897,35 +910,36 @@ result decides what the full firmware can offer, it isn't a pass/fail of your ha
 pio run -e s15-cam-exposure -t upload -t monitor
 ```
 
-**Use:** join WiFi **x4cam-exposure** (password `x4cam-steps`) and open `http://192.168.4.1/`.
-Point the camera at something moving: a desk fan, a waving hand, a swinging keychain. Use
-**VGA** while you experiment (fast), then check the best setting at **5 MP**.
-1. **Auto first.** *Shoot* without applying anything, then *Read registers*: note mode, gain and
-   exp. That's either what auto picked or just what the registers hold (Not sure which).
-2. **Manual exposure.** Set mode **0**, tick *write exposure*, start with the exposure value from
-   step 1 (or 1000 if it read 0), *Apply*, *Shoot*. Then halve it, and again: 500, 250, 120…
-   Each shot lands in the table with its settings.
-3. **Gain.** At a short exposure that's too dark, tick *write gain* and raise it: 32, 64, 128,
-   255. Watch the noise grow.
-4. **Mode 0 changes nothing?** Try *Apply* with mode 0 **and** exposure together, then mode 2 or 3.
-   If the camera stops answering, unplug and replug it: every setting resets.
+**Use:** join WiFi **x4cam-exposure** (password `x4cam-steps`), open `http://192.168.4.1/`, and
+point the camera at something moving: a desk fan, a waving hand, a swinging keychain. Only the
+ticked fields are written. Each *Shoot* adds a row to the table with what was set, the frame
+time, and *size ok* (if that says NO, the camera fell back to another size: *Apply* again or
+replug). Start at **VGA**, check your best setting at **5 MP** at the end.
+1. **Baseline:** *Shoot* without changing anything (auto, 20 MHz).
+2. **Clock:** pick 10 MHz, *Apply*, shoot; then 16, then 20. Does `frame ms` drop and the blur
+   shrink as the clock goes up?
+3. **Size:** shoot the same scene at VGA, HD and 5 MP. Compare frame time and blur.
+4. **Exposure compensation:** tick it, try −1, −2, −3. Darker, and sharper?
+5. **Manual:** tick *AGC mode* = 1 (manual) and *exposure* = 1000, *Apply*, shoot. Then 500, 250,
+   120… If nothing changes, also tick *AE mode* and try 1, then 0. Then try *gain* 1…6 to brighten.
+6. If the camera stops answering, unplug and replug it: every setting resets.
 
-**Read:** serial shows what was written and read back, and every shot:
+**Read:** serial shows what was written and every shot:
 ```
-exp boot regs {"mode":…,"gain":…,"exp":…,…}
-exp set res=vga mode=0 exp=500 write_err=0 readback={"mode":0,"gain":…,"exp":500,…}
-exp shot n=3 res=vga w=640 h=480 mode=0 gain=0 exp=500 comp=0 frame_ms=… grab_ms=… bytes=…
+exp camera xclk_mhz=20 size=vga pid=0x039e
+exp set write_err=0 written={"xclk_mhz":20,"size":"vga","comp":6,"agc":-1,"gain":-1,"ae":-1,"exp":-1}
+exp shot n=3 xclk_mhz=20 size=vga w=640 h=480 size_ok=1 comp=6 agc=-1 gain=-1 ae=-1 exp=-1 frame_ms=… grab_ms=… bytes=…
 ```
-Signs that manual exposure is really working: the photo gets **darker** as exposure goes down,
-moving things get **sharper**, and/or `frame_ms` changes with the exposure value. `write_err`
-other than 0 means the camera refused the write.
+(`-1` = not written since boot: the camera's own default.) Signs a setting really works: the
+photo gets darker and moving things sharper, and/or `frame_ms` changes. `write_err` other than 0
+means the camera refused the write.
 
 **Result** (write it down, it decides the next step):
-- **Manual exposure works:** the shortest exposure where a waving hand is sharp, and how dark and
-  noisy that is in your room. Then the full firmware gets exposure/gain options and a "motion"
-  setting, and the strobe-flash experiment becomes worth trying.
-- **It doesn't:** auto is all we get. The options are a lot more continuous light, or a different
-  camera module ([OPEN_QUESTIONS Q21](OPEN_QUESTIONS.md)).
+- **Something works** (clock, size, compensation or manual exposure): the setting where a waving
+  hand is sharp, and how dark and noisy it is in your room. Then the full firmware gets that as an
+  option (e.g. a "motion" setting), and the strobe-flash experiment becomes worth trying.
+- **Nothing does:** auto is all we get. The options are a lot more continuous light, or a
+  different camera module ([OPEN_QUESTIONS Q21](OPEN_QUESTIONS.md)).
 
 **Save:** every row in [MEASUREMENTS: exposure](MEASUREMENTS.md#exposure-step-15).
 

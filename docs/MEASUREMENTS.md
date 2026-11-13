@@ -78,13 +78,14 @@ One row per shot from the step 15 page (its table, or the `exp shot` serial line
 "living room, 2 ceiling lamps", "daylight window". Sharp = a waving hand / spinning fan looks
 frozen.
 
-| light | size | mode | gain | exp | comp | frame ms | brightness (dark / ok / bright) | motion (blurred / soft / sharp) | noise (none / some / heavy) |
-|---|---|---|---|---|---|---|---|---|---|
-| | auto | | | | | | | | |
-| | | | | | | | | | |
+| light | MHz | size | comp | agc | gain | ae | exp | frame ms | brightness (dark / ok / bright) | motion (blurred / soft / sharp) | noise (none / some / heavy) |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| | 20 | VGA | – | – | – | – | – | | | | |
+| | | | | | | | | | | | |
 
-**Answer here:** does manual exposure work (Y/N)? Shortest exposure value with a sharp hand: ___ ;
-at that value the photo is ___ .
+**Answer here:** which lever makes motion sharper: clock ___ , size ___ , compensation ___ ,
+manual exposure ___ (Y/N each)? Best setting with a sharp hand: ___ ; at that setting the photo
+is ___ .
 
 ## Camera capture (from `cam-hello` bench and `evt=captured`)
 

@@ -13,7 +13,8 @@ inline void led(bool on) {
 }
 
 // JPEG straight from the sensor, frame buffers in PSRAM. Returns the sensor PID (0 = failed).
-inline uint16_t cameraBegin(framesize_t size) {
+// xclkHz: sensor clock. The frame rate scales with it (step 15 tests 10/16/20 MHz).
+inline uint16_t cameraBegin(framesize_t size, int xclkHz = 20000000) {
   camera_config_t c = {};
   c.pin_pwdn = -1;    // tied to GND on the board
   c.pin_reset = 21;
@@ -25,7 +26,7 @@ inline uint16_t cameraBegin(framesize_t size) {
   c.pin_vsync = 42;
   c.pin_href = 18;
   c.pin_pclk = 12;
-  c.xclk_freq_hz = 20000000;
+  c.xclk_freq_hz = xclkHz;
   c.ledc_timer = LEDC_TIMER_0;
   c.ledc_channel = LEDC_CHANNEL_0;
   c.pixel_format = PIXFORMAT_JPEG;

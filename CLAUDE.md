@@ -93,5 +93,8 @@ renders are in the repo. `/nodes` can be rate-limited the same way (seen 2026-11
    Still to do on the panel: speed, colours, touch feel.
 3. Optional: split the CI `steps / all` job into parallel jobs (it takes ~10 of the 10.5 min).
 4. Motion blur indoors (owner, 2026-11-13; OPEN_QUESTIONS Q21): step 15 `s15-cam-exposure` tests
-   manual exposure/gain through the camera's registers. Waiting for the owner's results; they
-   decide whether the full firmware gets exposure options and a strobe-flash experiment.
+   sensor clock, frame size, exposure compensation and manual exposure/gain through the camera's
+   registers (meanings from github.com/hbentel/M5Stack-Unit-CamS3-5MP, see RESEARCH §2). Waiting
+   for the owner's results; they decide whether the full firmware gets exposure options and a
+   strobe-flash experiment. **Never read camera registers while it streams** (it falls back to
+   320×240 or hangs its bus, per that project).
