@@ -72,6 +72,20 @@ you see.
 | Cam1..4 | | | | | |
 | Flashlight case | – | – | | | |
 
+## Exposure (step 15)
+
+One row per shot from the step 15 page (its table, or the `exp shot` serial lines). Light: e.g.
+"living room, 2 ceiling lamps", "daylight window". Sharp = a waving hand / spinning fan looks
+frozen.
+
+| light | size | mode | gain | exp | comp | frame ms | brightness (dark / ok / bright) | motion (blurred / soft / sharp) | noise (none / some / heavy) |
+|---|---|---|---|---|---|---|---|---|---|
+| | auto | | | | | | | | |
+| | | | | | | | | | |
+
+**Answer here:** does manual exposure work (Y/N)? Shortest exposure value with a sharp hand: ___ ;
+at that value the photo is ___ .
+
 ## Camera capture (from `cam-hello` bench and `evt=captured`)
 
 | res | JPEG size (avg) | grab ms (min/max) | frame period ms | res switch ms | quality setting |

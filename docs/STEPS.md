@@ -58,6 +58,7 @@ Tick these in your copy as you go.
 - [ ] [12. UI smoke test](#12-ui-smoke-test)
 - [ ] [13. The full firmware](#13-the-full-firmware)
 - [ ] [14. Effects on the camera](#14-effects-on-the-camera-planned-no-firmware-yet) (planned)
+- [ ] [15. Freeze motion: exposure test](#15-freeze-motion-exposure-test) (experiment)
 - [ ] [Workshop F: into the box](#workshop-f-into-the-box)
 
 | # | firmware (env) | proves | power |
@@ -76,6 +77,7 @@ Tick these in your copy as you go.
 | 12 | `core/` `hello-ui` | LVGL, fonts, animation | USB, then rail |
 | 13 | `core/` `core` + `camera/` `cam1..4` | the real thing | USB or rail |
 | 14 | `s14-cam-effect` (planned) | a camera can bake crop + dither into its photo, and how fast | camera on USB |
+| 15 | `s15-cam-exposure` | how far exposure and gain can be set by hand, to freeze motion indoors | camera on USB |
 
 ---
 
@@ -104,7 +106,7 @@ cables: the rig needs **seven** (Core, button, flash, four cameras). Each unit c
   (CI uses 6.2.0).
 
 **Pre-flight build.** No boards needed. This downloads the pinned toolchain once (a big download,
-several minutes) and builds all 15 step firmwares (~5 min):
+several minutes) and builds all 16 step firmwares (~5 min):
 ```bash
 cd steps
 ```
@@ -861,6 +863,71 @@ encodes PNG, at full size and at 1296×972. Nothing like this has been measured;
 [MEASUREMENTS](MEASUREMENTS.md). **Decides:** if one photo is done in a few seconds, baked
 effects become the default (original kept only on request); if not, fall back to the smaller size
 or keep the in-photo settings.
+
+---
+
+## 15. Freeze motion: exposure test
+
+**Why:** indoors, every moving thing blurs. The camera module runs its own auto exposure, and in
+dim light it picks a long exposure. For action shots and dark parties the rig needs short
+exposures. This step finds out how much control the camera gives us. It's an experiment: the
+result decides what the full firmware can offer, it isn't a pass/fail of your hardware.
+
+**What's known:**
+- Freezing people in motion usually takes about 1/250 s (4 ms) or shorter (general photography
+  rule of thumb, ASSUMPTION for this camera). A shorter exposure collects less light, so indoors
+  the photo gets **darker**, or **noisier** if the gain is raised to compensate. No setting avoids
+  that trade; only more light does.
+- The camera library has three exposure controls for this module (VERIFIED, esp32-camera
+  `sensors/mega_ccm.c`): AE mode (register 0x0130), gain (0x0131), exposure (0x0133 high byte,
+  0x0134 low byte). Its own exposure setter has a bug (it writes the high byte into both
+  registers), so this firmware writes the registers directly.
+- **Not sure:** the units of exposure and gain, their ranges, whether manual exposure is honoured
+  at all, and which mode value means manual. The library writes 1 to "enable" AE, so 1 = auto and
+  0 = manual is the likely reading (ASSUMPTION).
+- The Flashlight stays lit for its whole pulse (50–150 ms), so as used today it can't freeze
+  motion. Used as a *strobe* (a short pulse in a dark room while the exposure is open) it might,
+  but that needs the flash timed to each camera's exposure. That's a later experiment, and only
+  worth it if manual exposure works here.
+
+**Rig:** one camera on the Grove-to-USB-C adapter, like step 8.
+
+**Flash:** `s15-cam-exposure`, *Upload and Monitor*. CLI:
+```bash
+pio run -e s15-cam-exposure -t upload -t monitor
+```
+
+**Use:** join WiFi **x4cam-exposure** (password `x4cam-steps`) and open `http://192.168.4.1/`.
+Point the camera at something moving: a desk fan, a waving hand, a swinging keychain. Use
+**VGA** while you experiment (fast), then check the best setting at **5 MP**.
+1. **Auto first.** *Shoot* without applying anything, then *Read registers*: note mode, gain and
+   exp. That's either what auto picked or just what the registers hold (Not sure which).
+2. **Manual exposure.** Set mode **0**, tick *write exposure*, start with the exposure value from
+   step 1 (or 1000 if it read 0), *Apply*, *Shoot*. Then halve it, and again: 500, 250, 120…
+   Each shot lands in the table with its settings.
+3. **Gain.** At a short exposure that's too dark, tick *write gain* and raise it: 32, 64, 128,
+   255. Watch the noise grow.
+4. **Mode 0 changes nothing?** Try *Apply* with mode 0 **and** exposure together, then mode 2 or 3.
+   If the camera stops answering, unplug and replug it: every setting resets.
+
+**Read:** serial shows what was written and read back, and every shot:
+```
+exp boot regs {"mode":…,"gain":…,"exp":…,…}
+exp set res=vga mode=0 exp=500 write_err=0 readback={"mode":0,"gain":…,"exp":500,…}
+exp shot n=3 res=vga w=640 h=480 mode=0 gain=0 exp=500 comp=0 frame_ms=… grab_ms=… bytes=…
+```
+Signs that manual exposure is really working: the photo gets **darker** as exposure goes down,
+moving things get **sharper**, and/or `frame_ms` changes with the exposure value. `write_err`
+other than 0 means the camera refused the write.
+
+**Result** (write it down, it decides the next step):
+- **Manual exposure works:** the shortest exposure where a waving hand is sharp, and how dark and
+  noisy that is in your room. Then the full firmware gets exposure/gain options and a "motion"
+  setting, and the strobe-flash experiment becomes worth trying.
+- **It doesn't:** auto is all we get. The options are a lot more continuous light, or a different
+  camera module ([OPEN_QUESTIONS Q21](OPEN_QUESTIONS.md)).
+
+**Save:** every row in [MEASUREMENTS: exposure](MEASUREMENTS.md#exposure-step-15).
 
 ---
 
