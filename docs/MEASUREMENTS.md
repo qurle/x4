@@ -32,6 +32,17 @@ Runtime per bank charge ≈ usable bank energy ÷ rig total below (see [POWER](P
 | shot with flash | *7–10 W + flash* | | | |
 | inrush at switch-on (peak, duration) | – | | | bank shut off? Y/N |
 
+## Rail and joints
+
+Voltage drop along each side of the power path, both probes on the same net
+([SOLDERING: P5](SOLDERING.md#prove-the-power-path)). Thresholds are an ASSUMPTION; record what
+you see.
+
+| load | +5 V: breakout VBUS pad → +5 V Wago (V) | GND: GND Wago → breakout GND pad (V) | wiggle test: dips | warm spots after 10 min | date |
+|---|---|---|---|---|---|
+| Core only (step 5), target < ~0.05 V | | | | | |
+| full rig idle (step 11), target < ~0.15 V | | | | | |
+
 ## Flash
 
 | pulse_ms | rail min V during pulse | resets? | light duration (slow-mo) | connector temp after 10 | date |
@@ -45,6 +56,8 @@ Runtime per bank charge ≈ usable bank energy ÷ rig total below (see [POWER](P
 | test | result |
 |---|---|
 | auto-off threshold (lowest current that keeps it on) | |
+| no-load turn-off time (nothing connected) | |
+| turns off when the bank moves in the breakout socket? | |
 | does it wake on plug-in / need a button press? | |
 | runtime from full, standby | *≈ 4.2 h at 3.5 W (est.)* |
 | runtime from full, 1 shot / 30 s + preview | |

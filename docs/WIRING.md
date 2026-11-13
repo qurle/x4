@@ -92,6 +92,7 @@ tape so nobody "fixes" them later.
      ferrules in the 2273; test each one;
   3. use Wago **221** lever connectors for stranded wire.
   Whatever you choose: **tug-test every connection.** Connection quality, not gauge, is the limit.
+  How to solder each kind of joint and check it: [SOLDERING.md](SOLDERING.md).
 - Do not tin stranded wire for push-in terminals (solder creeps and the contact loosens).
 - Two blocks per net, jumpered with a short solid wire: 9 connections per net today (source,
   4 cams, Core, flash, button, cap) leave 5 spare ports per net.

@@ -10,6 +10,7 @@ export const GROUPS = [
     name: 'Build the rig',
     docs: [
       ['STEPS.md', 'Play-through', "From a box of parts to the full rig"],
+      ['SOLDERING.md', 'Soldering', "Joints that hold, power that stays on"],
       ['BRINGUP.md', 'Bring-up', "Flashing rules and full-firmware tests"],
       ['WIRING.md', 'Wiring', "Diagram, pins, connectors"],
       ['POWER.md', 'Power', "Why it won't burn, and the risks"],

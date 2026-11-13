@@ -165,6 +165,10 @@ Low-current auto-off threshold: **Not sure** (not documented by Anker); measure 
 |---|---|---|
 | USB-C breakout CC resistors | **present** (owner). Measured with the bank connected: CC1 ≈ 5 kΩ, CC2 ≈ 9.2 kΩ → **re-measure unplugged** (ohms are only valid on an unpowered circuit). If CC2 stays off 5.1 kΩ: power works in one plug orientation only (flip the plug if the rail reads 0 V) or use the bank's USB-A port | multimeter 20k range, GND ↔ CC1 / CC2, breakout unplugged |
 | breakout inline capacitor | value: ___ V rating: ___ input/output side: ___ | read marking |
+| breakout #1 pad markings | ___ (e.g. VBUS GND CC1 CC2 D+ D−) | read the silkscreen ([SOLDERING](SOLDERING.md#r2-wire-to-a-breakout-pad-vbus-gnd)) |
+| plug orientations that give 5 V | both / only one (mark it) | Workshop B1, P2 ([SOLDERING](SOLDERING.md#prove-the-power-path)) |
+| bank turns itself off with no load after | ___ s / never | Workshop B1, P2 |
+| bank turns off when moved in the socket? | yes / no, before and after fixing the breakout down | Workshop B2, P4b |
 | 2200 µF voltage rating | **15 V** (owner) | read the can |
 | power switch rating | ___ A DC | read the marking |
 | CamS3 hardware revision (0x0200) | cam1 ___ cam2 ___ cam3 ___ cam4 ___ | boot log `evt=hw_rev` |
