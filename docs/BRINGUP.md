@@ -26,9 +26,9 @@ numbers into [MEASUREMENTS.md](MEASUREMENTS.md) as you go.
    ```bash
    cd camera && pio run
    ```
-4. A multimeter with a 10 A current jack. Current is measured with the probe tips clamped in
-   the free Wago 221 ports of the IN node and the +5 V rail, across the open switch
-   ([STEPS: measuring current](STEPS.md#measuring-current)).
+4. A multimeter with a 10 A current jack and a crocodile-clip lead. Current is measured across
+   the open switch: red probe clipped on the switch's input terminal, black probe in a free +5 V
+   rail port ([STEPS: measuring current](STEPS.md#measuring-current)).
 
 ## Flashing without breaking the power rules
 
@@ -130,7 +130,7 @@ Record both in HARDWARE.md.
 ### Step 4 — One load at a time from the rail
 
 USB unplugged everywhere. Switch off between steps. For each current reading: switch off, meter
-(A⎓, 10 A jack) in the IN and +5 V free ports, read, then switch on to bypass it
+(A⎓, 10 A jack) across the switch, read, then switch on to bypass it
 ([STEPS: measuring current](STEPS.md#measuring-current)).
 
 | add | expected (rough, update with your numbers) | if it fails |

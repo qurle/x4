@@ -98,6 +98,10 @@ double or pigtailed (gauge Not sure). The IN node is live whenever the bank is p
 Whether the AXP2101's VBUS reading is fast enough for a 50 ms dip is Not sure: the step shows
 how often the value changed. **Rejected:** USB power meter (not on hand), holding probes by
 hand (a slip powers the rig off or shorts the rail).
+**Update 2026-11-14 (owner): IN node dropped.** No extra block. Current is measured across the
+open switch with the red probe on the switch's input terminal, ideally on a crocodile-clip lead
+(holding it by hand is allowed, with care, for the slip risk above); black probe in a free +5 V
+rail port.
 
 ## ADR-019 Flat counter-named photos, settings inside the JPEG
 **Context.** Shots were folders (`/x4/shots/S000042/cam1.jpg` … + `shot.json`). The owner doesn't
