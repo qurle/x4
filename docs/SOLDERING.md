@@ -19,7 +19,6 @@ first: practice on scrap wire and on one of the spare breakouts (you have five a
 | button white ↔ Port A white | Grove ↔ Grove | splice, or a small lever connector | [Workshop C](STEPS.md#workshop-c-button-lead) |
 | flash yellow ↔ Port A yellow | Grove ↔ Grove | splice, or a small lever connector | [Workshop D](STEPS.md#workshop-d-flash-branch) |
 | flash red/black → its own 20 AWG branch | Grove → 20 AWG | splice, or a 2-port 221 | Workshop D |
-| optional: **CC switch mod** (one switch turns the bank on and off) | two 5.1 kΩ + thin wire | optional | [WIRING: switching the rig on and off](WIRING.md#b-cc-switch-recommended-one-switch-does-everything) |
 | Grove red/black ends into the rail (Port A, button, 4 cameras) | Grove → Wago 221 | **optional**: fold the bare end double, or solder a short 20 AWG pigtail | [Workshops A](STEPS.md#workshop-a-the-port-a-cable), C, E |
 
 Why the Grove ends need care: the 221 takes stranded wire, but Grove wire is probably thinner
