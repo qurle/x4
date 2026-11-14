@@ -141,8 +141,8 @@ camera, use the white (G19) line, and unplug it before flashing.
 ```
 x4 PRE-POWER CHECKLIST                           date ______  by ______
 [ ] Switch OFF. Bank unplugged.
-[ ] Ohms (200 Ω range, rail V ≈ 0 first) +5V rail ↔ GND rail: OL or climbing, never < ~5 Ω.
-[ ] Ohms each red wire ↔ +5V rail: ≈ 0 Ω. Each black ↔ GND rail: ≈ 0 Ω.
+[ ] Rail V ≈ 0 first. Beep/ohms +5V rail ↔ GND rail: silent or a chirp (OL or climbing), never a steady beep / < ~5 Ω.
+[ ] Beep/ohms each red wire ↔ +5V rail and each black ↔ GND rail: solid beep (≈ 0 Ω), also while flexed.
 [ ] Capacitor stripe (−) on GND rail. Rated ≥ 10 V.  Value ____ µF  ____ V
 [ ] Camera yellow + white wires cut, insulated, taped (×4).
 [ ] Core Port A: red→+5V, black→GND, yellow→flash yellow, white→button white.

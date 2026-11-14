@@ -49,7 +49,7 @@ bare end double usually does it. A pigtail is the sure way, and good practice fo
 | something to hold work still | a joint that moves while it cools is a bad joint | helping hands, blu-tack, tape on the table, a clamp |
 | heat-shrink 2–3 mm and 4–6 mm | insulation over every joint | cut ~2 cm pieces |
 | wire stripper, flush cutters | | |
-| multimeter with an Ω range | every check below | no beeper needed: the checks use ohms ([how](STEPS.md#connected-or-shorted-check-with-ohms)) |
+| multimeter with continuity (beep) and Ω | every check below | beep for quick checks, ohms when you need a number ([how](STEPS.md#connected-or-shorted-beep-or-ohms)) |
 | optional: a 47 Ω resistor rated ≥ 1 W | dummy load for the power check | 5 V / 47 Ω ≈ 0.1 A, ≈ 0.5 W: it gets warm. Not needed if you skip to the Core as the load |
 
 **Temperature:** start around **340–370 °C** for leaded solder. Adafruit's guide uses 370 °C for
@@ -96,7 +96,7 @@ clamp terminal: the solder creeps under pressure and the contact loosens
    together.
 5. **Strain relief:** tie or hot-glue both wires to the board (or to its mounting base) 1–2 cm
    from the pads. A pulled wire otherwise rips the pad off the board.
-6. Check with ohms ([how](STEPS.md#connected-or-shorted-check-with-ohms)): **VBUS ↔ GND** not
+6. Check with beep or ohms ([how](STEPS.md#connected-or-shorted-beep-or-ohms)): **VBUS ↔ GND** not
    shorted (OL), and VBUS ↔ CC1 / CC2 / D+ / D− not shorted either.
 
 ### R3. Splice and pigtail (wire to wire)
@@ -128,8 +128,8 @@ Check every joint before you shrink it.
 | insulation | ends within ~1–2 mm of the joint | melted back a lot: too hot or too slow |
 | pad | flat and attached | lifted or wobbling: stop, use a spare breakout |
 | tug | a gentle pull doesn't move it | moves or cracks |
-| ohms end to end | **connected**: within ~1 Ω of the probes-touching value, steady while you flex it | OL, or the number jumps when you flex it |
-| no bridge | OL to anything it shouldn't touch | a low reading to a neighbour: remove the bridge (flux + clean iron drags it away) |
+| end to end | **connected**: a solid beep that stays solid while you flex it (or within ~1 Ω of the probes-touching value) | silent, or the beep crackles / the number jumps when you flex it |
+| no bridge | silent (OL) to anything it shouldn't touch | a beep or low reading to a neighbour: remove the bridge (flux + clean iron drags it away) |
 
 Adafruit's guide has photos of each failure: cold, disturbed, overheated and insufficient wetting
 ([common problems](https://learn.adafruit.com/adafruit-guide-excellent-soldering/common-problems)).
@@ -143,7 +143,7 @@ This is how you know the power actually gets through, and that it **stays** ther
 |---|---|---|---|
 | **P1** bank | bank charged | press its button, look at its indicator | it shows charge. How the A1653 shows its output is on: *Not sure* |
 | **P2** bare breakout | bank → breakout #1, **no wires soldered yet** | DC V, probes held on the VBUS and GND pads | 4.75–5.25 V. Try **both plug orientations** and note which give 5 V. Wait 60 s and note whether it drops to 0 V by itself (that's the bank's no-load shut-off, not your fault) |
-| **P3** leads | the two leads soldered (R2), bank unplugged | Ω 200 Ω ([how](STEPS.md#connected-or-shorted-check-with-ohms)): pad ↔ far end of each lead; VBUS ↔ GND | connected (≈ 0 Ω) / not shorted (OL) |
+| **P3** leads | the two leads soldered (R2), bank unplugged | beep or Ω ([how](STEPS.md#connected-or-shorted-beep-or-ohms)): pad ↔ far end of each lead; VBUS ↔ GND | solid beep (≈ 0 Ω) / silent (OL) |
 | **P4** leads, powered | bank in; leads' far ends apart and taped. Optional: the 47 Ω load across the ends | DC V at the far ends of the leads | the same voltage as P2 |
 | **P4b** wiggle test | as P4. Use the meter's MIN/MAX mode if it has one | watch the reading while you flex each joint, each wire, and gently move **the bank in the socket** | the reading never drops. It drops when you move a wire → that joint. It drops when you move the bank → see below |
 | **P5** drop under load | rail built, Core on it ([step 5](STEPS.md#5-core-on-the-rail)); later the full rig ([step 11](STEPS.md#11-four-cameras)). Switch **on**, meter on V⎓ (not in the current jack) | **both probes on the same net**: red on the breakout VBUS pad, black on a +5 V block. That spans the lead, the IN node, the switch and the jumpers. Then GND: red on a GND block, black on the breakout GND pad | under ~0.05 V each at Core load, under ~0.15 V each with the full rig. More than ~0.2 V: a bad joint, a loose Wago or a poor switch contact. Feel for the warm spot |
@@ -163,7 +163,7 @@ When exactly it turns off tells you why.
 | it turns off… | most likely | test | fix |
 |---|---|---|---|
 | **the moment the bank or its plug moves** | the USB-C plug loses contact in the breakout's socket. The bank sees a disconnect and switches its output off: a Type-C source removes VBUS once the sink detaches, and only switches it on again after it has seen the device reconnected for ≥ 100 ms (secondary sources, see below). The A1653's **built-in plug** hangs the whole bank off a small breakout socket, which levers it | P4b: move only the bank | fix the breakout to something solid (screw, zip tie or hot glue on the foam board) and support the bank's body so it doesn't hang off the plug. Or use a short C-to-C cable, which works because the breakout has CC resistors. If it doesn't come back by itself, press the bank's button (*Not sure* the A1653 needs that) |
-| the moment you **touch a wire** to the rail or a pad | a short (probe or wire slipping between VBUS and GND), or **inrush**: the empty 2200 µF capacitor pulls a big current spike and trips the bank's over-current protection | ohms VBUS ↔ GND, bank out: OL or climbing = no short. Then try once **without the capacitor** | solder the joints instead of holding wires. If the capacitor trips it: [POWER §4](POWER.md#4-known-risks-and-mitigations) (pre-charge resistor or a smaller capacitor) |
+| the moment you **touch a wire** to the rail or a pad | a short (probe or wire slipping between VBUS and GND), or **inrush**: the empty 2200 µF capacitor pulls a big current spike and trips the bank's over-current protection | beep or ohms VBUS ↔ GND, bank out: silent / a chirp, or OL / climbing = no short. Then try once **without the capacitor** | solder the joints instead of holding wires. If the capacitor trips it: [POWER §4](POWER.md#4-known-risks-and-mitigations) (pre-charge resistor or a smaller capacitor) |
 | after **seconds or minutes with nothing (or almost nothing) connected** | the bank's low-current auto-off. Anker says its banks need a device to draw at least about **30–90 mA** to keep going; that's a general Anker article, so it's *Not sure* for the A1653 | P2: time it with no load; then repeat with the 47 Ω load | normal, not a fault. The Core alone draws ~150–300 mA (ASSUMPTION), well above that. Record the time in [MEASUREMENTS](MEASUREMENTS.md#bank-behaviour) |
 | **never comes on** in one plug orientation | one CC resistor missing or wrong (you measured CC2 ≈ 9.2 kΩ, but with the bank connected, which isn't a valid ohms reading) | re-measure CC1 / CC2 → GND **unplugged** | use the orientation that works and mark it. Or use the bank's other port with a cable (*Not sure* the A1653 has one) |
 | at **rig switch-on**, with all boards | inrush of the capacitor plus six loads starting | step 11's on/off ×10 test | [POWER §4](POWER.md#4-known-risks-and-mitigations) |

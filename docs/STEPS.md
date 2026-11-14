@@ -17,7 +17,7 @@ Every step is a card with the same parts:
 |---|---|
 | **Rig** | what is wired and powered during the step |
 | **Flash** | which firmware goes on which board. Explained in full at step 1, then shorter at each later step |
-| **Measure** | multimeter checks: volts, ohms (connected / not shorted), current |
+| **Measure** | multimeter checks: volts, beep / ohms (connected / not shorted), current |
 | **Read** | which serial lines or on-screen lines tell you it worked |
 | **Pass** | all of these, or don't go on |
 | **If not** | the first things to check, plus a link to the details |
@@ -132,7 +132,8 @@ same time, and put the probe back in VΩ as soon as the current reading is done.
 
 | mode | symbol | used for | rule |
 |---|---|---|---|
-| resistance, low | Ω, **200 Ω** range (or auto) | "is this wire connected to that", "is +5 V shorted to GND" ([below](#connected-or-shorted-check-with-ohms)) | **unpowered only**, bank unplugged |
+| continuity | 🔊 (beep, often shared with diode ▶|) | quick "is this wire connected to that", "is +5 V shorted to GND" ([below](#connected-or-shorted-beep-or-ohms)) | **unpowered only**, bank unplugged |
+| resistance, low | Ω, **200 Ω** range (or auto) | the same checks when you need a number: a joint that might be poor, the short check with the capacitor or boards on the rail | **unpowered only**, bank unplugged |
 | resistance, high | Ω, **20 kΩ** range | the breakout's CC resistors | **unpowered only**: ohms read wrong on a live circuit ([HARDWARE](HARDWARE.md#recorded-on-bring-up-fill-in) has an example) |
 | DC volts | V⎓ (20 V range or auto) | rail, Port A, button and flash signals | red on the point, black on GND |
 | DC current | A⎓, red probe in the **10 A** jack | rail current (step 5 on), current per board | always **in series**: the current flows *through* the meter. Never across +5 V and GND ([below](#measuring-current)) |
@@ -141,27 +142,35 @@ Grove sockets are too small to probe safely. Measure on the loose end of a Grove
 plugged into the port (you make one in Workshop A). Keep the loose wire ends apart and taped,
 except the two you're probing.
 
-### Connected or shorted? Check with ohms
+### Connected or shorted? Beep or ohms
 
-There's no beeper in this guide: every "is it connected" and "is it shorted" check uses the
-**Ω 200 Ω** range. (Diode mode can do it too, but ohms gives a number you can write down.)
+Every "is it connected" and "is it shorted" check can use either mode:
+- **Beep (continuity)** for the quick yes/no: a beep means connected, silence means not.
+- **Ohms (200 Ω range)** when you need a number: to judge a joint that might be poor, or the
+  short check once the capacitor or boards are on the rail.
 
-**Before any ohms check:** bank unplugged, no USB in any board, and V⎓ across the rail reads
-≈ 0 V. The 2200 µF capacitor can stay charged after the bank is out, and ohms on a charged
-circuit read nonsense. To empty it: wait, or hold the 47 Ω resistor across the rail for ~10 s.
+**Before either:** bank unplugged, no USB in any board, and V⎓ across the rail reads ≈ 0 V. The
+2200 µF capacitor can stay charged after the bank is out, and a charged circuit gives nonsense in
+both modes. To empty it: wait, or hold the 47 Ω resistor across the rail for ~10 s.
 
-**Zero the leads once:** touch the probe tips together. Most meters show a few tenths of an ohm
-(the leads themselves, ASSUMPTION; write yours down). Call that *R₀*.
+**Know your meter once:**
+- Touch the probe tips together. Beep mode: it beeps. Ohms mode: a few tenths of an ohm, the
+  leads themselves (ASSUMPTION; write yours down). Call that *R₀*.
+- The beep usually fires below a few tens of ohms (typical, ASSUMPTION: the manual or a resistor
+  tells you yours). So **a beep only says "connected", not "good"**: a poor joint of a few ohms
+  still beeps. For solder joints and Wago contacts, keep the probes on and **flex the joint**:
+  the beep must stay solid. A beep that crackles or drops out is a bad joint. Check doubtful ones
+  in ohms.
 
-| check | expected | means |
-|---|---|---|
-| **connected**: one end of a wire/joint to the other | within ~1 Ω of *R₀*, and it **doesn't jump** while you flex the joint | good. Jumps or flickers when flexed → a bad joint or loose contact |
-| **not shorted**: +5 V ↔ GND, or a pad ↔ its neighbour | **OL** (some meters show a lone **1** at the left: out of range) | good |
-| … with the 2200 µF on the rail | starts low and **climbs** (to OL, or until it settles) | good: the meter is slowly charging the capacitor. It can take a while (Not sure how long with your meter) |
-| … with boards on the rail | may **settle** at some value instead of OL: the boards' own circuits | good if it's well above ~5 Ω and stays put. Write it down the first time and compare each time you add a branch (Not sure what value to expect) |
-| **shorted** | **stays under ~5 Ω** and doesn't climb (ASSUMPTION threshold) | stop: find the short before any power goes on |
+| check | beep mode | ohms mode | means |
+|---|---|---|---|
+| **connected**: one end of a wire/joint to the other | solid beep, stays solid while you flex | within ~1 Ω of *R₀*, doesn't jump while you flex | good. Crackles, drops out or jumps → bad joint or loose contact |
+| **not shorted**: +5 V ↔ GND, or a pad ↔ its neighbour | silent | **OL** (some meters show a lone **1** at the left) | good |
+| … with the 2200 µF on the rail | a short chirp, then silent | starts low and **climbs** (to OL, or until it settles) | good: the meter is charging the capacitor. Ohms can take a while to climb (Not sure how long with your meter) |
+| … with boards on the rail | silent, or a chirp | may **settle** at some value instead of OL: the boards' own circuits | good if it's well above ~5 Ω and stays put. Write the ohms value down the first time and compare each time you add a branch (Not sure what value to expect) |
+| **shorted** | **beeps and keeps beeping** | **stays under ~5 Ω**, doesn't climb (ASSUMPTION threshold) | stop: find the short before any power goes on |
 
-The probe polarity doesn't matter for these checks.
+Probe polarity doesn't matter for these checks.
 
 ### Measuring current
 
@@ -227,8 +236,8 @@ joint good?" table.
 
 | check | expected |
 |---|---|
-| each splice end to end | **connected** ([ohms check](#connected-or-shorted-check-with-ohms)), steady while you flex the joint |
-| spare breakout: VBUS ↔ GND | **not shorted** (OL) |
+| each splice end to end | **connected** ([beep or ohms](#connected-or-shorted-beep-or-ohms)), solid while you flex the joint |
+| spare breakout: VBUS ↔ GND | **not shorted** (silent / OL) |
 | spare breakout: VBUS ↔ CC1, CC2, D+, D− | not shorted |
 | spare breakout: pad ↔ far end of its lead | connected |
 
@@ -437,7 +446,7 @@ Bank unplugged.
 
 ### B2. Power check: the bank stays on
 
-Do [P3, P4 and P4b](SOLDERING.md#prove-the-power-path) on the real breakout: ohms (connected / not shorted), then
+Do [P3, P4 and P4b](SOLDERING.md#prove-the-power-path) on the real breakout: beep or ohms (connected / not shorted), then
 5 V at the leads' far ends, then the **wiggle test**. Flex each joint and each wire, and gently
 move the bank in its socket, while you watch the meter.
 
@@ -467,7 +476,7 @@ Bank unplugged.
 
 | check | how | expected | if not |
 |---|---|---|---|
-| short | Ω 200 Ω, +5 V block ↔ GND block, bank unplugged, capacitor empty | **not shorted**: OL, or climbing once the capacitor is in ([ohms check](#connected-or-shorted-check-with-ohms)) | stays under ~5 Ω: find the short before anything else |
+| short | beep or Ω 200 Ω, +5 V block ↔ GND block, bank unplugged, capacitor empty | **not shorted**: silent / OL, or a chirp / climbing once the capacitor is in ([beep or ohms](#connected-or-shorted-beep-or-ohms)) | a steady beep / stays under ~5 Ω: find the short before anything else |
 | CC resistors | Ω, breakout **unplugged**, CC1 → GND and CC2 → GND | ≈ 5.1 kΩ each | none: use the bank's USB-A port + an A-to-C cable. CC2 still off 5.1 kΩ: the plug may work in one orientation only ([HARDWARE](HARDWARE.md#recorded-on-bring-up-fill-in)) |
 | rail, no load | bank in, switch on, DC V across the blocks | **4.75–5.25 V** | 0 V: switch, CC, or the bank is asleep (press its button). > 5.3 V: stop |
 | switch | switch off, DC V | ≈ 0 V | wired across GND instead of in +5 V |
@@ -508,7 +517,7 @@ stay taped. Meter ready for current: probes in the IN and +5 V free ports, as in
 the test is on the rail.
 
 **Measure:**
-- Before switching on: +5 V ↔ GND **not shorted** once more ([ohms check](#connected-or-shorted-check-with-ohms)): you just added a branch. Write down the value it settles at.
+- Before switching on: +5 V ↔ GND **not shorted** once more ([beep or ohms](#connected-or-shorted-beep-or-ohms)): you just added a branch. In ohms, write down the value it settles at.
 - After switching on: DC V at the blocks ≈ the no-load value from Workshop B.
 - Current: switch **off** with the meter in place, so the Core runs through the meter.
   About 0.15–0.3 A (ASSUMPTION; write yours down). Then bank out, probes out, red lead back to
@@ -701,7 +710,7 @@ Four leads, one per camera, each its own branch (star, never daisy-chained).
    ([WIRING: pin table](WIRING.md#pin-table)).
 3. Label each lead 1–4.
 
-**Measure** (bank unplugged, [ohms check](#connected-or-shorted-check-with-ohms)): +5 V ↔ GND
+**Measure** (bank unplugged, [beep or ohms](#connected-or-shorted-beep-or-ohms)): +5 V ↔ GND
 **not shorted** (and not lower than the value you wrote down at step 5 by much), each new red
 ↔ +5 V **connected**, each black ↔ GND **connected**. The CamS3 has no reverse-polarity protection
 ([TROUBLESHOOTING: power](TROUBLESHOOTING.md#power)), so this check matters.
@@ -979,16 +988,16 @@ Stuck: Core → hold RST ~3 s (green LED). Camera → G0 jumper to GND while plu
 |---|---|---|
 | step 2 | Port A red ↔ black, Core on USB | ≈ 0 V |
 | step 2 | Port A yellow (G2) ↔ black | ≈ 0 V |
-| Workshop 0 | Ω: each practice joint end to end / to its neighbours | connected / OL |
+| Workshop 0 | beep / Ω: each practice joint end to end / to its neighbours | solid beep while flexed / silent (OL) |
 | Workshop B1 | bare breakout VBUS ↔ GND pads, bank in, both orientations | 4.75–5.25 V (note which) |
 | Workshop B2 | leads' far ends, bank in, wiggle everything | steady 5 V, never drops |
-| Workshop B | Ω: +5 V ↔ GND, unpowered, capacitor empty | not shorted (OL or climbing) |
+| Workshop B | beep / Ω: +5 V ↔ GND, unpowered, capacitor empty | not shorted: silent or a chirp (OL or climbing) |
 | Workshop B | CC1, CC2 → GND, breakout unplugged | ≈ 5.1 kΩ each |
 | Workshop B | rail, no load | 4.75–5.25 V |
-| every time you add a branch | Ω: +5 V ↔ GND | not shorted; compare with your last value |
+| every time you add a branch | beep / Ω: +5 V ↔ GND | not shorted; in Ω, compare with your last value |
 | Workshop C | button white ↔ GND, rail on | ≈ 3.3 V released, ≈ 0 V pressed |
 | Workshop D | flash yellow ↔ GND, rail on, Core unplugged | ≈ 0 V |
-| Workshop E | Ω: each red ↔ +5 V, each black ↔ GND | connected (≈ R₀) |
+| Workshop E | beep / Ω: each red ↔ +5 V, each black ↔ GND | solid beep (≈ R₀) |
 | Workshop B | IN node ↔ GND, switch off | ≈ no-load value (IN is always live) |
 | step 5 on | A⎓ in the 10 A jack, probes in the IN and +5 V free ports, switch **off**; bank out while you place them | Core ≈ 0.15–0.3 A, full rig ≈ 1–1.5 A ([MEASUREMENTS](MEASUREMENTS.md)) |
 | step 5 | drop: breakout pad → Wago block, same net, each side, switch on, V⎓ | < ~0.05 V |
