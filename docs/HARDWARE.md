@@ -23,7 +23,7 @@ reasoned but not confirmed. **Not sure** = unknown. Research date 2026-10-31.
 | 13 | **Smartbuy microSDHC 16 GB Class 10** | 1 | on hand | goes in the **Core**; 16 GB = the CoreS3 documented maximum (OK), FAT32 |
 
 Suggested extras (not required): crocodile-clip leads (nice to have; the meter works without
-them, clamped in a Wago 221 port), a multimeter with an Ω range and a 10 A current jack (no beeper needed: every check uses ohms).
+them, clamped in a Wago 221 port), a multimeter with continuity (beep), an Ω range and a 10 A current jack.
 
 ## CoreS3-SE
 

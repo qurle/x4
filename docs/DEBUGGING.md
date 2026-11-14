@@ -46,8 +46,8 @@ Three independent methods; use at least two.
 
 ## Multimeter
 
-- Ohms before power (rail-to-rail OL or climbing, never < ~5 Ω), polarity per branch
-  ([how](STEPS.md#connected-or-shorted-check-with-ohms)).
+- Beep or ohms before power (rail-to-rail silent / OL or climbing, never a steady beep / < ~5 Ω), polarity per branch
+  ([how](STEPS.md#connected-or-shorted-beep-or-ohms)).
 - DC volts at the rail with no load, with all loads, and at the Core's Port A pins.
 - Rail current: A⎓, red lead in the **10 A** jack, probe tips clamped in the free ports of the
   IN node and the +5 V rail (across the switch), switch **off**: the whole rig runs through the
