@@ -107,9 +107,10 @@ The rail uses **Wago 221 lever connectors** (owner, 2026-11-13; it was 2273 push
 ## Switching the rig on and off
 
 **The problem (owner, 2026-11-14):** flipping the rail switch on doesn't start the bank once it
-has gone to sleep; its button has to be pressed too.
+has gone to sleep; its button has to be pressed too. The button can't turn the bank **off**
+either.
 
-**Why (ASSUMPTION, matches what you see):**
+**Why** (the owner's re-plug test below confirms it for the A1653):
 - A USB-C power bank switches its output on when it sees a device plug in, and off when it
   unplugs. It sees that through the CC resistors (5.1 kΩ to GND). **VERIFIED:** USB-C sources
   apply VBUS only after detecting an attached sink and remove it after a detach. Source: the
@@ -121,6 +122,12 @@ has gone to sleep; its button has to be pressed too.
   output. Anker's general articles say about 30–90 mA keeps a bank on (*Not sure* for the A1653).
 - Switching on later changes nothing the bank can see: no new plug-in. So it stays off until its
   button is pressed.
+
+**The re-plug test** (proves a CC switch will work, no parts needed): leave the bank in the
+breakout with nothing drawing until it sleeps (0 V at the VBUS pad or IN node), then unplug and
+re-plug it **without** pressing the button. A physical re-plug is the same "plug-in" signal a CC
+switch makes. **Result (owner, 2026-11-14): 5 V comes back by itself**, so a fresh plug-in wakes
+the A1653 and the CC switch (option B) will work.
 
 Three ways to deal with it:
 
@@ -169,7 +176,7 @@ a day, so you'd unplug the bank after every session anyway, which is no better t
 
 ### B. CC switch (recommended: one switch does everything)
 
-Move the switch from the 5 V line to the CC resistors. **Switch off** takes the "device present"
+Proven to work on the A1653 by the re-plug test above. Move the switch from the 5 V line to the CC resistors. **Switch off** takes the "device present"
 resistors away, so the bank sees an unplug and turns its output off by itself. **Switch on** puts
 them back, so the bank sees a fresh plug-in and turns on, every time, with no button.
 
@@ -200,9 +207,10 @@ BEFORE (stock breakout)                    AFTER (CC switch mod)
                                             (on-board 5.1k resistors removed or cut free)
 ```
 
-**Parts:** two 5.1 kΩ resistors (any size and wattage), the rig switch (now it carries only a
-fraction of a milliamp, ASSUMPTION; any small switch works, and your current ≥ 5 A switch is
-fine too), thin wire, heat-shrink.
+**Parts:** the rig switch you have (now it carries only a fraction of a milliamp, ASSUMPTION; any
+small switch works), thin wire, heat-shrink. Resistors: either **reuse the breakout's own two
+5.1 kΩ** (free GND end of each, wire both freed ends to the switch: nothing to buy), or two new
+5.1 kΩ (any size and wattage) if lifting the on-board ones is too fiddly on your board.
 
 **Steps** (practice on a **spare** breakout first; bank unplugged):
 1. **Find the on-board CC resistors.** Ohms, breakout unplugged: CC1 pad → GND and CC2 pad → GND
@@ -212,7 +220,9 @@ fine too), thin wire, heat-shrink.
 2. **Disconnect them from GND.** Either lift one end of each resistor with the iron, or cut the
    track between the resistor and GND with a sharp knife. Afterwards CC1 → GND and CC2 → GND must
    read **OL**.
-3. **Add the new resistors:** one 5.1 kΩ from CC1, one from CC2. Solder to the CC pads, or to the
+3. **Reusing the on-board resistors?** Solder a thin wire to each freed GND-side end and join the
+   two wires: that join is your switch point; skip to step 4. **Otherwise add new resistors:**
+   one 5.1 kΩ from CC1, one from CC2. Solder to the CC pads, or to the
    CC end of the old resistors if the board has no CC pads. Join their free ends in one
    heat-shrunk joint.
 4. **Wire the switch:** from that join to the switch, and from the switch to GND (a GND pad or

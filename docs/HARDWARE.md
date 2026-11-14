@@ -168,6 +168,8 @@ Low-current auto-off threshold: **Not sure** (not documented by Anker); measure 
 | breakout #1 pad markings | ___ (e.g. VBUS GND CC1 CC2 D+ D−) | read the silkscreen ([SOLDERING](SOLDERING.md#r2-wire-to-a-breakout-pad-vbus-gnd)) |
 | plug orientations that give 5 V | both / only one (mark it) | Workshop B1, P2 ([SOLDERING](SOLDERING.md#prove-the-power-path)) |
 | bank turns itself off with no load after | ___ s / never | Workshop B1, P2 |
+| bank button turns the output off? | **no** (owner, 2026-11-14) | press it while the rig runs |
+| re-plugging wakes a sleeping bank (no button)? | **yes** (owner, 2026-11-14): the CC switch will work | [WIRING: switching on and off](WIRING.md#switching-the-rig-on-and-off) |
 | bank turns off when moved in the socket? | yes / no, before and after fixing the breakout down | Workshop B2, P4b |
 | 2200 µF voltage rating | **15 V** (owner) | read the can |
 | power switch rating | ___ A DC | read the marking |
