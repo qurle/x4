@@ -50,7 +50,7 @@ Three independent methods; use at least two.
   ([how](STEPS.md#connected-or-shorted-beep-or-ohms)).
 - DC volts at the rail with no load, with all loads, and at the Core's Port A pins.
 - Rail current: A⎓, red lead in the **10 A** jack, red probe clipped on the switch's input
-  terminal, black probe in a free +5 V rail port (across the switch), switch **off**: the whole rig runs through the
+  terminal, black probe clipped on its output terminal (across the switch), switch **off**: the whole rig runs through the
   meter; switch on to bypass it. Bank unplugged while placing or removing the probes. Steps and limits
   (time limit of the 10 A jack, the meter's own voltage drop):
   [STEPS: measuring current](STEPS.md#measuring-current).

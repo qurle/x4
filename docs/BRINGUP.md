@@ -27,8 +27,8 @@ numbers into [MEASUREMENTS.md](MEASUREMENTS.md) as you go.
    cd camera && pio run
    ```
 4. A multimeter with a 10 A current jack and a crocodile-clip lead. Current is measured across
-   the open switch: red probe clipped on the switch's input terminal, black probe in a free +5 V
-   rail port ([STEPS: measuring current](STEPS.md#measuring-current)).
+   the open switch: red probe clipped on the switch's input terminal, black probe clipped on its
+   output terminal ([STEPS: measuring current](STEPS.md#measuring-current)).
 
 ## Flashing without breaking the power rules
 

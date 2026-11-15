@@ -13,11 +13,11 @@
 flowchart LR
   BANK["Anker Nano 5000<br/>USB-C 5 V ⎓ 3 A"] -->|USB-C cable| BRK["USB-C breakout #1<br/>(CC 5.1 kΩ!)"]
   BRK -->|"+5 V (red)"| SW["power switch<br/>≥ 5 A DC"]
-  BRK -->|"GND (black)"| GRAIL
-  SW --> PRAIL["+5 V rail<br/>Wago 221 blocks, jumpered<br/>(1 port free = meter)"]
+  BRK -->|"GND (black), Y: 2 wires"| GRAIL
+  SW -->|"Y: 2 wires"| PRAIL["+5 V rail<br/>2 Wago 221 blocks,<br/>each fed from the source"]
   subgraph rails[" "]
     PRAIL
-    GRAIL["GND rail<br/>Wago 221 blocks, jumpered"]
+    GRAIL["GND rail<br/>2 Wago 221 blocks,<br/>each fed from the source"]
   end
   CAP["2200 µF ≥10 V<br/>stripe → GND"]
   PRAIL --- CAP --- GRAIL
@@ -37,12 +37,16 @@ flowchart LR
 ASCII version (same thing):
 
 ```
-                                          ┌──────── +5V rail (Wago 221 blocks, jumpered) ──────┐
-Bank─USB-C─[breakout]─red─[SWITCH]────────────┤ cam1 cam2 cam3 cam4  core  flash  button  cap(+)  meter │
-                  └─black─────────────────────┤ cam1 cam2 cam3 cam4  core  flash  button  cap(−)  spare │
-                                              └──────── GND rail (Wago 221 blocks, jumpered) ──────┘
+                                       ┌─ +5V block 1: feed  cap(+)  flash  core  cam1
+Bank─USB-C─[breakout]─red─[SWITCH]─Y───┤
+                  │                    └─ +5V block 2: feed  cam2  cam3  cam4  button
+                  └─black──────────Y───┬─ GND block 1: feed  cap(−)  flash  core  cam1
+                                       └─ GND block 2: feed  cam2  cam3  cam4  button
+Two 5-port blocks per net, each fed straight from the source (the Y), no jumper between them:
+10 ports, 10 connections (WIRING.md#connectors). With the CC switch mod there's no switch in
+the red line, and both Ys sit at the breakout's pads.
 For current the multimeter goes across the open switch: red probe on the switch's input
-terminal (clip lead), black probe in the +5V rail's free port (STEPS.md#measuring-current).
+terminal, black probe on its output terminal, both with clip leads (STEPS.md#measuring-current).
 
 Core Port A (one Grove plug, wires split):
    red   ── +5V rail          (Core power IN)
@@ -96,10 +100,25 @@ The rail uses **Wago 221 lever connectors** (owner, 2026-11-13; it was 2273 push
   limit. Do not tin stranded wire for clamp terminals (solder creeps, the contact loosens).
 - How to solder the breakout leads, splices and pigtails, and how to check them:
   [SOLDERING.md](SOLDERING.md).
-- **Ports.** Each net has 9 connections (source, 4 cams, Core, flash, button, cap). The +5 V net
-  needs one more free port for the meter, so 10. Join blocks with short jumpers: two 5-port
-  blocks give 8 usable ports (2 go to the jumper), three give 11.
-- The jumpers carry the whole rig current: same 20 AWG, short, tug-tested.
+- **Ports: two 5-port blocks per net, each fed straight from the source, no jumper**
+  (owner, 2026-11-15). Each net has 9 loads and sources (source, 4 cams, Core, flash, button,
+  cap). A jumper between two blocks would take 2 of their 10 ports and leave 8, one short. Feeding
+  each block with its own wire from the source (a **Y**) uses 1 port per block instead: 10 of 10.
+  - **Block 1:** feed, capacitor, flashlight, Core, cam 1. **Block 2:** feed, cam 2, cam 3,
+    cam 4, button. Same split on GND. The flash and the capacitor share a block, so the flash's
+    1 A pulses draw on the capacitor without going through the other block's feed.
+  - **Where the Y goes.** With the CC switch mod (the switch on the CC resistors, red lead
+    straight to the rail): two 20 AWG red leads soldered to the breakout's **VBUS pad**, two
+    black to its **GND pad**. Or one lead per pad, Y-spliced into two
+    ([SOLDERING: splice](SOLDERING.md)). Without the mod (switch in the 5 V line): two red wires
+    from the switch's **output** lug, two black from the breakout's GND pad.
+  - Each feed carries only its block's share of the current: 20 AWG, short, tug-tested.
+  - **No free port is left for probes.** When a measurement needs one, pull the Mini Button's
+    lead out of that block (power checks don't need the button) and put it back afterwards.
+  - **Fallback if you can't solder a Y:** splice the Mini Button's red into the Core Port A red,
+    and black into black. One lead then goes into one port per net. The button draws next to
+    nothing and both leads run to the Core anyway. Don't double up the flash (1 A pulses), the
+    capacitor (should sit on the rail itself) or two cameras (one bad joint would take both).
 
 ## Switching the rig on and off
 
@@ -242,10 +261,11 @@ constants; the A1653's own timing is *Not sure*). Do it 10 times. Then leave it 
 longer than the bank's sleep time and switch on again: it must come on with no button.
 
 **Things that change with the mod:**
-- **Current measurement:** the meter used to go across the switch. Now: switch off (bank output
-  off), pull the breakout's red lead out of the rail, red probe clipped to its bare end, black
-  probe in the freed port, switch on, read, switch off, lead back
-  ([STEPS: measuring current](STEPS.md#measuring-current)).
+- **Current measurement:** the meter used to go across the switch. Now each block has its own
+  feed, so measure them one at a time: switch off (bank output off), pull block 1's red feed out
+  of its Wago, red probe clipped to its bare end, black probe in the freed port, switch on, read,
+  switch off, feed back. Then the same for block 2. The rig's current is the sum: the blocks
+  share nothing else on +5 V ([STEPS: measuring current](STEPS.md#measuring-current)).
 - **Turn-on:** the bank needs a moment (≥ ~100 ms) after the switch before the rail is live.
   Harmless.
 - **Not sure:** whether the A1653 likes being "plugged in" and "unplugged" many times a day this

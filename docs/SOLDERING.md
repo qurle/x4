@@ -16,6 +16,7 @@ first: practice on scrap wire and on one of the spare breakouts (you have five a
 | breakout #1 **VBUS** pad → red lead | 20 AWG red | **yes**: the breakout has bare pads | [Workshop B1](STEPS.md#b1-breakout-leads) |
 | breakout #1 **GND** pad → black lead | 20 AWG black | **yes** | Workshop B1 |
 | power switch lugs | 20 AWG red | only if your switch has solder lugs (not screw terminals) | [Workshop B3](STEPS.md#b3-the-rail) |
+| **Y-feed**: two 20 AWG leads on the breakout's VBUS pad and two on its GND pad (or on the switch's output lug), one per Wago block | 20 AWG | **yes**: it replaces the jumper between blocks and saves one port per net ([WIRING: connectors](WIRING.md#connectors)) | [Workshop B3](STEPS.md#b3-the-rail) |
 | button white ↔ Port A white | Grove ↔ Grove | splice, or a small lever connector | [Workshop C](STEPS.md#workshop-c-button-lead) |
 | flash yellow ↔ Port A yellow | Grove ↔ Grove | splice, or a small lever connector | [Workshop D](STEPS.md#workshop-d-flash-branch) |
 | flash red/black → its own 20 AWG branch | Grove → 20 AWG | splice, or a 2-port 221 | Workshop D |
@@ -147,7 +148,7 @@ This is how you know the power actually gets through, and that it **stays** ther
 | **P3** leads | the two leads soldered (R2), bank unplugged | beep or Ω ([how](STEPS.md#connected-or-shorted-beep-or-ohms)): pad ↔ far end of each lead; VBUS ↔ GND | solid beep (≈ 0 Ω) / silent (OL) |
 | **P4** leads, powered | bank in; leads' far ends apart and taped. Optional: the 47 Ω load across the ends | DC V at the far ends of the leads | the same voltage as P2 |
 | **P4b** wiggle test | as P4. Use the meter's MIN/MAX mode if it has one | watch the reading while you flex each joint, each wire, and gently move **the bank in the socket** | the reading never drops. It drops when you move a wire → that joint. It drops when you move the bank → see below |
-| **P5** drop under load | rail built, Core on it ([step 5](STEPS.md#5-core-on-the-rail)); later the full rig ([step 11](STEPS.md#11-four-cameras)). Switch **on**, meter on V⎓ (not in the current jack) | **both probes on the same net**: red on the breakout VBUS pad, black on a +5 V block. That spans the lead, the IN node, the switch and the jumpers. Then GND: red on a GND block, black on the breakout GND pad | under ~0.05 V each at Core load, under ~0.15 V each with the full rig. More than ~0.2 V: a bad joint, a loose Wago or a poor switch contact. Feel for the warm spot |
+| **P5** drop under load | rail built, Core on it ([step 5](STEPS.md#5-core-on-the-rail)); later the full rig ([step 11](STEPS.md#11-four-cameras)). Switch **on**, meter on V⎓ (not in the current jack) | **both probes on the same net**: red on the breakout VBUS pad, black on a +5 V block. That spans the lead, the switch and the block's feed. Then GND: red on a GND block, black on the breakout GND pad | under ~0.05 V each at Core load, under ~0.15 V each with the full rig. More than ~0.2 V: a bad joint, a loose Wago or a poor switch contact. Feel for the warm spot |
 
 Why P5 works: both probes sit on one wire, so the meter shows only the voltage lost along it.
 20 AWG loses about 33 mΩ per metre, so 30 cm at 1.5 A is about 15 mV. A bad joint of 0.1 Ω
