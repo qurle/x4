@@ -11,7 +11,7 @@ WebServer server(80);
 
 void handleHello() {
   char buf[96];
-  snprintf(buf, sizeof(buf), "cam=%d rssi=%d uptime_ms=%lu\n", CAM_ID, WiFi.RSSI(), (unsigned long)millis());
+  snprintf(buf, sizeof(buf), "cam=%d rssi=%d uptime_ms=%lu\n", CAM_ID, (int)WiFi.RSSI(), (unsigned long)millis());
   server.send(200, "text/plain", buf);
 }
 
@@ -34,7 +34,7 @@ void loop() {
     joined = now;
     led(joined);
     if (joined) {
-      Serial.printf("joined ssid=%s ip=%s rssi=%d\n", STEPS_AP_SSID, WiFi.localIP().toString().c_str(), WiFi.RSSI());
+      Serial.printf("joined ssid=%s ip=%s rssi=%d\n", STEPS_AP_SSID, WiFi.localIP().toString().c_str(), (int)WiFi.RSSI());
     } else {
       Serial.println("wifi lost, retrying");
     }

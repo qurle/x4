@@ -446,8 +446,8 @@ bool joinWifi() {
     return false;
   }
   esp_wifi_set_max_tx_power((int8_t)c.wifi_tx_qdbm);
-  X4_LOGI("net", "joined", "ssid=%s ip=%s rssi=%d ch=%d ms=%lu", ssid, WiFi.localIP().toString().c_str(), WiFi.RSSI(),
-          WiFi.channel(), (unsigned long)(millis() - t0));
+  X4_LOGI("net", "joined", "ssid=%s ip=%s rssi=%d ch=%d ms=%lu", ssid, WiFi.localIP().toString().c_str(), (int)WiFi.RSSI(),
+          (int)WiFi.channel(), (unsigned long)(millis() - t0));
   return true;
 }
 
@@ -486,7 +486,7 @@ void poll(uint32_t now) {
   cam::expireHeld(now, (uint32_t)conf::get().cam_hold_ms);
   if (kHello) return;
   if (!WiFi.isConnected()) {
-    if (g_registered) X4_LOG_ERR(Warn, "net", "lost", x4::Err::NET_JOIN_FAIL, "rssi=%d", WiFi.RSSI());
+    if (g_registered) X4_LOG_ERR(Warn, "net", "lost", x4::Err::NET_JOIN_FAIL, "rssi=%d", (int)WiFi.RSSI());
     g_registered = false;
     return;
   }
