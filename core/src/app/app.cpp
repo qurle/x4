@@ -486,6 +486,7 @@ void setup(Mode m) {
 
   display::begin((uint8_t)c.ui_brightness, c.ui_flip != 0);
   x4ui::begin(m == Mode::Hello);
+  display::setRawTouchHook(x4ui::touchRaw);  // the strip below the screen: swipe distance, back zone
   display::handle();
 
   bool sdOk = sd::begin();

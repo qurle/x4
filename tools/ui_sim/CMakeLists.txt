@@ -31,8 +31,8 @@ add_library(lvgl STATIC ${LVGL_SOURCES})
 target_include_directories(lvgl PUBLIC ${lvgl_SOURCE_DIR} ${X4_ROOT}/core/include)
 target_compile_definitions(lvgl PUBLIC LV_CONF_INCLUDE_SIMPLE LV_LVGL_H_INCLUDE_SIMPLE)
 
-file(GLOB UI_ASSETS ${X4_ROOT}/core/src/ui/assets/*.c)
-file(GLOB UI_FONTS ${X4_ROOT}/core/src/ui/fonts/*.c)
+file(GLOB UI_ASSETS CONFIGURE_DEPENDS ${X4_ROOT}/core/src/ui/assets/*.c)
+file(GLOB UI_FONTS CONFIGURE_DEPENDS ${X4_ROOT}/core/src/ui/fonts/*.c)
 add_executable(ui_sim
   sim_main.cpp
   ${X4_ROOT}/core/src/ui/ui.cpp

@@ -178,6 +178,8 @@ TILE1 = (16, 16, 156, 116)     # settings: orientation tile
 UNDER_SHEET = (0, 165, W, 190)  # below a sheet swiped 80 px up (it ends at y 160)
 TILE2 = (164, 16, 304, 116)    # settings: cam delay tile
 LOWER_TILES = (16, 124, 304, 224)
+TOP_BAND = (0, 0, W, 30)        # settings 100 ms into its slide: covered first...
+BOTTOM_BAND = (0, 215, W, H)    # ...while the bottom still shows the viewfinder
 EXPECT = [
     ("settings_delay_drag", "settings", TILE2, "changed", "a sideways drag on the cam delay tile changes the delay"),
     ("settings_delay_drag", "settings", LOWER_TILES, "same", "a sideways drag doesn't move the settings sheet"),
@@ -186,6 +188,13 @@ EXPECT = [
     ("settings_swipe_away", "preview_photo", FULL, "same", "a long swipe up sends settings away"),
     ("settings_flick", "preview_photo", FULL, "same", "a quick flick up sends settings away"),
     ("settings_swipe_short", "settings", FULL, "same", "a short slow swipe springs back"),
+    ("settings_opening", "preview_photo", TOP_BAND, "changed", "settings slide down from the top (the top is covered first)"),
+    ("settings_opening", "preview_photo", BOTTOM_BAND, "same", "settings slide down from the top (the bottom is still the viewfinder)"),
+    ("settings_swipe_from_strip", "preview_photo", FULL, "same", "a swipe up from the strip below the screen sends settings away"),
+    ("settings_back_zone", "preview_photo", FULL, "same", "a tap in the back zone closes settings"),
+    ("strip_tap_main", "preview_photo", FULL, "same", "a tap on the strip below the screen opens nothing"),
+    ("swipe_down_main", "preview_photo", FULL, "same", "a swipe down over the viewfinder opens nothing"),
+    ("menu_settings_away", "preview_photo", FULL, "same", "after menu -> settings -> swipe away, the menu is gone"),
     ("tap_footer", "preview_photo", MENU, "darker", "a tap on the footer opens the menu"),
     ("portrait_tap_side", "preview_portrait", MENU, "darker", "a tap on a faded side opens the menu"),
     ("portrait_new_frame", "preview_portrait", LEFT_SIDE, "changed", "a new camera frame reaches the side copies"),

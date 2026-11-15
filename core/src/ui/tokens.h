@@ -63,6 +63,9 @@ constexpr int32_t kTileW = 140;  // settings tile width
 constexpr int32_t kTileH = 100;  // settings tile height
 constexpr int32_t kSwipeDecidePx = 8;  // settings: a touch that moves this far becomes a swipe (vertical) or a cam delay drag (horizontal), not a tap
 constexpr int32_t kSwipeDismissPx = 60;  // settings: let go after a swipe up of this many px (or a flick) and the sheet slides away
+constexpr int32_t kTouchH = 280;  // touch panel height: the CoreS3-SE touch area is 320 x 280 (M5 spec), so y 240-279 is a strip below the 240 px screen
+constexpr int32_t kBackZoneX = 200;  // back zone: a tap on the strip below the screen with x >= this (and y >= backZoneY) does Back (owner, 2026-11-16)
+constexpr int32_t kBackZoneY = 250;  // back zone: tap y >= this (touch coordinates, the strip below the screen)
 constexpr int32_t kTileBarH = 25;  // orientation horzntl: top and bottom bar height
 constexpr int32_t kTileBarV = 30;  // orientation vertcl: left and right bar width
 constexpr int32_t kTileLabelY = 31;  // orientation label top (serif 36, cap box y 36 -> baseline 62)

@@ -25,6 +25,7 @@ uint32_t g_windowMax = 0;
 TouchSample g_sample{false, 0, 0};
 uint8_t g_baseRotation = 0;  // M5GFX's own rotation for the CoreS3, read once at begin()
 bool g_flip = false;
+RawTouchHook g_rawHook = nullptr;
 
 // 180 degrees on M5GFX: rotations 0..3 are 90 degree steps, 4..7 the same mirrored.
 uint8_t flipped(uint8_t r) { return (uint8_t)((r & 4) | ((r + 2) & 3)); }
@@ -55,7 +56,11 @@ void flushCb(lv_display_t* d, const lv_area_t* a, uint8_t* px) {
 void touchCb(lv_indev_t*, lv_indev_data_t* data) {
   data->state = g_sample.pressed ? LV_INDEV_STATE_PRESSED : LV_INDEV_STATE_RELEASED;
   data->point.x = g_sample.x;
-  data->point.y = g_sample.y;
+  // The panel also reports a strip below the screen (y 240..279). LVGL 9.6 passes such a point on
+  // as it is, finds no widget there, and then ignores the whole touch, even after the finger moves
+  // onto the screen: a swipe up from the strip did nothing. Clamp it onto the bottom row instead;
+  // the UI gets the real numbers through the raw touch hook (swipe distance, back zone).
+  data->point.y = g_sample.y < kH ? g_sample.y : kH - 1;
 }
 
 void renderStart(lv_event_t*) { g_renderStart = esp_timer_get_time(); }
@@ -126,6 +131,7 @@ uint32_t handle() {
     g_sample.x = t.x;
     g_sample.y = t.y;
   }
+  if (g_rawHook) g_rawHook(g_sample.pressed, g_sample.x, g_sample.y);  // before LVGL gets y clamped
   return lv_timer_handler();
 }
 
@@ -133,6 +139,7 @@ const Stats& stats() { return g_stats; }
 lv_display_t* disp() { return g_disp; }
 lv_indev_t* touch() { return g_touch; }
 TouchSample touchSample() { return g_sample; }
+void setRawTouchHook(RawTouchHook hook) { g_rawHook = hook; }
 
 }  // namespace display
 }  // namespace x4core

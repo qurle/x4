@@ -37,6 +37,10 @@ struct TouchSample {
   int16_t x, y;
 };
 TouchSample touchSample();
+// Called with every touch sample before LVGL reads it, with the real y (LVGL gets y clamped to the
+// screen). The full firmware sets x4ui::touchRaw here; hello-ui has no UI module and sets nothing.
+using RawTouchHook = void (*)(bool pressed, int16_t x, int16_t y);
+void setRawTouchHook(RawTouchHook hook);
 
 }  // namespace display
 }  // namespace x4core
