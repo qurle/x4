@@ -49,9 +49,10 @@ Full primer: [STEPS: multimeter primer](STEPS.md#multimeter-primer). The short v
 - A multimeter shows an average. It can't show the flash pulse, the WiFi bursts or the switch-on
   spike. Leave "peak" columns empty unless a scope or the meter's MIN/MAX measured them, and say
   which in the notes.
-- Probing a Wago block: open the lever of a **free port**, push the probe tip in, close the lever,
-  tug gently. If the tip doesn't grip, wrap 4–5 turns of bare solid wire around it and clamp the
-  wire. Keep one free port on +5 V and one on GND for this.
+- Probing a Wago block: every port is in use (WIRING: connectors), so first pull the **Mini
+  Button's** lead out of the block you want (power checks don't need the button). Open that
+  lever, push the probe tip in, close the lever, tug gently. If the tip doesn't grip, wrap 4–5
+  turns of bare solid wire around it and clamp the wire. Put the button lead back afterwards.
 - Grove sockets are too small to probe. Measure on a Wago port or a loose wire end.
 
 ## Rail and joints
@@ -66,10 +67,12 @@ are small, and the 20 V range shows too few digits.
 
 **Probes:** both probes on the **same wire**, one at each end, so the meter shows only what is lost
 along it ([SOLDERING: P5](SOLDERING.md#prove-the-power-path)).
-- **+ side:** red on the breakout's **VBUS pad** (the solder joint of the red lead), black in a
-  free port of the **+5 V block**. This spans the red lead, the switch and the jumpers.
-- **− side:** red in a free port of the **GND block**, black on the breakout's **GND pad**.
-- **Rail voltage:** red in a free +5 V port, black in a free GND port.
+- **+ side:** red on the breakout's **VBUS pad** (the solder joint of the red lead), black in the
+  freed port of **+5 V block 2** (the button's block). This spans the red lead, the switch and
+  that block's feed. Block 1 has its own feed: to check it too, swap the button's place with
+  cam 1 for the measurement.
+- **− side:** red in the freed port of **GND block 2**, black on the breakout's **GND pad**.
+- **Rail voltage:** red in the freed +5 V port, black in the freed GND port.
 - **Wiggle:** keep the probes on the + side and gently flex each joint, the switch and the bank
   in its socket. Use MIN/MAX if the meter has it.
 

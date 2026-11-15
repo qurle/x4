@@ -180,10 +180,10 @@ The meter has to sit **in** the +5 V line, so the rig's current runs through it.
 1. **Bank unplugged**, rail switch **off**. Wait ~10 s so the capacitor drains into the boards.
 2. Dial to **A⎓**, red lead in the **10 A** jack, black in COM.
 3. **Red probe on the switch's input terminal** (the one the breakout's red lead goes to): clip
-   it on with a crocodile-clip lead. **Black probe** clamped in a free +5 V rail port: open the
-   lever, push the tip in, close it, tug gently. (Order only changes the sign. If the tapered tip
-   doesn't grip, wrap 4–5 turns of bare solid wire around it and clamp the wire.) No clip lead?
-   Hold the red probe on the terminal, firmly, with nothing else within reach of the tip.
+   it on with a crocodile-clip lead. **Black probe** clipped on the switch's **output** terminal
+   with a second clip lead (order only changes the sign). Both blocks' feeds come off that
+   terminal, so the whole rig runs through the meter. No clip lead? Hold the probes on the
+   terminals, firmly, with nothing else within reach of the tips.
 4. Plug the bank in (or press its button if it's in and asleep). The switch is open, so the
    current runs through the meter: the rig powers up and the meter shows its current. Read the
    typical value over ~10 s (WiFi makes it jump).
@@ -196,9 +196,10 @@ through the meter. While one touches a live terminal, the other tip is live too,
 GND with it shorts the bank. That's why the clip lead matters: a hand-held probe can slip.
 
 **With the CC switch mod** ([WIRING](WIRING.md#b-cc-switch-recommended-one-switch-does-everything))
-there's no switch in the 5 V line: switch off (the bank cuts power), pull the breakout's red lead
-out of its rail Wago, clip the red probe to the lead's bare end, black probe in the freed port,
-switch on, read, switch off, lead back.
+there's no switch in the 5 V line, and each Wago block has its own feed: switch off (the bank cuts
+power), pull block 1's red feed out of its Wago, clip the red probe to the feed's bare end, black
+probe in the freed port, switch on, read, switch off, feed back. Repeat for block 2 and add the
+two readings.
 
 Current of **one board**: bank unplugged, open the lever on that board's red wire and take it out,
 clip the red probe to the wire's bare end, black probe into the freed rail port, then bank in.
@@ -466,12 +467,13 @@ until this passes: everything after this step depends on that power staying on.
 Bank unplugged.
 
 1. Read the [WIRING diagram and pin table](WIRING.md#pin-table) once, top to bottom.
-2. Wago 221 blocks per net, joined with short 20 AWG jumpers: **+5 V needs ≥ 10 ports**, **GND
-   ≥ 9** (three 5-port blocks per net give 11; [WIRING: connectors](WIRING.md#connectors)).
-3. Breakout red lead → **switch** → +5 V blocks (red 20 AWG). The switch goes in +5 V only
-   (solder lugs: [recipe R4](SOLDERING.md#r4-switch-lugs)). Keep one +5 V port **free** for the
-   meter's black probe ([Measuring current](#measuring-current)). Breakout black lead → GND
-   blocks.
+2. Two 5-port Wago 221 blocks per net, **each fed straight from the source, no jumper**: block 1
+   takes feed, capacitor, flashlight, Core, cam 1; block 2 takes feed, cam 2–4, button
+   ([WIRING: connectors](WIRING.md#connectors)).
+3. Breakout red lead → **switch** → a **Y** of two red 20 AWG wires, one to each +5 V block. The
+   switch goes in +5 V only (solder lugs: [recipe R4](SOLDERING.md#r4-switch-lugs)). With the CC
+   switch mod the Y is soldered at the breakout's VBUS pad instead. Breakout GND pad → a Y of two
+   black wires, one to each GND block.
 4. The capacitor goes **across** the rail: + leg to +5 V, **stripe (−) to GND**. Never in series.
 5. Every wire in with the lever closed, then a **tug test**. Thin Grove ends folded double or
    pigtailed ([WIRING: connectors](WIRING.md#connectors)).
@@ -1027,7 +1029,7 @@ Stuck: Core → hold RST ~3 s (green LED). Camera → G0 jumper to GND while plu
 | Workshop D | flash yellow ↔ GND, rail on, Core unplugged | ≈ 0 V |
 | Workshop E | beep / Ω: each red ↔ +5 V, each black ↔ GND | solid beep (≈ R₀) |
 | Workshop B | switch input terminal ↔ GND, switch off | ≈ no-load value (live whenever the bank is on) |
-| step 5 on | A⎓ in the 10 A jack, red probe clipped on the switch input, black in a free +5 V port, switch **off**; bank out while you place them | Core ≈ 0.15–0.3 A, full rig ≈ 1–1.5 A ([MEASUREMENTS](MEASUREMENTS.md)) |
+| step 5 on | A⎓ in the 10 A jack, red probe clipped on the switch input, black clipped on the switch output, switch **off**; bank out while you place them | Core ≈ 0.15–0.3 A, full rig ≈ 1–1.5 A ([MEASUREMENTS](MEASUREMENTS.md)) |
 | step 5 | drop: breakout pad → Wago block, same net, each side, switch on, V⎓ | < ~0.05 V |
 | step 11 | the same drop at full rig load | < ~0.15 V |
 | step 7 on | the *dip* line on screen; else V⎓ across the blocks with MIN/MAX | ≥ 4.6 V |

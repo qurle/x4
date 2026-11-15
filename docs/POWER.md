@@ -28,7 +28,7 @@ power-up. Two items need a measurement at bring-up (Port A idle voltage, rail sa
 Anker Nano 5000 (USB-C out, 5 V ⎓ 3 A, no PD negotiation)
   └─ USB-C breakout #1 (the ONE in use; must have 5.1 kΩ CC pull-downs)
        └─ power switch (+5 V line only, ≥ 5 A DC)
-            ├─ +5 V rail: Wago 221 blocks (jumpered)            GND rail: Wago 221 blocks (jumpered)
+            ├─ +5 V rail: 2 Wago 221 blocks, each fed from the source (Y)   GND rail: the same
             │    ├── Cam1 Grove red  ─┐                              ├── Cam1 Grove black
             │    ├── Cam2 Grove red   │ star: one branch per load     ├── Cam2 …
             │    ├── Cam3 Grove red   │                              ├── Cam3 …
@@ -37,7 +37,7 @@ Anker Nano 5000 (USB-C out, 5 V ⎓ 3 A, no PD negotiation)
             │    ├── Flashlight red (20 AWG)                          ├── Flashlight black (20 AWG)
             │    ├── Mini Button red (5 V, see HARDWARE "button")     ├── Mini Button black
             │    └── 2200 µF (+)  ── in PARALLEL ──  2200 µF (−, stripe) ┘
-            └─ (spares: 2–3 free ports per net after jumpering two blocks)
+            └─ (no spare ports: 2 × 5 ports = feeds + 8 connections per net, see WIRING: connectors)
 ```
 
 - Star topology, never daisy-chained Grove power.
@@ -49,8 +49,9 @@ Anker Nano 5000 (USB-C out, 5 V ⎓ 3 A, no PD negotiation)
   short, insulate and tape them in the harness (VERIFIED: Unit CamS3-5MP schematic J1 pin 1
   G19/D−, pin 2 G20/D+, M5 pin map "Yellow G20, White G19").
 - Net count per rail: source, 4 cams, Core, flash, button, cap = **9** on +5 V and 9 on GND,
-  which no longer fits one 8-port block. Two blocks per net, jumpered with a short solid wire,
-  gives 14 usable ports per net (OK'd by the owner).
+  which no longer fits one block. Two 5-port blocks per net, each fed straight from the source
+  (a Y instead of a jumper), give exactly the 10 ports needed (owner, 2026-11-15;
+  [WIRING: connectors](WIRING.md#connectors)).
 
 ## 2. Feeding the Core through Port A (brief §3.2)
 
