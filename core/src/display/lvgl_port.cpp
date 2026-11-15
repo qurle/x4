@@ -123,38 +123,8 @@ void setFlip(bool flip) {
 
 void setBrightness(uint8_t b) { M5.Display.setBrightness(b); }
 
-// Logs the touch panel's raw state whenever the number of points or their IDs change (a touch
-// starts or ends, a second point appears). For the "swipes stop working after touching the strip
-// below the screen" report (owner, 2026-11-16): M5Unified tracks fingers by the panel's point ID and
-// getDetail() follows the last reported ID, so a stuck or extra point would show up here.
-static void logTouchChanges() {
-  static uint8_t lastCount = 0xFF;
-  static uint32_t lastIds = 0;
-  uint8_t n = M5.Touch.getCount();
-  uint32_t ids = 0;
-  for (uint8_t i = 0; i < n && i < 4; i++) ids |= (uint32_t)(M5.Touch.getTouchPointRaw(i).id & 0xFF) << (8 * i);
-  if (n == lastCount && ids == lastIds) return;
-  lastCount = n;
-  lastIds = ids;
-  if (n == 0) {
-    X4_LOGI("touch", "raw", "n=0");
-    return;
-  }
-  auto r0 = M5.Touch.getTouchPointRaw(0);
-  auto d = M5.Touch.getDetail(0);
-  if (n == 1) {
-    X4_LOGI("touch", "raw", "n=1 id=%u raw=%d,%d xy=%d,%d st=%u", (unsigned)r0.id, (int)r0.x, (int)r0.y, (int)d.x,
-            (int)d.y, (unsigned)d.state);
-  } else {
-    auto r1 = M5.Touch.getTouchPointRaw(1);
-    X4_LOGI("touch", "raw", "n=%u id=%u raw=%d,%d id=%u raw=%d,%d xy=%d,%d st=%u", (unsigned)n, (unsigned)r0.id,
-            (int)r0.x, (int)r0.y, (unsigned)r1.id, (int)r1.x, (int)r1.y, (int)d.x, (int)d.y, (unsigned)d.state);
-  }
-}
-
 uint32_t handle() {
   // Sample touch once per loop (M5.update() must have run).
-  logTouchChanges();
   auto t = M5.Touch.getDetail();
   g_sample.pressed = t.isPressed();
   if (g_sample.pressed) {

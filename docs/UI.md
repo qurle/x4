@@ -105,16 +105,6 @@ picture (y 240–279). With the Core mounted upside down that strip is at the to
   2026-11-16).
 - Global vertical touch swipes are unbound: a swipe up used to send `menu` as well as closing the
   sheet, so the two fought (it reopened settings or jumped to diagnostics).
-- **Open issue (owner, 2026-11-16):** after a touch on the strip around x 170, y 260, swiping
-  stopped working altogether, not just for that one touch. Not explained yet. Two facts:
-  - M5Unified turns strip touches into virtual buttons BtnA/B/C (x in thirds; VERIFIED in its
-    `M5Unified.inl`). The firmware doesn't use them, and M5Unified doesn't change the touch data.
-  - LVGL never sends PRESSED to a touch that starts below the screen (VERIFIED, `lv_indev.c`).
-    That spoils one swipe, not all of them; the clamp above fixes it.
-
-  The Core logs `touch raw n=… id=… raw=x,y xy=x,y st=…` whenever the number of touch points or
-  their IDs change. Reproduce, then send that log: a point that stays after the finger lifts, or a
-  changed ID, would explain it (M5Unified reads `getDetail()` through the last reported ID).
 
 ### Double tap: shutter
 
