@@ -16,6 +16,7 @@ export const GROUPS = [
       ['POWER.md', 'Power', "Why it won't burn, and the risks"],
       ['HARDWARE.md', 'Hardware', "Parts, pins, what's verified"],
       ['ENCLOSURE.md', 'Enclosure', "Foam board now, acrylic later"],
+      ['BODY.md', 'Foam-board body', "Templates and build guide for the v1 box"],
       ['MEASUREMENTS.md', 'Measurements', "Tables to fill on the bench"],
     ],
   },

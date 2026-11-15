@@ -960,7 +960,8 @@ means the camera refused the write.
 
 ## Workshop F: into the box
 
-Once everything works on the bench, mount it in the v1 shell ([ENCLOSURE](ENCLOSURE.md#v1-foam-board--cardboard)):
+Once everything works on the bench, mount it in the v1 shell: templates and build steps in
+[BODY.md](BODY.md), general rules in [ENCLOSURE](ENCLOSURE.md#v1-foam-board--cardboard):
 - the four cameras on one **rigid strip**, so their positions don't change between shots;
 - **matte black sleeves** around every lens and the flash;
 - **vents** near the cameras and the Core;

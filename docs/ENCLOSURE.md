@@ -16,6 +16,8 @@ What the renders show (described, the images were not provided as files; add the
 
 ## v1: foam board + cardboard
 
+Build guide and 1:1 cutting templates: [BODY.md](BODY.md).
+
 - Skeleton: 3–5 mm foam board; skin: cardboard.
 - Joints: low-temperature hot glue, double-sided foam tape, hook-and-loop for modules you want to
   remove (bank, Core, flash). **No superglue or solvent glue** near foam (melts it) or lenses
