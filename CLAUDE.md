@@ -92,9 +92,11 @@ renders are in the repo. `/nodes` can be rate-limited the same way (seen 2026-11
 2. UI positions are checked against Figma in the simulator (`tools/ui_sim`, docs/DEVELOP.md §3).
    Still to do on the panel: speed, colours, touch feel.
 3. Optional: split the CI `steps / all` job into parallel jobs (it takes ~10 of the 10.5 min).
-4. Motion blur indoors (owner, 2026-11-13; OPEN_QUESTIONS Q21): step 15 `s15-cam-exposure` tests
-   sensor clock, frame size, exposure compensation and manual exposure/gain through the camera's
-   registers (meanings from github.com/hbentel/M5Stack-Unit-CamS3-5MP, see RESEARCH §2). Waiting
-   for the owner's results; they decide whether the full firmware gets exposure options and a
-   strobe-flash experiment. **Never read camera registers while it streams** (it falls back to
-   320×240 or hangs its bus, per that project).
+4. Motion blur indoors (owner, 2026-11-13; OPEN_QUESTIONS Q21). Step 15 round 1 (owner,
+   2026-11-15): manual exposure works with AGC mode 0x0130 = 1; compensation, gain, AE mode and
+   clock did little; 5 MP frame 207 ms vs VGA 40 ms. Owner's target: **24+ fps preview and a short
+   exposure on the shot**. Round 2 (`s15-cam-exposure`: luma, fps, sweeps, preview-vs-5 MP) is
+   waiting for the owner's results. Next after that: manual exposure/gain config options, and the
+   Core's preview on the camera's MJPEG stream (today one HTTP GET per frame, `prev_fps` max 15).
+   **Never read camera registers while it streams** (it falls back to 320×240 or hangs its bus,
+   per github.com/hbentel/M5Stack-Unit-CamS3-5MP, see RESEARCH §2).
