@@ -13,7 +13,7 @@ bool g_camOk = false;
 
 void handleHello() {
   char buf[96];
-  snprintf(buf, sizeof(buf), "cam=%d cam_ok=%d rssi=%d uptime_ms=%lu\n", CAM_ID, g_camOk, WiFi.RSSI(),
+  snprintf(buf, sizeof(buf), "cam=%d cam_ok=%d rssi=%d uptime_ms=%lu\n", CAM_ID, g_camOk, (int)WiFi.RSSI(),
            (unsigned long)millis());
   server.send(200, "text/plain", buf);
 }

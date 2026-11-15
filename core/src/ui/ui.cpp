@@ -43,16 +43,13 @@ void setText(lv_obj_t* l, const char* txt) {
 }
 
 void setHidden(lv_obj_t* o, bool hidden) {
-  if (hidden != lv_obj_has_flag(o, LV_OBJ_FLAG_HIDDEN)) {
-    if (hidden) lv_obj_add_flag(o, LV_OBJ_FLAG_HIDDEN);
-    else lv_obj_remove_flag(o, LV_OBJ_FLAG_HIDDEN);
-  }
+  if (hidden != lv_obj_is_hidden(o)) lv_obj_set_hidden(o, hidden);  // skip no-op calls (they invalidate)
 }
 
 lv_obj_t* plain(lv_obj_t* parent) {
   lv_obj_t* o = lv_obj_create(parent);
   lv_obj_remove_style_all(o);
-  lv_obj_remove_flag(o, LV_OBJ_FLAG_SCROLLABLE);
+  lv_obj_set_scrollable(o, false);
   return o;
 }
 
@@ -62,14 +59,14 @@ lv_obj_t* screenBase(uint32_t bg) {
   lv_obj_set_style_bg_opa(s, LV_OPA_COVER, 0);
   lv_obj_set_style_pad_all(s, 0, 0);
   lv_obj_set_style_border_width(s, 0, 0);
-  lv_obj_remove_flag(s, LV_OBJ_FLAG_SCROLLABLE);
+  lv_obj_set_scrollable(s, false);
   return s;
 }
 
 lv_obj_t* image(lv_obj_t* parent, const lv_image_dsc_t* src) {
   lv_obj_t* i = lv_image_create(parent);
   lv_image_set_src(i, src);
-  lv_obj_remove_flag(i, LV_OBJ_FLAG_CLICKABLE);
+  lv_obj_set_clickable(i, false);
   return i;
 }
 
@@ -86,7 +83,7 @@ lv_obj_t* hugRow(lv_obj_t* parent, int32_t gap) {
   lv_obj_set_flex_flow(r, LV_FLEX_FLOW_ROW);
   lv_obj_set_flex_align(r, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
   lv_obj_set_style_pad_column(r, gap, 0);
-  lv_obj_remove_flag(r, LV_OBJ_FLAG_CLICKABLE);
+  lv_obj_set_clickable(r, false);
   return r;
 }
 
@@ -115,13 +112,13 @@ void anim(lv_obj_t* o, lv_anim_exec_xcb_t cb, int32_t from, int32_t to, uint32_t
 
 // Fade (and optional rise) in/out of an overlay, hiding it when fully faded.
 void fadeTo(lv_obj_t* o, bool show, uint32_t ms) {
-  bool hidden = lv_obj_has_flag(o, LV_OBJ_FLAG_HIDDEN);
+  bool hidden = lv_obj_is_hidden(o);
   if (show && !hidden) return;
   if (!show && hidden) return;
   lv_anim_delete(o, animOpa);
   if (show) {
     lv_obj_set_style_opa(o, LV_OPA_TRANSP, 0);
-    lv_obj_remove_flag(o, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_set_hidden(o, false);
     anim(o, animOpa, LV_OPA_TRANSP, LV_OPA_COVER, ms, pathBase());
   } else {
     lv_anim_t a;
@@ -131,7 +128,7 @@ void fadeTo(lv_obj_t* o, bool show, uint32_t ms) {
     lv_anim_set_values(&a, LV_OPA_COVER, LV_OPA_TRANSP);
     lv_anim_set_duration(&a, ms);
     lv_anim_set_path_cb(&a, pathFast());
-    lv_anim_set_completed_cb(&a, [](lv_anim_t* an) { lv_obj_add_flag((lv_obj_t*)an->var, LV_OBJ_FLAG_HIDDEN); });
+    lv_anim_set_completed_cb(&a, [](lv_anim_t* an) { lv_obj_set_hidden((lv_obj_t*)an->var, true); });
     lv_anim_start(&a);
   }
 }
@@ -281,7 +278,7 @@ void buildSplash() {
 void hideMenu() { fadeTo(g.menu, false, kMsFast); }
 
 void onViewfinderTap(lv_event_t*) {
-  bool open = !lv_obj_has_flag(g.menu, LV_OBJ_FLAG_HIDDEN);
+  bool open = !lv_obj_is_hidden(g.menu);
   if (open) {
     hideMenu();
   } else {
@@ -298,7 +295,7 @@ void onMenu(lv_event_t* e) {
 
 void buildMain() {
   g.main = screenBase(kBg);
-  lv_obj_add_flag(g.main, LV_OBJ_FLAG_CLICKABLE);
+  lv_obj_set_clickable(g.main, true);
   lv_obj_add_event_cb(g.main, onViewfinderTap, LV_EVENT_CLICKED, nullptr);
   lv_obj_add_event_cb(g.main, [](lv_event_t*) { show(Screen::Diagnostics); }, LV_EVENT_LONG_PRESSED, nullptr);
 
@@ -306,8 +303,8 @@ void buildMain() {
   g.preview = lv_image_create(g.main);
   lv_obj_set_size(g.preview, kScreenW, kScreenH);
   lv_obj_set_pos(g.preview, 0, 0);
-  lv_obj_remove_flag(g.preview, LV_OBJ_FLAG_CLICKABLE);
-  lv_obj_add_flag(g.preview, LV_OBJ_FLAG_HIDDEN);
+  lv_obj_set_clickable(g.preview, false);
+  lv_obj_set_hidden(g.preview, true);
 
   // No photo yet: quiet serif line in the design's voice (state not drawn in Figma).
   g.placeholder = label(g.main, fontSub(), kOnPhoto, "");
@@ -323,16 +320,16 @@ void buildMain() {
   const int32_t side = (kScreenW - kPortraitW) / 2;
   for (int i = 0; i < 2; i++) {
     lv_obj_t* t = plain(g.main);
-    lv_obj_remove_flag(t, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_set_clickable(t, false);
     lv_obj_set_size(t, kPortraitTileW, kScreenH);
     lv_obj_set_pos(t, i == 0 ? side - kPortraitTileW : kScreenW - side, 0);
     lv_obj_set_style_bg_color(t, c(kBg), 0);
     lv_obj_set_style_bg_opa(t, LV_OPA_COVER, 0);
     lv_obj_t* img = lv_image_create(t);
-    lv_obj_remove_flag(img, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_set_clickable(img, false);
     lv_obj_set_pos(img, -(kScreenW - kPortraitTileW) / 2, 0);  // the frame's middle 111 px
     lv_obj_set_style_image_opa(img, (lv_opa_t)(LV_OPA_COVER * kPortraitTileOpa / 100), 0);
-    lv_obj_add_flag(t, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_set_hidden(t, true);
     g.sideTile[i] = t;
     g.sideImg[i] = img;
   }
@@ -344,26 +341,26 @@ void buildMain() {
   g.footer = plain(g.main);
   lv_obj_set_size(g.footer, kScreenW, kFooterH);
   lv_obj_align(g.footer, LV_ALIGN_BOTTOM_LEFT, 0, 0);
-  lv_obj_add_flag(g.footer, LV_OBJ_FLAG_OVERFLOW_VISIBLE);
+  lv_obj_set_overflow_visible(g.footer, true);
   // It sits on the photo, so taps on it are taps on the photo (open the menu): not clickable.
   // (plain() objects are clickable by default and would swallow the tap. The Saving and Error
   // overlays keep that on purpose: no menu under them.)
-  lv_obj_remove_flag(g.footer, LV_OBJ_FLAG_CLICKABLE);
+  lv_obj_set_clickable(g.footer, false);
   g.glowL = image(g.footer, &x4_img_glow_corner_left);
   lv_obj_set_pos(g.glowL, 0, kGlowY);
   lv_obj_set_pos(image(g.footer, &x4_img_glow_corner_right), kScreenW - x4_img_glow_corner_right.header.w, kGlowY);
   g.glowMid = image(g.footer, &x4_img_glow_mid);
   lv_obj_set_pos(g.glowMid, (kScreenW - x4_img_glow_mid.header.w) / 2, kGlowY);
-  lv_obj_add_flag(g.glowMid, LV_OBJ_FLAG_HIDDEN);
+  lv_obj_set_hidden(g.glowMid, true);
 
   // Left, video mode only (Footer State "Video"; hidden in "Default" and "Flash Recharge"),
   // together with its corner glow. The record glow (60×23 ellipse, centred on the timer's
   // bottom-left corner) shows only while recording.
   g.recGlow = image(g.footer, &x4_img_rec_glow);
   lv_obj_set_pos(g.recGlow, 0, kRecGlowY);
-  lv_obj_add_flag(g.recGlow, LV_OBJ_FLAG_HIDDEN);
+  lv_obj_set_hidden(g.recGlow, true);
   g.recDot = plain(g.footer);
-  lv_obj_remove_flag(g.recDot, LV_OBJ_FLAG_CLICKABLE);
+  lv_obj_set_clickable(g.recDot, false);
   lv_obj_set_size(g.recDot, kRecDot, kRecDot);
   lv_obj_set_style_radius(g.recDot, LV_RADIUS_CIRCLE, 0);
   lv_obj_set_style_bg_color(g.recDot, c(kOnPhoto), 0);
@@ -371,7 +368,7 @@ void buildMain() {
   lv_obj_set_pos(g.recDot, kFooterPadX, kRecDotY);
   g.recTime = label(g.footer, fontFooter(), kOnPhoto, "-:--");
   lv_obj_set_pos(g.recTime, kRecTextX, kFooterTextY);
-  for (lv_obj_t* o : {g.glowL, g.recDot, g.recTime}) lv_obj_add_flag(o, LV_OBJ_FLAG_HIDDEN);
+  for (lv_obj_t* o : {g.glowL, g.recDot, g.recTime}) lv_obj_set_hidden(o, true);
 
   // Centre: bolt (6.6×9.7) + gap 4 + "80%", the group centred on the screen. The bolt fades in with
   // the charge so it reads as filling up; the number moves in 1 % steps.
@@ -379,7 +376,7 @@ void buildMain() {
   g.flashBolt = image(g.flashInd, &x4_img_flash_bolt);
   g.flashPct = label(g.flashInd, fontFooter(), kOnPhoto, "");
   lv_obj_align(g.flashInd, LV_ALIGN_TOP_MID, 0, kFooterTextY);
-  lv_obj_add_flag(g.flashInd, LV_OBJ_FLAG_HIDDEN);
+  lv_obj_set_hidden(g.flashInd, true);
 
   // Right: "820 MB", right edge 8 px from the screen edge. Figma separates number and unit with a
   // thin space, which Space Mono lacks: two labels, 3 px apart.
@@ -405,14 +402,14 @@ void buildMain() {
     lv_obj_t* cell = plain(g.menu);
     lv_obj_set_size(cell, kScreenW / 3 + (i == 1 ? 1 : 0), kMenuH);
     lv_obj_set_pos(cell, i * kScreenW / 3, 0);
-    lv_obj_add_flag(cell, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_set_clickable(cell, true);
     lv_obj_add_event_cb(cell, onMenu, LV_EVENT_CLICKED, (void*)(intptr_t)i);
     lv_obj_t* l = label(cell, fontMenu(), kOnPhoto, kItems[i]);
     lv_obj_align(l, LV_ALIGN_TOP_MID, 0, kMenuLabelY);
     lv_obj_set_style_text_opa(l, LV_OPA_60, LV_STATE_PRESSED);
-    lv_obj_add_flag(l, LV_OBJ_FLAG_EVENT_BUBBLE);
+    lv_obj_set_event_bubble(l, true);
   }
-  lv_obj_add_flag(g.menu, LV_OBJ_FLAG_HIDDEN);
+  lv_obj_set_hidden(g.menu, true);
 
   // Saving overlay (83:2228): holographic image whose opacity follows progress (k of 4 = k/4),
   // "Saving..." serif 48 at x 105 (the word centred, the dots trail), "k of n" serif 24 with k
@@ -426,7 +423,7 @@ void buildMain() {
   lv_obj_set_pos(g.savingK, kSavingOfX - 40, kStateSubY);
   g.savingOf = label(g.saving, fontSub(), kOnPhoto, "");
   lv_obj_set_pos(g.savingOf, kSavingOfX, kStateSubY);
-  lv_obj_add_flag(g.saving, LV_OBJ_FLAG_HIDDEN);
+  lv_obj_set_hidden(g.saving, true);
 
   // Error overlay (83:2286): red image at 90 % (baked), one centred serif 48 line: the reason when
   // it is known (unknown=false), "Error" otherwise (unknown=true).
@@ -435,14 +432,14 @@ void buildMain() {
   image(g.error, &x4_img_overlay_error);
   g.errorTitle = boxLabel(g.error, fontState(), kOnPhoto, "Error", kScreenW, LV_TEXT_ALIGN_CENTER);
   lv_obj_set_pos(g.errorTitle, 0, kStateTitleY);
-  lv_obj_add_flag(g.error, LV_OBJ_FLAG_HIDDEN);
+  lv_obj_set_hidden(g.error, true);
 
   // Shutter white-out on the top layer (not in Figma; tactile feedback replacing haptics).
   g.whiteout = plain(lv_layer_top());
   lv_obj_set_size(g.whiteout, kScreenW, kScreenH);
   lv_obj_set_style_bg_color(g.whiteout, c(kFlash), 0);
   lv_obj_set_style_bg_opa(g.whiteout, LV_OPA_TRANSP, 0);
-  lv_obj_remove_flag(g.whiteout, LV_OBJ_FLAG_CLICKABLE);
+  lv_obj_set_clickable(g.whiteout, false);
 
   // Toast (not in Figma): dark pill, footer type.
   g.toast = plain(lv_layer_top());
@@ -454,7 +451,7 @@ void buildMain() {
   lv_obj_set_size(g.toast, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
   g.toastL = label(g.toast, fontFooter(), kOnPhoto, "");
   lv_obj_align(g.toast, LV_ALIGN_BOTTOM_MID, 0, -kFooterH);
-  lv_obj_add_flag(g.toast, LV_OBJ_FLAG_HIDDEN);
+  lv_obj_set_hidden(g.toast, true);
 }
 
 // Known reasons replace "Error" (Figma 83:2282 'unknown=false' shows "SD is full"). Sentence case
@@ -478,7 +475,7 @@ void updateMain(const Status& s, uint32_t now) {
   // Overlays by state.
   bool saving = s.state == State::Shooting || s.state == State::Transferring;
   bool err = s.state == State::Error;
-  bool savingAppears = saving && lv_obj_has_flag(g.saving, LV_OBJ_FLAG_HIDDEN);
+  bool savingAppears = saving && lv_obj_is_hidden(g.saving);
   fadeTo(g.saving, saving, kMsBase);
   fadeTo(g.error, err, kMsBase);
   if (saving) {
@@ -566,7 +563,7 @@ void updateMain(const Status& s, uint32_t now) {
   setText(g.sdUnit, unit);
   setHidden(g.sdUnit, !*unit);
 
-  if (!lv_obj_has_flag(g.menu, LV_OBJ_FLAG_HIDDEN) && (int32_t)(now - g.menuUntil) >= 0) hideMenu();
+  if (!lv_obj_is_hidden(g.menu) && (int32_t)(now - g.menuUntil) >= 0) hideMenu();
 }
 
 // ---------------------------------------------------------------- settings (Figma "settings" 73:254)
@@ -583,7 +580,7 @@ Tile makeTile(lv_obj_t* parent, int32_t x, int32_t y) {
   lv_obj_set_style_border_color(t.box, c(kInk), 0);
   lv_obj_set_style_bg_color(t.box, c(kInk), 0);
   lv_obj_set_style_bg_opa(t.box, LV_OPA_TRANSP, 0);
-  lv_obj_add_flag(t.box, LV_OBJ_FLAG_CLICKABLE);  // no press effect (owner, 2026-11-01)
+  lv_obj_set_clickable(t.box, true);  // no press effect (owner, 2026-11-01)
   return t;
 }
 
@@ -591,7 +588,7 @@ lv_obj_t* inkRect(lv_obj_t* parent, int32_t x, int32_t y, int32_t w, int32_t h) 
   lv_obj_t* b = plain(parent);
   lv_obj_set_style_bg_color(b, c(kInk), 0);
   lv_obj_set_style_bg_opa(b, LV_OPA_COVER, 0);
-  lv_obj_remove_flag(b, LV_OBJ_FLAG_CLICKABLE);
+  lv_obj_set_clickable(b, false);
   lv_obj_set_size(b, w, h);
   at(b, x, y);
   return b;
@@ -656,14 +653,14 @@ void sheetOpen() {
   lv_anim_delete(g.settings, animTy);
   lv_obj_move_foreground(g.settings);
   lv_obj_set_style_translate_y(g.settings, kScreenH, 0);
-  lv_obj_remove_flag(g.settings, LV_OBJ_FLAG_HIDDEN);
+  lv_obj_set_hidden(g.settings, false);
   anim(g.settings, animTy, kScreenH, 0, kMsBase, pathBase());
 }
 
 void sheetClose(bool animated) {
   lv_anim_delete(g.settings, animTy);
   if (!animated) {
-    lv_obj_add_flag(g.settings, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_set_hidden(g.settings, true);
     lv_obj_set_style_translate_y(g.settings, 0, 0);
     return;
   }
@@ -675,7 +672,7 @@ void sheetClose(bool animated) {
   lv_anim_set_duration(&a, kMsBase);
   lv_anim_set_path_cb(&a, pathBase());
   lv_anim_set_completed_cb(&a, [](lv_anim_t* an) {
-    lv_obj_add_flag((lv_obj_t*)an->var, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_set_hidden((lv_obj_t*)an->var, true);
     lv_obj_set_style_translate_y((lv_obj_t*)an->var, 0, 0);
   });
   lv_anim_start(&a);
@@ -735,7 +732,7 @@ void buildSettings() {
   lv_obj_set_size(g.settings, kScreenW, kScreenH);
   lv_obj_set_style_bg_color(g.settings, c(kSettingsBg), 0);
   lv_obj_set_style_bg_opa(g.settings, LV_OPA_COVER, 0);
-  lv_obj_add_flag(g.settings, LV_OBJ_FLAG_HIDDEN);
+  lv_obj_set_hidden(g.settings, true);
   const int32_t x0 = kSettingsPad, x1 = kSettingsPad + kTileW + kSettingsGap;
   const int32_t y0 = kSettingsPad, y1 = kSettingsPad + kTileH + kSettingsGap;
   const int32_t labelW = kTileW;
@@ -772,7 +769,7 @@ void buildSettings() {
   lv_obj_set_style_bg_opa(g.tEffect.a, LV_OPA_COVER, 0);
   lv_obj_set_style_bg_main_opa(g.tEffect.a, LV_OPA_TRANSP, 0);
   lv_obj_set_style_bg_grad_opa(g.tEffect.a, LV_OPA_COVER, 0);
-  lv_obj_remove_flag(g.tEffect.a, LV_OBJ_FLAG_CLICKABLE);
+  lv_obj_set_clickable(g.tEffect.a, false);
   g.tEffect.b = image(g.tEffect.box, &x4_img_dither_strip);
   at(g.tEffect.b, kStyleStripX, 0);
   g.tEffect.label = label(g.tEffect.box, fontTileSmall(), kInk, "normal");
@@ -816,7 +813,7 @@ void updateSettings(const Status& s) {
     if (g.shownDelay < 0) lv_obj_set_width(g.tDelay.a, to);
     else anim(g.tDelay.a, animW, lv_obj_get_width(g.tDelay.a), to, kMsSpring, pathSpring());
     g.shownDelay = s.camDelayMs;
-    char b[12];
+    char b[16];  // "0.9 s" at most; 16 so the compiler can see it never truncates
     if (kDelaySteps[idx] == 0) snprintf(b, sizeof(b), "0 s");
     else if (kDelaySteps[idx] == 1000) snprintf(b, sizeof(b), "1 s");
     else snprintf(b, sizeof(b), "0.%d s", (int)(kDelaySteps[idx] / 100));
@@ -885,7 +882,7 @@ void onTouchTest(lv_event_t*) {
   lv_point_t p;
   lv_indev_get_point(lv_indev_active(), &p);
   if (!g.touchDot) return;
-  lv_obj_remove_flag(g.touchDot, LV_OBJ_FLAG_HIDDEN);
+  lv_obj_set_hidden(g.touchDot, false);
   lv_obj_set_pos(g.touchDot, p.x - 6, p.y - 6);
   X4_LOGI("ui", "touch_test", "x=%d y=%d", (int)p.x, (int)p.y);
 }
@@ -901,7 +898,7 @@ void buildDiag() {
   lv_obj_align(col, LV_ALIGN_TOP_LEFT, kSpaceL, 40);
   lv_obj_set_flex_flow(col, LV_FLEX_FLOW_COLUMN);
   lv_obj_set_style_pad_row(col, kSpaceXS, 0);
-  lv_obj_add_flag(col, LV_OBJ_FLAG_SCROLLABLE);
+  lv_obj_set_scrollable(col, true);
   lv_obj_add_event_cb(col, onTouchTest, LV_EVENT_PRESSED, nullptr);
   g.diagSys = label(col, fontCaption(), kFg, "");
   g.diagCams = label(col, fontCaption(), kFgMuted, "");
@@ -926,8 +923,8 @@ void buildDiag() {
   lv_obj_set_style_radius(g.touchDot, kRadiusPill, 0);
   lv_obj_set_style_bg_color(g.touchDot, c(kError), 0);
   lv_obj_set_style_border_width(g.touchDot, 0, 0);
-  lv_obj_add_flag(g.touchDot, LV_OBJ_FLAG_HIDDEN);
-  lv_obj_remove_flag(g.touchDot, LV_OBJ_FLAG_CLICKABLE);
+  lv_obj_set_hidden(g.touchDot, true);
+  lv_obj_set_clickable(g.touchDot, false);
 }
 
 void updateDiag(const Status& s, uint32_t now) {
@@ -1032,7 +1029,7 @@ void shutterMoment(bool flash) {
   lv_anim_delete(g.whiteout, animBgOpa);
   anim(g.whiteout, animBgOpa, flash ? LV_OPA_COVER : LV_OPA_70, LV_OPA_TRANSP, kMsSlow, pathBase());
   beep(2600, 18, 1300, 30);
-  if (!lv_obj_has_flag(g.menu, LV_OBJ_FLAG_HIDDEN)) hideMenu();
+  if (!lv_obj_is_hidden(g.menu)) hideMenu();
   if (g.cur != Screen::Main && !g.hello) show(Screen::Main);  // shutter always returns to the viewfinder
 }
 
@@ -1056,7 +1053,7 @@ void shutterRefused(const char* why) {
 void toast(const char* text, uint32_t colorHex, uint32_t ms) {
   lv_label_set_text(g.toastL, text);
   lv_obj_set_style_text_color(g.toastL, c(colorHex), 0);
-  lv_obj_remove_flag(g.toast, LV_OBJ_FLAG_HIDDEN);
+  lv_obj_set_hidden(g.toast, false);
   lv_anim_delete(g.toast, nullptr);
   anim(g.toast, animOpa, LV_OPA_TRANSP, LV_OPA_COVER, kMsFast, pathFast());
   anim(g.toast, animY, 12, 0, kMsBase, pathSpring());
