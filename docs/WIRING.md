@@ -12,8 +12,7 @@
 ```mermaid
 flowchart LR
   BANK["Anker Nano 5000<br/>USB-C 5 V ⎓ 3 A"] -->|USB-C cable| BRK["USB-C breakout #1<br/>(CC 5.1 kΩ!)"]
-  BRK -->|"+5 V (red)"| IN["IN node<br/>Wago 221, 3 ports<br/>(1 free = meter)"]
-  IN --> SW["power switch<br/>≥ 5 A DC"]
+  BRK -->|"+5 V (red)"| SW["power switch<br/>≥ 5 A DC"]
   BRK -->|"GND (black)"| GRAIL
   SW --> PRAIL["+5 V rail<br/>Wago 221 blocks, jumpered<br/>(1 port free = meter)"]
   subgraph rails[" "]
@@ -39,11 +38,11 @@ ASCII version (same thing):
 
 ```
                                           ┌──────── +5V rail (Wago 221 blocks, jumpered) ──────┐
-Bank─USB-C─[breakout]─red─[IN: meter]─[SWITCH]─┤ cam1 cam2 cam3 cam4  core  flash  button  cap(+)  meter │
+Bank─USB-C─[breakout]─red─[SWITCH]────────────┤ cam1 cam2 cam3 cam4  core  flash  button  cap(+)  meter │
                   └─black─────────────────────┤ cam1 cam2 cam3 cam4  core  flash  button  cap(−)  spare │
                                               └──────── GND rail (Wago 221 blocks, jumpered) ──────┘
-IN = one small Wago 221 between breakout and switch. Its free port and the +5V rail's free port
-are where the multimeter goes for current (STEPS.md#measuring-current).
+For current the multimeter goes across the open switch: red probe on the switch's input
+terminal (clip lead), black probe in the +5V rail's free port (STEPS.md#measuring-current).
 
 Core Port A (one Grove plug, wires split):
    red   ── +5V rail          (Core power IN)
@@ -61,8 +60,7 @@ Mini Button: red → +5V rail, black → GND rail, white → Core Port A white. 
 | from | wire | to | net | notes |
 |---|---|---|---|---|
 | bank USB-C | cable | breakout #1 USB-C | – | breakout needs 5.1 kΩ CC pull-downs (or use bank USB-A + A-to-C cable) |
-| breakout V/VBUS | red 20 AWG | IN node (Wago 221) | +5 V, before the switch | **live whenever the bank is plugged in**, switch on or off |
-| IN node | red 20 AWG | switch → +5V rail | +5 V | switch in +5 V only; IN keeps one port free for the meter |
+| breakout V/VBUS | red 20 AWG | switch → +5V rail | +5 V | switch in +5 V only. The switch's input side is **live whenever the bank is on**, switch on or off |
 | breakout G/GND | black 20 AWG | GND rail | GND | |
 | Cam1..4 Grove red | red | +5V rail | +5 V | one branch each (star) |
 | Cam1..4 Grove black | black | GND rail | GND | |
@@ -100,8 +98,7 @@ The rail uses **Wago 221 lever connectors** (owner, 2026-11-13; it was 2273 push
   [SOLDERING.md](SOLDERING.md).
 - **Ports.** Each net has 9 connections (source, 4 cams, Core, flash, button, cap). The +5 V net
   needs one more free port for the meter, so 10. Join blocks with short jumpers: two 5-port
-  blocks give 8 usable ports (2 go to the jumper), three give 11. The **IN node** is one more
-  small block (3 ports: breakout, switch, meter).
+  blocks give 8 usable ports (2 go to the jumper), three give 11.
 - The jumpers carry the whole rig current: same 20 AWG, short, tug-tested.
 
 ## Switching the rig on and off
@@ -124,7 +121,7 @@ either.
   button is pressed.
 
 **The re-plug test** (proves a CC switch will work, no parts needed): leave the bank in the
-breakout with nothing drawing until it sleeps (0 V at the VBUS pad or IN node), then unplug and
+breakout with nothing drawing until it sleeps (0 V at the VBUS pad or the switch input), then unplug and
 re-plug it **without** pressing the button. A physical re-plug is the same "plug-in" signal a CC
 switch makes. **Result (owner, 2026-11-14): 5 V comes back by itself**, so a fresh plug-in wakes
 the A1653 and the CC switch (option B) will work.
@@ -143,16 +140,16 @@ A resistor that is always connected **before** the switch keeps a load on the ba
 hits its low-current auto-off. The switch then only connects the rig.
 
 ```
-Bank─USB-C─[breakout]─red─[IN node]─────[SWITCH]─── +5V rail
+Bank─USB-C─[breakout]─red──┬──────────[SWITCH]─── +5V rail
                               │
                            47 Ω ≥ 2 W   (the keep-alive load, always on)
                               │
                   └─black─────┴──────────────────── GND rail
 ```
 
-Wiring: one 47 Ω resistor rated **≥ 2 W** (1 W minimum) between a spare IN-node port and the GND
-rail. Use a 5-port IN block so the meter port stays free. Keep it off the foam board and plastic
-with an air gap: it runs warm.
+Wiring: one 47 Ω resistor rated **≥ 2 W** (1 W minimum) from the switch's input terminal (or the
+breakout's VBUS pad) to the GND rail. Keep it off the foam board and plastic with an air gap: it
+runs warm.
 
 **Power draw** (5 V rail; bank energy as in [POWER §3](POWER.md#3-power-numbers-all-estimates-until-measured):
 14.8 Wh usable, ASSUMPTION):
@@ -183,7 +180,7 @@ them back, so the bank sees a fresh plug-in and turns on, every time, with no bu
 ```mermaid
 flowchart LR
   BANK["Anker bank<br/>(USB-C source)"] -->|"USB-C plug"| REC["breakout socket"]
-  REC -->|"VBUS"| IN["IN node"] -->|"short jumper wire<br/>(was: the switch)"| PRAIL["+5 V rail"]
+  REC -->|"VBUS: red lead straight in<br/>(was: through the switch)"| PRAIL["+5 V rail"]
   REC -->|"GND"| GRAIL["GND rail"]
   REC -->|"CC1"| R1["5.1 kΩ"]
   REC -->|"CC2"| R2["5.1 kΩ"]
@@ -201,8 +198,8 @@ BEFORE (stock breakout)                    AFTER (CC switch mod)
  CC1 ──[5.1k]── GND                         CC1 ──[5.1k]──┐
  CC2 ──[5.1k]── GND                         CC2 ──[5.1k]──┤
                                                           └──o/ o── GND
- VBUS ── red ── IN ──[SWITCH]── +5V rail                 rig switch
- GND  ── black ───────────────── GND rail   VBUS ── red ── IN ──[jumper]── +5V rail
+ VBUS ── red ──[SWITCH]──────── +5V rail                 rig switch
+ GND  ── black ───────────────── GND rail   VBUS ── red ─────────────────── +5V rail
                                             GND  ── black ─────────────── GND rail
                                             (on-board 5.1k resistors removed or cut free)
 ```
@@ -228,8 +225,8 @@ small switch works), thin wire, heat-shrink. Resistors: either **reuse the break
 4. **Wire the switch:** from that join to the switch, and from the switch to GND (a GND pad or
    the GND rail). Tie the thin wires down next to the breakout (strain relief,
    [SOLDERING R2](SOLDERING.md#r2-wire-to-a-breakout-pad-vbus-gnd)).
-5. **Replace the old switch in the 5 V line** with a short 20 AWG jumper wire from the IN node to
-   the +5 V rail.
+5. **Take the old switch out of the 5 V line:** the breakout's red lead goes straight into the
+   +5 V rail.
 
 **Check** (bank unplugged, ohms):
 
@@ -245,9 +242,10 @@ constants; the A1653's own timing is *Not sure*). Do it 10 times. Then leave it 
 longer than the bank's sleep time and switch on again: it must come on with no button.
 
 **Things that change with the mod:**
-- **Current measurement:** the meter used to go across the switch. Now it goes in place of the
-  IN → +5 V jumper: switch off (bank output off), take the jumper out, meter probes into the two
-  free ports, switch on, read, switch off, jumper back ([STEPS: measuring current](STEPS.md#measuring-current)).
+- **Current measurement:** the meter used to go across the switch. Now: switch off (bank output
+  off), pull the breakout's red lead out of the rail, red probe clipped to its bare end, black
+  probe in the freed port, switch on, read, switch off, lead back
+  ([STEPS: measuring current](STEPS.md#measuring-current)).
 - **Turn-on:** the bank needs a moment (≥ ~100 ms) after the switch before the rail is live.
   Harmless.
 - **Not sure:** whether the A1653 likes being "plugged in" and "unplugged" many times a day this
@@ -304,7 +302,7 @@ x4 PRE-POWER CHECKLIST                           date ______  by ______
 [ ] Flash on its own 20 AWG branch. Flash slide switch on FLASH.
 [ ] No USB-C cable in any board.
 [ ] Every Wago lever closed, every wire tug-tested (Grove ends folded double or pigtailed).
-[ ] IN node: breakout red + switch wire, one port free. +5V rail: one port free.
+[ ] +5V rail: one port free (meter).
 [ ] Bank plugged in, switch ON with NO boards plugged: rail = 4.75–5.25 V  (measured ____ V)
 [ ] Then follow BRINGUP.md step 4 (one load at a time).
 ```

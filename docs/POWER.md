@@ -27,8 +27,7 @@ power-up. Two items need a measurement at bring-up (Port A idle voltage, rail sa
 ```
 Anker Nano 5000 (USB-C out, 5 V ⎓ 3 A, no PD negotiation)
   └─ USB-C breakout #1 (the ONE in use; must have 5.1 kΩ CC pull-downs)
-       └─ IN node: Wago 221 (breakout red, switch, 1 free port for the meter)
-          └─ power switch (+5 V line only, ≥ 5 A DC)
+       └─ power switch (+5 V line only, ≥ 5 A DC)
             ├─ +5 V rail: Wago 221 blocks (jumpered)            GND rail: Wago 221 blocks (jumpered)
             │    ├── Cam1 Grove red  ─┐                              ├── Cam1 Grove black
             │    ├── Cam2 Grove red   │ star: one branch per load     ├── Cam2 …
