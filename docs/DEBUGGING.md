@@ -12,7 +12,7 @@
 
 ## Diagnostics screen (on the Core)
 
-Long-press the shutter (or long-press the screen / swipe up). Shows FPS + worst frame time, 5 V
+Long-press the shutter (or long-press the screen). Shows FPS + worst frame time, 5 V
 output + OTG state, rail mV (AXP2101 VBUS), die temperature, heap/min heap/PSRAM, reset reason,
 boot and brown-out counters, SD state and speed, button state, flash state and pulse count; per
 camera online, IP, temperature, RSSI, heartbeat age, last shot result and capture offset; last

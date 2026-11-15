@@ -19,6 +19,11 @@ void update(const x4core::Status& s, uint32_t nowMs);
 void onAction(const x4::input::Event& e);
 Screen current();
 void show(Screen s);
+// The touch point before LVGL sees it. The CoreS3-SE panel also reports a strip below the 240 px
+// screen (y 240..279); display::touchCb() clamps that onto the bottom row for LVGL, so swipes that
+// start there and the back zone (tokens kBackZoneX/Y) need the real numbers from here. Call once per
+// input sample, before LVGL reads it.
+void touchRaw(bool pressed, int16_t x, int16_t y);
 
 // Moments (called by the app when effects happen).
 void shutterMoment(bool flash);      // white-out + iris + click sound

@@ -302,6 +302,9 @@ void test_input_defaults_and_parse() {
   m.loadDefaults();
   TEST_ASSERT_EQUAL((int)input::Action::Shutter,
                     (int)m.lookup(input::Source::ShutterButton, input::Gesture::Press));
+  // Vertical touch swipes are left to the settings sheet: unbound by default.
+  TEST_ASSERT_EQUAL((int)input::Action::None, (int)m.lookup(input::Source::Touch, input::Gesture::SwipeUp));
+  TEST_ASSERT_EQUAL((int)input::Action::None, (int)m.lookup(input::Source::Touch, input::Gesture::SwipeDown));
   int bad = 0;
   int n = m.parse("shutter.long=menu, encoder.rotate=scroll,button1.click=none", &bad);
   TEST_ASSERT_EQUAL(3, n);

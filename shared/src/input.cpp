@@ -37,8 +37,8 @@ const Binding kDefaults[] = {
     {Source::ShutterButton, Gesture::LongPress, Action::Diagnostics},
     {Source::Touch, Gesture::SwipeLeft, Action::Next},
     {Source::Touch, Gesture::SwipeRight, Action::Prev},
-    {Source::Touch, Gesture::SwipeDown, Action::Back},
-    {Source::Touch, Gesture::SwipeUp, Action::Menu},
+    // No vertical touch swipes: the settings sheet handles its own swipe up (owner, 2026-11-16),
+    // and a global swipe would reopen it or jump to diagnostics at the same time.
     {Source::Button1, Gesture::Click, Action::FlashToggle},
     {Source::Button2, Gesture::Click, Action::PreviewToggle},
     {Source::Button3, Gesture::Click, Action::Menu},

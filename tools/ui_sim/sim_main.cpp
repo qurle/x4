@@ -82,9 +82,9 @@ void request(Request r) {
       g_st.flashArmed = false;
       break;
     case Request::Shutter:
-      if (g_live && !g_shot.active && g_st.state == x4::shoot::State::Preview) {
-        g_shot = {true, g_ms, g_st.flashArmed && g_st.flashReady};
-        x4ui::shutterMoment(g_shot.withFlash);
+      if (!g_shot.active && g_st.state == x4::shoot::State::Preview) {
+        if (g_live) g_shot = {true, g_ms, g_st.flashArmed && g_st.flashReady};  // live: fake progress
+        x4ui::shutterMoment(g_st.flashArmed && g_st.flashReady);                // white-out, like the app
       }
       break;
     default:
@@ -160,7 +160,8 @@ struct Scene {
 };
 
 void advance(uint32_t ms);
-bool g_hold = false;  // a scene that ends with the finger still down sets this
+bool g_hold = false;    // a scene that ends with the finger still down sets this
+bool g_freeze = false;  // a scene that must be captured mid-animation sets this
 
 // Finger down at (x, y0), moves to y1 over ms (straight line, 10 ms steps). lift: the finger
 // leaves the glass right at the end, like a real swipe (resting first would cancel a flick).
@@ -229,6 +230,68 @@ void holdTile() {  // finger down on the orientation tile, not lifted: no press 
   g_hold = true;
 }
 
+// The sheet comes down from the top (owner, 2026-11-16): 100 ms in, the bottom still shows the
+// viewfinder. Captured mid-slide.
+void sheetOpening() {
+  openSettings();
+  advance(100);
+  g_freeze = true;
+}
+// Swipe up that starts on the strip below the screen (touch y 240..279). LVGL clamps y to 239, so
+// before the raw-touch fix this 70 px swipe counted as ~44 px and the sheet sprang back.
+void swipeFromStrip() {
+  openSettingsAndWait();
+  drag(170, 265, 195, 200, true);
+}
+// Tap in the back zone (x >= 200, y >= 250: below the screen, right part): closes settings.
+void backZoneTap() {
+  openSettingsAndWait();
+  g_ptr = {true, 260, 265};
+}
+// Tap on the strip outside the back zone, on the viewfinder: nothing happens (no menu).
+void stripTapMain() { g_ptr = {true, 120, 265}; }
+// Swipe down over the viewfinder: not a tap, so no menu; and no settings.
+void swipeDownMain() { drag(160, 40, 150, 200, true); }
+// Menu -> settings -> swipe the sheet away: the menu must be gone too.
+void menuSettingsSwipeAway() {
+  g_ptr = {true, 160, 140};  // tap: menu
+  advance(80);
+  g_ptr.down = false;
+  advance(300);
+  g_ptr = {true, 160, 20};  // "settings"
+  advance(80);
+  g_ptr.down = false;
+  advance(600);
+  drag(160, 200, 120, 200, true);  // swipe the sheet away
+}
+
+// Double tap on the viewfinder (owner, 2026-11-16): fires the shutter. Captured 40 ms later, in
+// the white-out.
+void tapAt(int16_t x, int16_t y, uint32_t holdMs) {
+  g_ptr = {true, x, y};
+  advance(holdMs);
+  g_ptr.down = false;
+}
+void doubleTap() {
+  tapAt(160, 140, 60);
+  advance(120);
+  tapAt(165, 138, 60);
+  advance(40);
+  g_freeze = true;
+}
+// A single tap waits X4_DOUBLE_TAP_MS (300) for a second one: 150 ms after it, no menu yet.
+void singleTapEarly() {
+  tapAt(160, 140, 60);
+  advance(150);
+  g_freeze = true;
+}
+// Two taps too far apart are two single taps: the menu opens and closes again, no shutter.
+void twoTapsFarApart() {
+  tapAt(60, 140, 60);
+  advance(100);
+  tapAt(260, 140, 60);
+}
+
 // Real touch on the orientation tile: exercises touch -> app::setOption -> status -> redraw.
 void tapOrientTile() {
   openSettings();
@@ -288,6 +351,23 @@ const Scene kScenes[] = {
      [](x4core::Status&) {}, swipeShortSlow},
     {"settings_flick", "-", "settings flicked 30 px up fast: back to the viewfinder",
      [](x4core::Status&) {}, flick},
+    {"double_tap", "-", "double tap on the viewfinder: shutter (white-out)", [](x4core::Status&) {}, doubleTap},
+    {"single_tap_early", "-", "150 ms after a single tap: menu not open yet (waits for a second tap)",
+     [](x4core::Status&) {}, singleTapEarly},
+    {"two_taps_far", "-", "two taps 200 px apart: two single taps (menu opens, closes), no shutter",
+     [](x4core::Status&) {}, twoTapsFarApart},
+    {"settings_opening", "-", "settings 100 ms after opening: slides down from the top",
+     [](x4core::Status&) {}, sheetOpening},
+    {"settings_swipe_from_strip", "-", "swipe up from the strip below the screen: settings go away",
+     [](x4core::Status&) {}, swipeFromStrip},
+    {"settings_back_zone", "-", "tap in the back zone (below the screen, right): back to the viewfinder",
+     [](x4core::Status&) {}, backZoneTap},
+    {"strip_tap_main", "-", "tap on the strip below the screen (not the back zone): nothing opens",
+     [](x4core::Status&) {}, stripTapMain},
+    {"swipe_down_main", "-", "swipe down over the viewfinder: no menu, no settings",
+     [](x4core::Status&) {}, swipeDownMain},
+    {"menu_settings_away", "-", "menu -> settings -> swipe away: viewfinder, menu gone",
+     [](x4core::Status&) {}, menuSettingsSwipeAway},
     {"saving_1of4", "15:69", "Saving... 1 of 4", [](x4core::Status& s) { saving(s, 0); }, nullptr},
     {"saving_3of4", "15:80", "Saving... 3 of 4", [](x4core::Status& s) { saving(s, 2); }, nullptr},
     {"error_known", "83:2119", "error with a known reason: SD is full",
@@ -316,8 +396,9 @@ void flush(lv_display_t* d, const lv_area_t* a, uint8_t* px) {
 }
 
 void readPointer(lv_indev_t*, lv_indev_data_t* d) {
+  x4ui::touchRaw(g_ptr.down, g_ptr.x, g_ptr.y);  // like display::handle() on the device
   d->point.x = g_ptr.x;
-  d->point.y = g_ptr.y;
+  d->point.y = g_ptr.y < kH ? g_ptr.y : kH - 1;  // like display::touchCb(): the strip below the screen
   d->state = g_ptr.down ? LV_INDEV_STATE_PRESSED : LV_INDEV_STATE_RELEASED;
 }
 
@@ -439,7 +520,7 @@ int renderScene(const char* name, const char* out) {
       advance(80);
       if (!g_hold) g_ptr.down = false;  // ends a tap or a swipe, unless the scene holds it
     }
-    advance(900);  // let fades, slides and springs finish
+    if (!g_freeze) advance(900);  // let fades, slides and springs finish
     lv_refr_now(nullptr);
     if (!writeBmp(out)) {
       fprintf(stderr, "cannot write %s\n", out);

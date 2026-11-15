@@ -154,8 +154,7 @@ Default bindings (`shared/src/input.cpp`):
 | `shutter.press` | shutter (fires on the first contact edge: no debounce latency) |
 | `shutter.long` | diagnostics |
 | `touch.swipe_left / swipe_right` | next / prev |
-| `touch.swipe_down` | back |
-| `touch.swipe_up` | menu (diagnostics) |
+| `touch.swipe_up / swipe_down` | none: the settings sheet handles its own swipe up ([UI](UI.md#touch-the-strip-below-the-screen)) |
 | `button1.click / button2.click / button3.click` | flash_toggle / preview_toggle / menu |
 | `encoder.rotate / encoder.click / encoder.long` | scroll / select / back |
 | `web.click` | shutter |

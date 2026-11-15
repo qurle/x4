@@ -242,6 +242,14 @@ struct {
   // settings: a sheet on top of the viewfinder (not a separate screen), so a swipe up can reveal
   // the live viewfinder under it while the finger moves.
   lv_obj_t* settings = nullptr;
+  // Raw touch (see touchRaw): this touch's start and latest point, unclamped.
+  struct {
+    bool down = false;
+    int16_t x0 = 0, y0 = 0, x = 0, y = 0;
+  } raw;
+  bool backPending = false;  // a tap in the back zone; acted on in update(), outside LVGL's input read
+  lv_timer_t* tapTimer = nullptr;  // viewfinder: a first tap waiting to see if a second one follows
+  lv_point_t tapAt{};
   struct {
     lv_point_t start{};
     int mode = 0;          // 0 = not moved (a tap), 1 = vertical swipe, 2 = horizontal (cam delay)
@@ -274,10 +282,68 @@ void buildSplash() {
   reveal(v, 4);
 }
 
+// ---------------------------------------------------------------- touch helpers
+// A touch that began on the strip below the screen never taps a widget: display::touchCb() clamps it
+// onto the bottom row (so swipes from there reach the sheet), which would otherwise tap whatever
+// sits there (the footer, the sheet). The back zone is handled in update().
+bool startedBelowScreen() { return g.raw.y0 >= kScreenH; }
+// Moved more than kSwipeDecidePx since it touched down: a swipe, not a tap.
+bool rawMoved() {
+  return LV_MAX(LV_ABS(g.raw.x - g.raw.x0), LV_ABS(g.raw.y - g.raw.y0)) > kSwipeDecidePx;
+}
+bool isTap() { return !startedBelowScreen() && !rawMoved(); }
+
 // ---------------------------------------------------------------- main (viewfinder)
 void hideMenu() { fadeTo(g.menu, false, kMsFast); }
+void hideMenuNow() {  // a menu button was used: the menu goes at once, not after a fade
+  lv_anim_delete(g.menu, nullptr);
+  lv_obj_set_hidden(g.menu, true);
+  lv_obj_set_style_opa(g.menu, LV_OPA_COVER, 0);
+}
+
+// ---- double tap = shutter (owner, 2026-11-16). A single tap still toggles the menu, but only once
+// no second tap came within X4_DOUBLE_TAP_MS. Build-time setting, not a menu option:
+//   build_flags = -DX4_DOUBLE_TAP_MS=250    (0 = no double tap, the menu answers at once)
+#ifndef X4_DOUBLE_TAP_MS
+#define X4_DOUBLE_TAP_MS 300
+#endif
+constexpr uint32_t kDoubleTapMs = X4_DOUBLE_TAP_MS;
+constexpr int32_t kDoubleTapSlopPx = 40;  // the second tap must land this close to the first
+
+void toggleMenu();
+
+void cancelPendingTap() {
+  if (g.tapTimer) lv_timer_delete(g.tapTimer);
+  g.tapTimer = nullptr;
+}
 
 void onViewfinderTap(lv_event_t*) {
+  if (!isTap()) return;  // a swipe over the photo is not a tap (LVGL still sends CLICKED)
+  if (kDoubleTapMs == 0) {
+    toggleMenu();
+    return;
+  }
+  lv_point_t p{g.raw.x, g.raw.y};
+  if (g.tapTimer) {  // second tap within the window
+    cancelPendingTap();
+    if (LV_ABS(p.x - g.tapAt.x) <= kDoubleTapSlopPx && LV_ABS(p.y - g.tapAt.y) <= kDoubleTapSlopPx) {
+      X4_LOGI("ui", "double_tap", "x=%d y=%d", (int)p.x, (int)p.y);
+      app::request(app::Request::Shutter);
+      return;
+    }
+    toggleMenu();  // too far apart: the first was a single tap after all; this one starts over
+  }
+  g.tapAt = p;
+  g.tapTimer = lv_timer_create(
+      [](lv_timer_t*) {
+        g.tapTimer = nullptr;  // repeat count 1: LVGL deletes the timer after this call
+        toggleMenu();
+      },
+      kDoubleTapMs, nullptr);
+  lv_timer_set_repeat_count(g.tapTimer, 1);
+}
+
+void toggleMenu() {
   bool open = !lv_obj_is_hidden(g.menu);
   if (open) {
     hideMenu();
@@ -288,8 +354,9 @@ void onViewfinderTap(lv_event_t*) {
 }
 
 void onMenu(lv_event_t* e) {
+  if (!isTap()) return;  // a swipe across the menu doesn't press its buttons
   intptr_t which = (intptr_t)lv_event_get_user_data(e);
-  hideMenu();
+  hideMenuNow();
   if (which == 1) show(Screen::Settings);
 }
 
@@ -385,16 +452,16 @@ void buildMain() {
   g.sdUnit = label(sd, fontFooter(), kOnPhoto, "");
   lv_obj_align(sd, LV_ALIGN_TOP_RIGHT, -kFooterPadX, kFooterTextY);
 
-  // Tap menu (Figma "on tap: buttons"): 80 px black 80 %→0 gradient, three serif-32 labels.
+  // Tap menu (Figma "on tap: buttons"): 80 px black 80 %→0 gradient, three serif-32 labels. The
+  // gradient is a dithered 8 px image tiled across (tools/gen_assets.py): LVGL's own gradient
+  // showed bands in RGB565 (owner, 2026-11-16).
   g.menu = plain(g.main);
   lv_obj_set_size(g.menu, kScreenW, kMenuH);
   lv_obj_set_pos(g.menu, 0, 0);
-  lv_obj_set_style_bg_color(g.menu, lv_color_black(), 0);
-  lv_obj_set_style_bg_grad_color(g.menu, lv_color_black(), 0);
-  lv_obj_set_style_bg_grad_dir(g.menu, LV_GRAD_DIR_VER, 0);
-  lv_obj_set_style_bg_opa(g.menu, LV_OPA_COVER, 0);
-  lv_obj_set_style_bg_main_opa(g.menu, LV_OPA_80, 0);
-  lv_obj_set_style_bg_grad_opa(g.menu, LV_OPA_TRANSP, 0);
+  lv_obj_t* grad = image(g.menu, &x4_img_menu_grad);
+  lv_obj_set_size(grad, kScreenW, kMenuH);
+  lv_image_set_inner_align(grad, LV_IMAGE_ALIGN_TILE);
+  lv_obj_set_pos(grad, 0, 0);
   // video and media are hidden in v1 (owner, 2026-11-01); their cells keep the Figma positions.
   static const char* kItems[] = {"video", "settings", "media"};
   for (int i = 0; i < 3; i++) {
@@ -613,7 +680,7 @@ int32_t fillW(int32_t ms) {
 }
 
 // A touch that moved more than kSwipeDecidePx became a swipe or a delay drag: not a tap.
-bool wasTap() { return g.drag.mode == 0; }
+bool wasTap() { return g.drag.mode == 0 && !startedBelowScreen(); }
 
 void onOrient(lv_event_t*) {
   if (wasTap()) app::setOption("ui_orient", x4core::status::get().uiOrient ? 0 : 1);
@@ -642,9 +709,10 @@ void onDelay(lv_event_t* e) {
   if (kDelaySteps[idx] != x4core::status::get().camDelayMs) app::setOption("cam_delay_ms", kDelaySteps[idx]);
 }
 
-// ---- the sheet: opens sliding up from the bottom; a swipe up sends it off the top.
+// ---- the sheet: opens sliding down from the top (owner, 2026-11-16); a swipe up sends it back up.
 // While the finger moves up the sheet follows it 1:1 and the viewfinder shows underneath. Let go
-// past kSwipeDismissPx, or with a flick, and it slides away; otherwise it eases back.
+// past kSwipeDismissPx, or with a flick, and it slides away; otherwise it eases back. Distances use
+// the raw touch, so a swipe that starts on the strip below the screen counts in full.
 constexpr float kFlickPxPerMs = 0.5f;  // ASSUMPTION: tune on the panel
 
 void animTy(void* o, int32_t v) { lv_obj_set_style_translate_y((lv_obj_t*)o, v, 0); }
@@ -652,9 +720,9 @@ void animTy(void* o, int32_t v) { lv_obj_set_style_translate_y((lv_obj_t*)o, v, 
 void sheetOpen() {
   lv_anim_delete(g.settings, animTy);
   lv_obj_move_foreground(g.settings);
-  lv_obj_set_style_translate_y(g.settings, kScreenH, 0);
+  lv_obj_set_style_translate_y(g.settings, -kScreenH, 0);
   lv_obj_set_hidden(g.settings, false);
-  anim(g.settings, animTy, kScreenH, 0, kMsBase, pathBase());
+  anim(g.settings, animTy, -kScreenH, 0, kMsBase, pathBase());
 }
 
 void sheetClose(bool animated) {
@@ -688,12 +756,11 @@ bool sheetCovers() {
 // on the settings screen arrives here).
 void onSheetTouch(lv_event_t* e) {
   lv_event_code_t code = lv_event_get_code(e);
-  lv_point_t p;
-  lv_indev_get_point(lv_indev_active(), &p);
+  lv_point_t p{g.raw.x, g.raw.y};  // raw: the point LVGL gets stops at y 239
   uint32_t now = lv_tick_get();
   if (code == LV_EVENT_PRESSED) {
     lv_anim_delete(g.settings, animTy);
-    g.drag.start = p;
+    g.drag.start = {g.raw.x0, g.raw.y0};
     g.drag.mode = 0;
     g.drag.lastY = p.y;
     g.drag.lastT = now;
@@ -982,6 +1049,30 @@ void begin(bool helloMode) {
 
 Screen current() { return g.cur; }
 
+static bool inBackZone(int16_t x, int16_t y) { return x >= kBackZoneX && y >= kBackZoneY; }
+
+void touchRaw(bool pressed, int16_t x, int16_t y) {
+  if (pressed) {
+    if (!g.raw.down) {
+      g.raw.x0 = x;
+      g.raw.y0 = y;
+    }
+    g.raw.down = true;
+    g.raw.x = x;
+    g.raw.y = y;
+    return;
+  }
+  if (!g.raw.down) return;
+  g.raw.down = false;
+  // Lifted: a tap that started and ended in the back zone (below the screen, right part).
+  if (inBackZone(g.raw.x0, g.raw.y0) && inBackZone(g.raw.x, g.raw.y) && !rawMoved()) g.backPending = true;
+}
+
+static void goBack() {
+  closeConfirm();
+  if (!g.hello) show(Screen::Main);
+}
+
 void show(Screen s) {
   if (s == g.cur) return;
   Screen from = g.cur;
@@ -1002,6 +1093,11 @@ void show(Screen s) {
 }
 
 void update(const Status& s, uint32_t now) {
+  if (g.backPending) {
+    g.backPending = false;
+    X4_LOGD("ui", "back_zone", "screen=%d", (int)g.cur);
+    if (g.cur != Screen::Splash) goBack();
+  }
   if (g.cur == Screen::Splash && (int32_t)(now - g.splashUntil) >= 0)
     show(g.hello ? Screen::Diagnostics : Screen::Main);
   // The viewfinder stays current under the settings sheet: a swipe up reveals it live.
@@ -1017,15 +1113,13 @@ void onAction(const x4::input::Event& e) {
       show(g.cur == Screen::Diagnostics && !g.hello ? Screen::Main : Screen::Diagnostics);
       break;
     case Action::Menu: show(g.cur == Screen::Main ? Screen::Settings : Screen::Diagnostics); break;
-    case Action::Back:
-      closeConfirm();
-      if (!g.hello) show(Screen::Main);
-      break;
+    case Action::Back: goBack(); break;
     default: break;
   }
 }
 
 void shutterMoment(bool flash) {
+  cancelPendingTap();  // a tap waiting for its second half must not open the menu after the shot
   lv_anim_delete(g.whiteout, animBgOpa);
   anim(g.whiteout, animBgOpa, flash ? LV_OPA_COVER : LV_OPA_70, LV_OPA_TRANSP, kMsSlow, pathBase());
   beep(2600, 18, 1300, 30);

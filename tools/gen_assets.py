@@ -9,7 +9,18 @@ core/src/ui/assets/. Files starting with "_" are design references only and are 
 RGB565A8 layout (LVGL 9): a plane of little-endian RGB565 pixels (stride = w*2) followed by a
 plane of 8-bit alpha (stride = w). Fully opaque images are written as plain RGB565 (no alpha
 plane). C files of images that no longer exist are deleted.
+
+Dithering (owner, 2026-11-16: gradients looked banded). RGB565 has 32 levels of red and blue, so a
+smooth gradient turns into visible steps. Colours are reduced with an 8x8 ordered (Bayer) dither
+instead of plain truncation, except for images that are a dither pattern already. Soft glows and
+the tap menu gradient also get a little ordered noise in their alpha: the banding there comes from
+blending them over the photo into RGB565, so the alpha is what has to vary. The pattern is fixed
+(no random numbers), so --check stays reproducible.
+
+Generated (not from Figma): menu-grad, the tap menu's black 80 % -> 0 gradient (ui/tokens.json
+menuH tall, 8 px wide, tiled across the screen by ui.cpp).
 """
+import json
 import pathlib
 import sys
 
@@ -20,20 +31,49 @@ SRC = ROOT / "ui" / "assets" / "figma"
 DST = ROOT / "core" / "src" / "ui" / "assets"
 
 
+# 8x8 Bayer matrix (values 0..63).
+BAYER8 = [
+    [0, 32, 8, 40, 2, 34, 10, 42], [48, 16, 56, 24, 50, 18, 58, 26],
+    [12, 44, 4, 36, 14, 46, 6, 38], [60, 28, 52, 20, 62, 30, 54, 22],
+    [3, 35, 11, 43, 1, 33, 9, 41], [51, 19, 59, 27, 49, 17, 57, 25],
+    [15, 47, 7, 39, 13, 45, 5, 37], [63, 31, 55, 23, 61, 29, 53, 21],
+]
+NO_COLOR_DITHER = {"dither-strip"}  # already a dither pattern: keep its exact colours
+ALPHA_DITHER = {"glow-corner-left": 12, "glow-corner-right": 12, "glow-mid": 12, "rec-glow": 12, "menu-grad": 12}
+
+
 def cname(path):
     return "x4_img_" + path.stem.replace("-", "_")
 
 
-def convert(path):
-    im = Image.open(path).convert("RGBA")
+def threshold(x, y):
+    return (BAYER8[y & 7][x & 7] + 0.5) / 64.0  # 0..1
+
+
+def quant(v, levels, t):
+    """0..255 -> 0..levels-1 with an ordered dither threshold t (0..1)."""
+    return min(levels - 1, int(v * (levels - 1) / 255.0 + t))
+
+
+def convert(path, im=None):
+    im = (im or Image.open(path)).convert("RGBA")
     w, h = im.size
     px = im.load()
+    dither_color = path.stem not in NO_COLOR_DITHER
+    alpha_amp = ALPHA_DITHER.get(path.stem, 0)
     color = bytearray()
     alpha = bytearray()
     for y in range(h):
         for x in range(w):
             r, g, b, a = px[x, y]
-            v = ((r >> 3) << 11) | ((g >> 2) << 5) | (b >> 3)
+            if dither_color:
+                t = threshold(x, y)
+                r5, g6, b5 = quant(r, 32, t), quant(g, 64, t), quant(b, 32, t)
+            else:
+                r5, g6, b5 = r >> 3, g >> 2, b >> 3
+            if alpha_amp and 0 < a < 255:
+                a = max(0, min(255, int(round(a + (threshold(x, y) - 0.5) * alpha_amp))))
+            v = (r5 << 11) | (g6 << 5) | b5
             color += bytes((v & 0xFF, v >> 8))
             alpha.append(a)
     opaque = all(a == 255 for a in alpha)
@@ -68,6 +108,29 @@ def convert(path):
     return name, w, h, "\n".join(lines)
 
 
+def generated():
+    """Images made here, not exported from Figma."""
+    tokens = json.loads((ROOT / "ui" / "tokens.json").read_text())
+
+    def find(o, key):
+        if isinstance(o, dict):
+            if key in o:
+                return o[key]
+            for v in o.values():
+                r = find(v, key)
+                if r is not None:
+                    return r
+        return None
+
+    h = find(tokens, "menuH")["value"]
+    im = Image.new("RGBA", (8, h))
+    for y in range(h):  # black, 80 % at the top -> 0 at the bottom (Figma "on tap: buttons")
+        a = int(round(0.8 * 255 * (1 - y / (h - 1))))
+        for x in range(8):
+            im.putpixel((x, y), (0, 0, 0, a))
+    return [(pathlib.Path("menu-grad.png"), im)]
+
+
 def main():
     check = "--check" in sys.argv
     outs = {}
@@ -84,6 +147,11 @@ def main():
         name, w, h, text = convert(p)
         outs[DST / f"{name}.c"] = text
         header.append(f"extern const lv_image_dsc_t {name};  // {w}x{h} from {p.name}")
+    for p, im in generated():
+        name, w, h, text = convert(p, im)
+        text = text.replace(f"from ui/assets/figma/{p.name}", "(generated: menu gradient)")
+        outs[DST / f"{name}.c"] = text
+        header.append(f"extern const lv_image_dsc_t {name};  // {w}x{h} generated")
     header += ["}", ""]
     outs[DST / "assets.h"] = "\n".join(header)
     stale = [f for f, t in outs.items() if not f.exists() or f.read_text() != t]
