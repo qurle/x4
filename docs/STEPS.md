@@ -132,7 +132,7 @@ same time, and put the probe back in VΩ as soon as the current reading is done.
 
 | mode | symbol | used for | rule |
 |---|---|---|---|
-| continuity | 🔊 (beep, often shared with diode ▶|) | quick "is this wire connected to that", "is +5 V shorted to GND" ([below](#connected-or-shorted-beep-or-ohms)) | **unpowered only**, bank unplugged |
+| continuity | 🔊 (beep, often shared with diode ▶\|) | quick "is this wire connected to that", "is +5 V shorted to GND" ([below](#connected-or-shorted-beep-or-ohms)) | **unpowered only**, bank unplugged |
 | resistance, low | Ω, **200 Ω** range (or auto) | the same checks when you need a number: a joint that might be poor, the short check with the capacitor or boards on the rail | **unpowered only**, bank unplugged |
 | resistance, high | Ω, **20 kΩ** range | the breakout's CC resistors | **unpowered only**: ohms read wrong on a live circuit ([HARDWARE](HARDWARE.md#recorded-on-bring-up-fill-in) has an example) |
 | DC volts | V⎓ (20 V range or auto) | rail, Port A, button and flash signals | red on the point, black on GND |
