@@ -118,7 +118,7 @@ void handleRoot() {
   static const char kPage[] PROGMEM = R"HTML(<!doctype html><html><head><meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1"><title>x4cam step 15</title>
 <style>body{font:15px system-ui;margin:12px;background:#111;color:#eee}input,select,button{font:inherit;margin:2px}
-input[type=number]{width:6em}img{max-width:100%;margin-top:8px}table{border-collapse:collapse;font:12px monospace}
+input[type=number]{width:6em}img{display:block;max-width:100%;margin:8px 0}table{border-collapse:collapse;font:12px monospace}
 td,th{border:1px solid #444;padding:2px 5px}pre{white-space:pre-wrap}fieldset{border:1px solid #444;margin:8px 0}
 .mu{color:#999;font-size:13px}</style></head><body>
 <h2>x4cam step 15: exposure</h2>
@@ -147,8 +147,8 @@ clock <select id=xclk><option value=10>10 MHz</option><option value=16>16 MHz</o
 </fieldset>
 <p><button onclick=apply()>Apply</button> <button onclick=shoot()>Shoot</button></p>
 <pre id=out></pre>
-<table id=log><tr><th>#</th><th>MHz</th><th>size</th><th>comp</th><th>agc</th><th>gain</th><th>ae</th><th>exp</th><th>frame ms</th><th>grab ms</th><th>kB</th><th>size ok</th></tr></table>
 <img id=img>
+<table id=log><tr><th>#</th><th>MHz</th><th>size</th><th>comp</th><th>agc</th><th>gain</th><th>ae</th><th>exp</th><th>frame ms</th><th>grab ms</th><th>kB</th><th>size ok</th></tr></table>
 <script>
 const $=id=>document.getElementById(id);
 function q(){let p=new URLSearchParams({res:$('res').value,xclk:$('xclk').value});
