@@ -117,6 +117,7 @@ From `python tools/x4log.py core.log --shots` and the web page.
 
 | shot | skew ms (timestamps) | skew ms (slow-mo) | shutter→captured ms | transfers (ms, kB/s each) | total ms | xfer_parallel | quality |
 |---|---|---|---|---|---|---|---|
+| step 11, 3 cameras, several shots (owner, 2026-11-15, main @ 875d088) | – (not synchronised) | – | – | 300–650 ms each, one after another | ≈ 1800 usually | 1 (sequential) | 12 |
 | | | | | | | | |
 
 ## Throughput
@@ -125,7 +126,7 @@ From `python tools/x4log.py core.log --shots` and the web page.
 |---|---|---|
 | SD write speed (bench, 1 MB, 16 KB chunks) | kB/s | `evt=bench` / web *SD speed test* |
 | SD read speed | kB/s | |
-| one camera → Core HTTP (5 MP) | cam 1: 155 kB in 531 ms (≈ 290 kB/s); cam 2: 148 kB in 304 ms (≈ 490 kB/s); cam 3: 137 kB in 265 ms (≈ 520 kB/s); cam 4: not connected yet | owner, 2026-11-15, step 11 (`s10-core-shot` + `s10-camN`), main @ 875d088. Time = HTTP GET start → file closed: includes the camera's grab and the SD write, cameras asked one after another. **Not sure** why cam 1 is slower (first in line? signal?). 137–155 kB is far below the *1–2.5 MB* estimate for 5 MP at quality 12: check a saved file's pixel size |
+| one camera → Core HTTP (5 MP) | usually 300–650 ms per camera over several shots. One shot in detail: cam 1 155 kB in 531 ms (≈ 290 kB/s), cam 2 148 kB in 304 ms (≈ 490 kB/s), cam 3 137 kB in 265 ms (≈ 520 kB/s); cam 4 not connected yet | owner, 2026-11-15, step 11 (`s10-core-shot` + `s10-camN`), main @ 875d088. Time = HTTP GET start → file closed: includes the camera's grab and the SD write, cameras asked one after another. 137–155 kB is far below the *1–2.5 MB* estimate for 5 MP at quality 12: check a saved file's pixel size |
 | 2 cameras in parallel | kB/s aggregate | |
 | 4 cameras in parallel | kB/s aggregate | |
 | camera ping (round trip) | 18 ms (cam 1) | owner, 2026-11-15, main @ 875d088. **Not sure**: which host pinged, single value or average |
