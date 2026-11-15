@@ -30,8 +30,6 @@ file(GLOB_RECURSE LVGL_SOURCES ${lvgl_SOURCE_DIR}/src/*.c)
 add_library(lvgl STATIC ${LVGL_SOURCES})
 target_include_directories(lvgl PUBLIC ${lvgl_SOURCE_DIR} ${X4_ROOT}/core/include)
 target_compile_definitions(lvgl PUBLIC LV_CONF_INCLUDE_SIMPLE LV_LVGL_H_INCLUDE_SIMPLE)
-# lv_conf.h is the device one; its LV_COLOR_DEPTH deprecation note is not ours to fix here.
-target_compile_options(lvgl PUBLIC -Wno-cpp)
 
 file(GLOB UI_ASSETS ${X4_ROOT}/core/src/ui/assets/*.c)
 file(GLOB UI_FONTS ${X4_ROOT}/core/src/ui/fonts/*.c)

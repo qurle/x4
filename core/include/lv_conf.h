@@ -3,7 +3,9 @@
 #ifndef LV_CONF_H
 #define LV_CONF_H
 
-#define LV_COLOR_DEPTH 16
+// RGB565 = 16-bit colour (replaces LV_COLOR_DEPTH 16, deprecated in LVGL 9; LVGL derives
+// LV_COLOR_DEPTH from this).
+#define LV_COLOR_FORMAT_DEFAULT LV_COLOR_FORMAT_RGB565
 
 // Use the C library heap (internal RAM + PSRAM via the ESP32 heap caps) instead of LVGL's own
 // fixed pool: widgets and image caches can then spill into the 8 MB PSRAM.
