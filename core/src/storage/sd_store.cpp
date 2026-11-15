@@ -51,6 +51,30 @@ bool begin() {
 
 bool mounted() { return g_mounted; }
 
+bool check() {
+  if (!g_mounted) return false;
+  // 512 B in internal RAM: the SPI driver may DMA into it.
+  static uint8_t* sector = (uint8_t*)heap_caps_malloc(512, MALLOC_CAP_INTERNAL | MALLOC_CAP_DMA);
+  if (!sector) return true;  // can't check: assume it's still there
+  bool ok;
+  {
+    SpiLock l;
+    ok = SD.readRAW(sector, 0);
+  }
+  if (ok) return true;
+  // Pulled out (owner, 2026-11-16: the screen said "SD is full" with no card, because the mounted
+  // flag was never cleared and the free-space query then read 0).
+  {
+    SpiLock l;
+    if (g_logFile) g_logFile.close();
+    SD.end();
+  }
+  g_mounted = false;
+  g_logBytes = 0;
+  X4_LOG_ERR(Warn, "sd", "removed", x4::Err::SD_MOUNT_FAIL, "unmounted=1");
+  return false;
+}
+
 uint64_t freeBytes() {
   if (!g_mounted) return 0;
   SpiLock l;
