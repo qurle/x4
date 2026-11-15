@@ -19,17 +19,17 @@ where the probes go.
 In this order. All of it works with the firmware that's on the boards now (`s10-core-shot` on
 the Core, `s10-camN` on the cameras), except item 6.
 
-| # | what | kind | section | time |
-|---|---|---|---|---|
-| 1 | voltage drop along the + and − leads at rig load | **check** | [rail and joints](#rail-and-joints) | 5 min |
-| 2 | rail voltage at the blocks, idle | **check** | [rail and joints](#rail-and-joints) | 1 min |
-| 3 | switch on/off 10× | **check** | [rig total](#rig-total) | 5 min |
-| 4 | rig current, idle | record | [rig total](#rig-total) | 5 min |
-| 5 | 10 shots: time per camera and per shot | record (target comes with the full firmware) | [shot timing](#shot-timing-target-all-4-stored--5-s) | 5 min |
-| 6 | flash dip, 10 flashes 8 s apart (needs `s07-flash` on the Core: USB swap) | **check** | [flash](#flash) | 10 min |
-| 7 | joints and boards after 10 min powered | **check** (warm OK, hot = stop) | [temperatures](#temperatures-die-from-logs-and-touchir-thermometer-on-the-case) | touch |
-| 8 | current per board | record | [current per device](#current-per-device-5-v-rail) | 15 min |
-| 9 | bank behaviour | record | [bank behaviour](#bank-behaviour) | during the session |
+| what | kind | section | time |
+|---|---|---|---|
+| **1.** voltage drop along the + and − leads at rig load | **check** | [rail and joints](#rail-and-joints) | 5 min |
+| **2.** rail voltage at the blocks, idle | **check** | [rail and joints](#rail-and-joints) | 1 min |
+| **3.** switch on/off 10× | **check** | [rig total](#rig-total) | 5 min |
+| **4.** rig current, idle | record | [rig total](#rig-total) | 5 min |
+| **5.** 10 shots: time per camera and per shot | record (target comes with the full firmware) | [shot timing](#shot-timing-target-all-4-stored--5-s) | 5 min |
+| **6.** flash dip, 10 flashes 8 s apart (needs `s07-flash` on the Core: USB swap) | **check** | [flash](#flash) | 10 min |
+| **7.** joints and boards after 10 min powered | **check** (warm OK, hot = stop) | [temperatures](#temperatures-die-from-logs-and-touchir-thermometer-on-the-case) | touch |
+| **8.** current per board | record | [current per device](#current-per-device-5-v-rail) | 15 min |
+| **9.** bank behaviour | record | [bank behaviour](#bank-behaviour) | during the session |
 
 Later: cam 4 (repeat 1–4 and 8 with it in), the full firmware (step 13: SD speed, shot timing with
 skew, temperatures from logs, UI fps), and anything that needs a scope (peaks, inrush).

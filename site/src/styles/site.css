@@ -602,7 +602,9 @@ nav a[aria-current='page']::before {
   }
 }
 
-/* Tables: Space Mono 13, a 2 px rule under the header, a soft tint on every other row. */
+/* Tables: Space Mono 13, a 2 px rule under the header, a soft tint on every other row.
+   Headers wrap and every column is at least 110 px (six fit the 697 px text column), so a long header next to empty cells can't
+   squeeze a text column down to one word per line; wide tables scroll sideways instead. */
 .prose table {
   display: block;
   overflow-x: auto;
@@ -618,12 +620,12 @@ nav a[aria-current='page']::before {
   text-align: left;
   vertical-align: top;
   padding: 7px 14px 7px 0;
+  min-width: 110px;
 }
 .prose th {
   font-weight: 700;
   color: var(--head);
   border-bottom: var(--frame);
-  white-space: nowrap;
 }
 .prose tbody tr:nth-child(even) {
   background: var(--tint);
