@@ -82,9 +82,9 @@ void request(Request r) {
       g_st.flashArmed = false;
       break;
     case Request::Shutter:
-      if (g_live && !g_shot.active && g_st.state == x4::shoot::State::Preview) {
-        g_shot = {true, g_ms, g_st.flashArmed && g_st.flashReady};
-        x4ui::shutterMoment(g_shot.withFlash);
+      if (!g_shot.active && g_st.state == x4::shoot::State::Preview) {
+        if (g_live) g_shot = {true, g_ms, g_st.flashArmed && g_st.flashReady};  // live: fake progress
+        x4ui::shutterMoment(g_st.flashArmed && g_st.flashReady);                // white-out, like the app
       }
       break;
     default:
@@ -265,6 +265,33 @@ void menuSettingsSwipeAway() {
   drag(160, 200, 120, 200, true);  // swipe the sheet away
 }
 
+// Double tap on the viewfinder (owner, 2026-11-16): fires the shutter. Captured 40 ms later, in
+// the white-out.
+void tapAt(int16_t x, int16_t y, uint32_t holdMs) {
+  g_ptr = {true, x, y};
+  advance(holdMs);
+  g_ptr.down = false;
+}
+void doubleTap() {
+  tapAt(160, 140, 60);
+  advance(120);
+  tapAt(165, 138, 60);
+  advance(40);
+  g_freeze = true;
+}
+// A single tap waits X4_DOUBLE_TAP_MS (300) for a second one: 150 ms after it, no menu yet.
+void singleTapEarly() {
+  tapAt(160, 140, 60);
+  advance(150);
+  g_freeze = true;
+}
+// Two taps too far apart are two single taps: the menu opens and closes again, no shutter.
+void twoTapsFarApart() {
+  tapAt(60, 140, 60);
+  advance(100);
+  tapAt(260, 140, 60);
+}
+
 // Real touch on the orientation tile: exercises touch -> app::setOption -> status -> redraw.
 void tapOrientTile() {
   openSettings();
@@ -324,6 +351,11 @@ const Scene kScenes[] = {
      [](x4core::Status&) {}, swipeShortSlow},
     {"settings_flick", "-", "settings flicked 30 px up fast: back to the viewfinder",
      [](x4core::Status&) {}, flick},
+    {"double_tap", "-", "double tap on the viewfinder: shutter (white-out)", [](x4core::Status&) {}, doubleTap},
+    {"single_tap_early", "-", "150 ms after a single tap: menu not open yet (waits for a second tap)",
+     [](x4core::Status&) {}, singleTapEarly},
+    {"two_taps_far", "-", "two taps 200 px apart: two single taps (menu opens, closes), no shutter",
+     [](x4core::Status&) {}, twoTapsFarApart},
     {"settings_opening", "-", "settings 100 ms after opening: slides down from the top",
      [](x4core::Status&) {}, sheetOpening},
     {"settings_swipe_from_strip", "-", "swipe up from the strip below the screen: settings go away",

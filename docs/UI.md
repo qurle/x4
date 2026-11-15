@@ -73,7 +73,7 @@ above. The serif is only used ≥ 24 px, where its hairlines survive on the 320�
 | **preview: dithered** | Viewfinder, `ui_effect = dithered` | same; each preview frame dithered in place (Bayer 4×4, 4 levels per channel) | photos on SD stay original; each photo records `"effect":"dithered"` for the companion (JPEG comment, docs/PROTOCOL.md#sd-layout-fat32) |
 | **preview: portrait** | Viewfinder, `ui_orient = portrait` | the 180 px centre crop as it is; each side shows a 111 px copy of the frame's **middle** at 30 % over the screen background `#1E1E1E` (left copy at x −41, right at x 250, 70 px of each on screen). The copies are two more `lv_image`s on the same preview buffer: no extra RAM, no copying, and every camera frame reaches them at once (LVGL's image cache is off) | each photo records `"orientation":"portrait"`. Taps on the sides open the menu like anywhere on the photo |
 | **preview: video, not recording / recording** | Viewfinder | footer left block appears (dot + `-:--`), then the recording look | video is not implemented yet: `Status.videoMode` and `Status.recording` are always false, so in v1 the footer shows only the flash charge (when charging) and SD free |
-| **on tap: buttons** | tap menu | 80 px vertical gradient black 80 %→0 (a dithered 8 px image tiled across, see [Dithered gradients](#dithered-gradients)), three cells with serif 32 white labels | tap the photo: fades in (140 ms), auto-hides after 4 s, tap again to hide. A button closes the menu at once when tapped. A swipe over the photo or the menu is not a tap. Only *settings* is shown in v1 (centre cell, Figma position); *video* and *media* are hidden (owner, 2026-11-01) |
+| **on tap: buttons** | tap menu | 80 px vertical gradient black 80 %→0 (a dithered 8 px image tiled across, see [Dithered gradients](#dithered-gradients)), three cells with serif 32 white labels | tap the photo: fades in (140 ms) once no second tap followed within `X4_DOUBLE_TAP_MS` (300 ms, see [Double tap](#double-tap-shutter)), auto-hides after 4 s, tap again to hide. A button closes the menu at once when tapped. A swipe over the photo or the menu is not a tap. Only *settings* is shown in v1 (centre cell, Figma position); *video* and *media* are hidden (owner, 2026-11-01) |
 | **settings** | a full-screen sheet on the viewfinder (not a separate screen) | `#D1D1D1` sheet, four 140×100 tiles with 2 px ink frames | slides **down from the top** (260 ms; owner, 2026-11-16). **Swipe up to send it away**, also from the strip below the screen: the sheet follows the finger up and the live viewfinder shows underneath; let go after 60 px or with a flick (≥ 0.5 px/ms, ASSUMPTION: tune on the panel) and it slides back up, otherwise it eases back. A touch that moves 8 px becomes a swipe (vertical) or a cam delay drag (horizontal), never a tap. Back (the [back zone](#touch-the-strip-below-the-screen)) and the shutter also close it (it slides up). No swipe opens it: only the menu's *settings* button. While it's fully open the viewfinder under it isn't redrawn |
 | settings · orientation | tile 1 (83:2168) | black bars 140×25 top + bottom (`horzntl`) or 30×100 left + right (`vertcl`), serif 36 centred | tap toggles |
 | settings · cam delay | tile 2 (83:2173) | black fill from the left, width = delay / 1 s (0 → 1 px, 0.2 s → 28, 0.8 s → 112, 1 s → 140); value serif 36, right edge 8 px in, white over the fill and `#2E2E2E` over the grey | tap, or drag sideways across the tile: 0, 0.2 … 1.0 s; the fill springs to its width (420 ms overshoot) |
@@ -105,6 +105,19 @@ picture (y 240–279). With the Core mounted upside down that strip is at the to
   2026-11-16).
 - Global vertical touch swipes are unbound: a swipe up used to send `menu` as well as closing the
   sheet, so the two fought (it reopened settings or jumped to diagnostics).
+
+### Double tap: shutter
+
+Two taps on the viewfinder fire the shutter (owner, 2026-11-16), so a single tap has to wait to
+see whether a second one follows.
+
+- **Double tap:** the second tap ends within `X4_DOUBLE_TAP_MS` of the first and lands within
+  40 px of it. Shutter, exactly like the button (`app::request(Shutter)`); the menu doesn't open.
+- **Single tap:** toggles the menu after that wait, so the menu appears ~300 ms later than before.
+- **Two taps far apart** count as two single taps.
+- A shot from the button cancels a tap that is still waiting, so the menu doesn't pop up after it.
+- **Build-time setting, not a menu option:** `-DX4_DOUBLE_TAP_MS=300` in `core/platformio.ini`
+  (`[env:core]`). `0` turns double tap off and the menu answers at once.
 
 ### Dithered gradients
 

@@ -248,6 +248,8 @@ struct {
     int16_t x0 = 0, y0 = 0, x = 0, y = 0;
   } raw;
   bool backPending = false;  // a tap in the back zone; acted on in update(), outside LVGL's input read
+  lv_timer_t* tapTimer = nullptr;  // viewfinder: a first tap waiting to see if a second one follows
+  lv_point_t tapAt{};
   struct {
     lv_point_t start{};
     int mode = 0;          // 0 = not moved (a tap), 1 = vertical swipe, 2 = horizontal (cam delay)
@@ -299,8 +301,49 @@ void hideMenuNow() {  // a menu button was used: the menu goes at once, not afte
   lv_obj_set_style_opa(g.menu, LV_OPA_COVER, 0);
 }
 
+// ---- double tap = shutter (owner, 2026-11-16). A single tap still toggles the menu, but only once
+// no second tap came within X4_DOUBLE_TAP_MS. Build-time setting, not a menu option:
+//   build_flags = -DX4_DOUBLE_TAP_MS=250    (0 = no double tap, the menu answers at once)
+#ifndef X4_DOUBLE_TAP_MS
+#define X4_DOUBLE_TAP_MS 300
+#endif
+constexpr uint32_t kDoubleTapMs = X4_DOUBLE_TAP_MS;
+constexpr int32_t kDoubleTapSlopPx = 40;  // the second tap must land this close to the first
+
+void toggleMenu();
+
+void cancelPendingTap() {
+  if (g.tapTimer) lv_timer_delete(g.tapTimer);
+  g.tapTimer = nullptr;
+}
+
 void onViewfinderTap(lv_event_t*) {
   if (!isTap()) return;  // a swipe over the photo is not a tap (LVGL still sends CLICKED)
+  if (kDoubleTapMs == 0) {
+    toggleMenu();
+    return;
+  }
+  lv_point_t p{g.raw.x, g.raw.y};
+  if (g.tapTimer) {  // second tap within the window
+    cancelPendingTap();
+    if (LV_ABS(p.x - g.tapAt.x) <= kDoubleTapSlopPx && LV_ABS(p.y - g.tapAt.y) <= kDoubleTapSlopPx) {
+      X4_LOGI("ui", "double_tap", "x=%d y=%d", (int)p.x, (int)p.y);
+      app::request(app::Request::Shutter);
+      return;
+    }
+    toggleMenu();  // too far apart: the first was a single tap after all; this one starts over
+  }
+  g.tapAt = p;
+  g.tapTimer = lv_timer_create(
+      [](lv_timer_t*) {
+        g.tapTimer = nullptr;  // repeat count 1: LVGL deletes the timer after this call
+        toggleMenu();
+      },
+      kDoubleTapMs, nullptr);
+  lv_timer_set_repeat_count(g.tapTimer, 1);
+}
+
+void toggleMenu() {
   bool open = !lv_obj_is_hidden(g.menu);
   if (open) {
     hideMenu();
@@ -1076,6 +1119,7 @@ void onAction(const x4::input::Event& e) {
 }
 
 void shutterMoment(bool flash) {
+  cancelPendingTap();  // a tap waiting for its second half must not open the menu after the shot
   lv_anim_delete(g.whiteout, animBgOpa);
   anim(g.whiteout, animBgOpa, flash ? LV_OPA_COVER : LV_OPA_70, LV_OPA_TRANSP, kMsSlow, pathBase());
   beep(2600, 18, 1300, 30);
