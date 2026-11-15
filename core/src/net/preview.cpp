@@ -65,9 +65,15 @@ void previewTask(void*) {
             g_seq++;
             xSemaphoreGive(g_mu);
             frames++;
+          } else {
+            X4_LOG_EVERY(5000, x4::log::Level::Warn, "preview", "short_read", "cam=%u got=%d of=%d", g_cam, got, size);
+            s->stop();  // the rest of the body is still on the socket: don't reuse it
           }
         } else {
           X4_LOG_EVERY(5000, x4::log::Level::Warn, "preview", "fetch", "cam=%u http=%d size=%d", g_cam, code, size);
+          // The body (if any) was not read: close the connection, or the next request on this
+          // kept-alive socket reads the leftovers as its reply (http=-7, "no HTTP server").
+          if (WiFiClient* s = http.getStreamPtr()) s->stop();
         }
         http.end();
       }

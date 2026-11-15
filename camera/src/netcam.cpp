@@ -273,13 +273,10 @@ esp_err_t sendFrame(httpd_req_t* req, const uint8_t* buf, size_t len, const char
   cors(req);
   httpd_resp_set_type(req, "image/jpeg");
   if (extraKey) httpd_resp_set_hdr(req, extraKey, extraVal);
-  // Send in 16 KB pieces so one big frame does not need one huge socket buffer.
-  constexpr size_t kPiece = 16 * 1024;
-  for (size_t off = 0; off < len; off += kPiece) {
-    size_t n = len - off < kPiece ? len - off : kPiece;
-    if (httpd_resp_send_chunk(req, (const char*)buf + off, n) != ESP_OK) return ESP_FAIL;
-  }
-  return httpd_resp_send_chunk(req, nullptr, 0);
+  // One httpd_resp_send: it sets Content-Length (the Core's preview needs it to know the frame is
+  // complete) and streams the buffer itself. Chunked sends had no length, so the Core dropped every
+  // preview frame (preview fetch http=200 size=-1).
+  return httpd_resp_send(req, (const char*)buf, len);
 }
 
 esp_err_t hCapture(httpd_req_t* req) {
