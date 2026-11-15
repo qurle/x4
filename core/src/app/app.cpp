@@ -318,7 +318,7 @@ void thermal(uint32_t now) {
 void sdCheck(uint32_t now) {
   if (g_lastSd && now - g_lastSd < 10000) return;
   g_lastSd = now;
-  bool mounted = sd::mounted();
+  bool mounted = sd::check();  // a pulled card is noticed here and unmounted
   if (!mounted && g_mode == Mode::Full) mounted = sd::begin();  // card inserted later
   g_sdFreeMb = (uint32_t)(sd::freeBytes() >> 20);
   g_sdTotalMb = (uint32_t)(sd::totalBytes() >> 20);

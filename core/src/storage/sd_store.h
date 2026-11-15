@@ -15,6 +15,10 @@ constexpr size_t kChunk = 16 * 1024;
 
 bool begin();          // mount (retries once); creates /x4, /x4/logs
 bool mounted();
+// Is the card still there? Reads one raw sector (FatFs's cached values don't notice a pulled card).
+// If the read fails: closes the log file, unmounts and returns false, so the app shows "No SD card"
+// and remounts with begin() when a card goes back in. Call every few seconds, not per frame.
+bool check();
 uint64_t freeBytes();
 uint64_t totalBytes();
 const char* cardTypeName();
