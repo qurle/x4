@@ -1,6 +1,6 @@
 # Measurements
 
-Mostly empty still: so far only step 15 round 1 and the ping/RSSI rows in Throughput. Fill the tables with a multimeter (current:
+Mostly empty still: so far step 15 round 1 and a few rows in Throughput. Fill the tables with a multimeter (current:
 across the open rail switch, [STEPS: measuring current](STEPS.md#measuring-current)), the
 serial log (`tools/x4log.py`) and the web page. Keep the date and
 firmware git hash on every row. Estimates from the brief are in *italics*.
@@ -109,7 +109,7 @@ Best setting with a sharp hand: ___ ; at that setting the photo is ___ .
 | HD 1280×720 | | | | | |
 | UXGA 1600×1200 | | | | | |
 | FHD 1920×1080 | | | | | |
-| **5MP 2592×1944** | *1–2.5 MB* | | | | |
+| **5MP 2592×1944** | *1–2.5 MB*; step 10 saw 137–155 kB (2026-11-15, size not checked) | | | | 12 |
 
 ## Shot timing (target: all 4 stored ≤ 5 s)
 
@@ -125,10 +125,10 @@ From `python tools/x4log.py core.log --shots` and the web page.
 |---|---|---|
 | SD write speed (bench, 1 MB, 16 KB chunks) | kB/s | `evt=bench` / web *SD speed test* |
 | SD read speed | kB/s | |
-| one camera → Core HTTP (5 MP) | kB/s | `evt=done kBps=` |
+| one camera → Core HTTP (5 MP) | cam 1: 155 kB in 531 ms (≈ 290 kB/s); cam 2: 148 kB in 304 ms (≈ 490 kB/s); cam 3: 137 kB in 265 ms (≈ 520 kB/s); cam 4: not connected yet | owner, 2026-11-15, step 10 (`s10-core-shot` + `s10-camN`), main @ 875d088. Time = HTTP GET start → file closed: includes the camera's grab and the SD write, cameras asked one after another. **Not sure** why cam 1 is slower (first in line? signal?). 137–155 kB is far below the *1–2.5 MB* estimate for 5 MP at quality 12: check a saved file's pixel size |
 | 2 cameras in parallel | kB/s aggregate | |
 | 4 cameras in parallel | kB/s aggregate | |
-| camera ping (round trip) | 18 ms | owner, 2026-11-15, main @ 875d088. **Not sure**: which camera, from which host, how many pings (single value or average) |
+| camera ping (round trip) | 18 ms (cam 1) | owner, 2026-11-15, main @ 875d088. **Not sure**: which host pinged, single value or average |
 | SoftAP RSSI per camera at rig distance | 26 (as reported) | owner, 2026-11-15, main @ 875d088. `WiFi.RSSI()` is negative dBm, so this is most likely −26 dBm (very strong, camera close to the Core). **Not sure**: sign, which camera, distance. `/api/status` |
 | photo save time, empty card vs ~10k files in `/x4` | ms per photo | flat folder: each new file scans the whole folder (ADR-019). `evt=done ms=` |
 
