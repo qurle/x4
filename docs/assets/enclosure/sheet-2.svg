@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="210.0mm" height="297.0mm" viewBox="0 0 210.0 297.0" font-family="Helvetica, Arial, sans-serif">
+<style>.cut{fill:none;stroke:#000;stroke-width:0.3}.mark{fill:none;stroke:#000;stroke-width:0.25;stroke-dasharray:1.5 1}.ctr{stroke:#000;stroke-width:0.15}.sm{font-size:2.6px}.lbl{font-size:3.3px}.big{font-size:5px;font-weight:bold}</style>
+<text x="10.00" y="11.00" class="big" text-anchor="start">x4cam body — camera block, posts, spacer strips, flash pad</text>
+<text x="10.00" y="16.00" class="sm" text-anchor="start">sheet 2/3 · 3 mm foam board · print at 100 % (actual size), check the 50 mm bar</text>
+<polygon points="14.00,24.00 103.50,24.00 103.50,43.00 14.00,43.00" class="cut"/>
+<text x="58.75" y="47.00" class="lbl" text-anchor="middle">B1 · TOP BAR (front layers)</text>
+<polygon points="14.00,55.00 103.50,55.00 103.50,74.00 14.00,74.00" class="cut"/>
+<text x="58.75" y="78.00" class="lbl" text-anchor="middle">B2 · TOP BAR (front layers)</text>
+<polygon points="14.00,86.00 103.50,86.00 103.50,103.00 128.00,103.00 128.00,105.00 14.00,105.00" class="cut"/>
+<text x="14.00" y="109.00" class="lbl" text-anchor="start">B3 · TOP BAR (back layer, with the 2 mm lip over camera 4)</text>
+<polygon points="142.00,24.00 158.00,24.00 158.00,44.00 142.00,44.00" class="cut"/>
+<text x="150.00" y="48.00" class="sm" text-anchor="middle">P1</text>
+<polygon points="168.00,24.00 184.00,24.00 184.00,44.00 168.00,44.00" class="cut"/>
+<text x="176.00" y="48.00" class="sm" text-anchor="middle">P2</text>
+<text x="14.00" y="125.00" class="lbl" text-anchor="start">F1–F2 · POST STRIPS: laminate, then cut the 5 dashed notches</text>
+<rect x="14.00" y="127.00" width="114.00" height="3.50" class="cut"/>
+<rect x="20.05" y="127.00" width="12.00" height="3.50" class="mark"/>
+<rect x="44.15" y="127.00" width="12.00" height="3.50" class="mark"/>
+<rect x="68.25" y="127.00" width="12.00" height="3.50" class="mark"/>
+<rect x="92.35" y="127.00" width="12.00" height="3.50" class="mark"/>
+<text x="130.00" y="130.00" class="sm" text-anchor="start">F1</text>
+<rect x="14.00" y="136.50" width="114.00" height="3.50" class="cut"/>
+<rect x="20.05" y="136.50" width="12.00" height="3.50" class="mark"/>
+<rect x="44.15" y="136.50" width="12.00" height="3.50" class="mark"/>
+<rect x="68.25" y="136.50" width="12.00" height="3.50" class="mark"/>
+<rect x="92.35" y="136.50" width="12.00" height="3.50" class="mark"/>
+<text x="130.00" y="139.50" class="sm" text-anchor="start">F2</text>
+<text x="14.00" y="167.50" class="lbl" text-anchor="start">C · SPACER STRIPS × 8: two per camera</text>
+<rect x="14.00" y="169.50" width="40.10" height="4" class="cut"/>
+<rect x="57.10" y="169.50" width="40.10" height="4" class="cut"/>
+<rect x="14.00" y="176.50" width="40.10" height="4" class="cut"/>
+<rect x="57.10" y="176.50" width="40.10" height="4" class="cut"/>
+<rect x="14.00" y="183.50" width="40.10" height="4" class="cut"/>
+<rect x="57.10" y="183.50" width="40.10" height="4" class="cut"/>
+<rect x="14.00" y="190.50" width="40.10" height="4" class="cut"/>
+<rect x="57.10" y="190.50" width="40.10" height="4" class="cut"/>
+<rect x="10.0" y="279.0" width="50" height="2" fill="#000"/>
+<text x="10.00" y="277.50" class="sm" text-anchor="start">50 mm: measure before cutting</text>
+<rect x="70.0" y="273.0" width="10" height="10" class="cut"/>
+<text x="82.00" y="280.00" class="sm" text-anchor="start">10 mm</text>
+<text x="200.00" y="280.00" class="sm" text-anchor="end">solid = cut through · dashed = mark from your real part · + = centre</text>
+</svg>

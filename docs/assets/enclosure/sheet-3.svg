@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="210.0mm" height="297.0mm" viewBox="0 0 210.0 297.0" font-family="Helvetica, Arial, sans-serif">
+<style>.cut{fill:none;stroke:#000;stroke-width:0.3}.mark{fill:none;stroke:#000;stroke-width:0.25;stroke-dasharray:1.5 1}.ctr{stroke:#000;stroke-width:0.15}.sm{font-size:2.6px}.lbl{font-size:3.3px}.big{font-size:5px;font-weight:bold}</style>
+<text x="10.00" y="11.00" class="big" text-anchor="start">x4cam body — top, bottom, walls</text>
+<text x="10.00" y="16.00" class="sm" text-anchor="start">sheet 3/3 · 3 mm foam board · print at 100 % (actual size), check the 50 mm bar</text>
+<polygon points="26.25,24.00 183.75,24.00 183.75,50.00 26.25,50.00" class="cut"/>
+<rect x="78.75" y="38.00" width="8.10" height="3.00" class="cut"/>
+<rect x="94.85" y="38.00" width="16.10" height="3.00" class="cut"/>
+<rect x="118.95" y="38.00" width="16.10" height="3.00" class="cut"/>
+<rect x="143.05" y="38.00" width="16.10" height="3.00" class="cut"/>
+<rect x="67.25" y="36.00" width="9.00" height="5.00" class="cut"/>
+<rect x="99.75" y="26.00" width="38.40" height="10.00" class="mark"/>
+<rect x="29.00" y="25.00" width="32.00" height="24.00" class="mark"/>
+<text x="29.25" y="22.50" class="lbl" text-anchor="start">T · TOP (outside face; FRONT edge = bottom of this drawing) · 4 exhaust slots over the gap</text>
+<text x="100.75" y="32.00" class="sm" text-anchor="start">Core SD / button: mark from Core</text>
+<text x="31.25" y="38.00" class="sm" text-anchor="start">Mini Button sits here</text>
+<text x="67.25" y="44.00" class="sm" text-anchor="start">button cable</text>
+<polygon points="26.25,64.00 183.75,64.00 183.75,90.00 26.25,90.00" class="cut"/>
+<text x="29.25" y="62.50" class="lbl" text-anchor="start">G · BOTTOM (front edge = bottom of this drawing)</text>
+<polygon points="26.25,104.00 52.25,104.00 52.25,181.50 26.25,181.50" class="cut"/>
+<rect x="35.00" y="139.00" width="4.50" height="10.00" class="cut"/>
+<line x1="35.25" y1="144.00" x2="39.25" y2="144.00" class="ctr"/><line x1="37.25" y1="142.00" x2="37.25" y2="146.00" class="ctr"/>
+<text x="39.25" y="185.50" class="lbl" text-anchor="middle">M · MIDDLE WALL</text>
+<text x="39.25" y="189.00" class="sm" text-anchor="middle">socket hole: check vs your bank</text>
+<text x="27.25" y="108.00" class="sm" text-anchor="start">← back</text>
+<text x="51.25" y="108.00" class="sm" text-anchor="end">front →</text>
+<polygon points="68.25,104.00 94.25,104.00 94.25,181.50 68.25,181.50" class="cut"/>
+<rect x="72.25" y="165.60" width="18.00" height="3.00" class="cut"/>
+<rect x="72.25" y="169.60" width="18.00" height="3.00" class="cut"/>
+<text x="81.25" y="185.50" class="lbl" text-anchor="middle">R · RIGHT WALL</text>
+<text x="81.25" y="189.00" class="sm" text-anchor="middle">2 intake slots</text>
+<text x="69.25" y="108.00" class="sm" text-anchor="start">← front</text>
+<text x="93.25" y="108.00" class="sm" text-anchor="end">back →</text>
+<rect x="10.0" y="279.0" width="50" height="2" fill="#000"/>
+<text x="10.00" y="277.50" class="sm" text-anchor="start">50 mm: measure before cutting</text>
+<rect x="70.0" y="273.0" width="10" height="10" class="cut"/>
+<text x="82.00" y="280.00" class="sm" text-anchor="start">10 mm</text>
+<text x="200.00" y="280.00" class="sm" text-anchor="end">solid = cut through · dashed = mark from your real part · + = centre</text>
+</svg>

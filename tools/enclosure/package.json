@@ -1,0 +1,12 @@
+{
+  "name": "x4cam-enclosure",
+  "private": true,
+  "description": "Foam-board body: 1:1 templates, 3D step page, step pictures and PDF (docs/ENCLOSURE.md)",
+  "scripts": {
+    "build": "python3 gen.py && node build.mjs && node render.cjs"
+  },
+  "dependencies": {
+    "esbuild": "^0.28.2",
+    "three": "^0.187.0"
+  }
+}

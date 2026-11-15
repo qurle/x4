@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="210.0mm" height="297.0mm" viewBox="0 0 210.0 297.0" font-family="Helvetica, Arial, sans-serif">
+<style>.cut{fill:none;stroke:#000;stroke-width:0.3}.mark{fill:none;stroke:#000;stroke-width:0.25;stroke-dasharray:1.5 1}.ctr{stroke:#000;stroke-width:0.15}.sm{font-size:2.6px}.lbl{font-size:3.3px}.big{font-size:5px;font-weight:bold}</style>
+<text x="10.00" y="11.00" class="big" text-anchor="start">x4cam body — front, door, sleeve back</text>
+<text x="10.00" y="16.00" class="sm" text-anchor="start">sheet 1/3 · 3 mm foam board · print at 100 % (actual size), check the 50 mm bar</text>
+<polygon points="26.25,22.00 183.75,22.00 183.75,105.50 26.25,105.50" class="cut"/>
+<circle cx="78.80" cy="57.60" r="7.25" class="cut"/><line x1="76.80" y1="57.60" x2="80.80" y2="57.60" class="ctr"/><line x1="78.80" y1="55.60" x2="78.80" y2="59.60" class="ctr"/>
+<circle cx="102.90" cy="57.60" r="7.25" class="cut"/><line x1="100.90" y1="57.60" x2="104.90" y2="57.60" class="ctr"/><line x1="102.90" y1="55.60" x2="102.90" y2="59.60" class="ctr"/>
+<circle cx="127.00" cy="57.60" r="7.25" class="cut"/><line x1="125.00" y1="57.60" x2="129.00" y2="57.60" class="ctr"/><line x1="127.00" y1="55.60" x2="127.00" y2="59.60" class="ctr"/>
+<circle cx="151.10" cy="57.60" r="7.25" class="cut"/><line x1="149.10" y1="57.60" x2="153.10" y2="57.60" class="ctr"/><line x1="151.10" y1="55.60" x2="151.10" y2="59.60" class="ctr"/>
+<rect x="156.25" y="26.50" width="23.00" height="16.00" rx="3.00" class="cut"/>
+<text x="29.25" y="102.50" class="lbl" text-anchor="start">A · FRONT (outside face) · 4 lens holes Ø14.5, 24.1 apart · flash window over camera 4</text>
+<text x="29.25" y="97.50" class="sm" text-anchor="start">left 37.5 mm = bank sleeve</text>
+<polygon points="14.00,125.50 134.00,125.50 134.00,209.00 14.00,209.00" class="cut"/>
+<rect x="51.60" y="128.50" width="54.40" height="54.40" class="cut"/>
+<rect x="119.50" y="133.75" width="8.00" height="13.50" class="mark"/>
+<line x1="121.50" y1="140.50" x2="125.50" y2="140.50" class="ctr"/><line x1="123.50" y1="138.50" x2="123.50" y2="142.50" class="ctr"/>
+<rect x="22.00" y="134.50" width="16.00" height="20.00" class="mark"/>
+<text x="17.00" y="206.00" class="lbl" text-anchor="start">D · DOOR (outside face, seen from the back) · window = full Core outline</text>
+<text x="17.00" y="201.00" class="sm" text-anchor="start">dashed, mark from your parts: switch (top right) · flash pad P1+P2 (inside face, top left)</text>
+<text x="30.00" y="158.50" class="sm" text-anchor="middle">flash pad P (inside)</text>
+<polygon points="146.00,125.50 183.50,125.50 183.50,209.00 146.00,209.00" class="cut"/>
+<text x="148.00" y="206.00" class="lbl" text-anchor="start">K · SLEEVE BACK</text>
+<rect x="10.0" y="279.0" width="50" height="2" fill="#000"/>
+<text x="10.00" y="277.50" class="sm" text-anchor="start">50 mm: measure before cutting</text>
+<rect x="70.0" y="273.0" width="10" height="10" class="cut"/>
+<text x="82.00" y="280.00" class="sm" text-anchor="start">10 mm</text>
+<text x="200.00" y="280.00" class="sm" text-anchor="end">solid = cut through · dashed = mark from your real part · + = centre</text>
+</svg>

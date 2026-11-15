@@ -983,7 +983,8 @@ means the camera refused the write.
 
 ## Workshop F: into the box
 
-Once everything works on the bench, mount it in the v1 shell ([ENCLOSURE](ENCLOSURE.md#v1-foam-board--cardboard)):
+Once everything works on the bench, build the v1 body and mount it: step-by-step with pictures and
+1:1 templates in [ENCLOSURE](ENCLOSURE.md#v1-foam-board-body):
 - the four cameras on one **rigid strip**, so their positions don't change between shots;
 - **matte black sleeves** around every lens and the flash;
 - **vents** near the cameras and the Core;
