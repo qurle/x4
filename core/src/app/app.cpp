@@ -520,9 +520,13 @@ void loop() {
   if (g_mode == Mode::Full) {
     x4::proto::ShotAck a;
     while (net::nextAck(&a)) {
-      X4_LOGI("shoot", "ack", "cam=%u shot=%lu ok=%d bytes=%lu cap_ms=%lu cap_vs_at_us=%lld", a.cam, (unsigned long)a.shot,
-              a.ok, (unsigned long)a.bytes, (unsigned long)a.capMs,
-              (long long)(a.capCoreUs - g_ctl.session().atUs));
+      // A failed capture has no capture time: don't print a meaningless offset for it.
+      if (a.ok)
+        X4_LOGI("shoot", "ack", "cam=%u shot=%lu ok=1 bytes=%lu cap_ms=%lu cap_vs_at_us=%lld", a.cam, (unsigned long)a.shot,
+                (unsigned long)a.bytes, (unsigned long)a.capMs, (long long)(a.capCoreUs - g_ctl.session().atUs));
+      else
+        X4_LOGW("shoot", "ack", "cam=%u shot=%lu ok=0 cap_ms=%lu err=%u", a.cam, (unsigned long)a.shot,
+                (unsigned long)a.capMs, (unsigned)a.err);
       handleEffects(g_ctl.onAck(a, now));
     }
     net::XferResult r;

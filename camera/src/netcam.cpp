@@ -136,7 +136,7 @@ void shooterTask(void*) {
     sendCore(out, len);  // ACKs are tiny: send twice instead of waiting for a retry
     X4_LOG(r.ok ? x4::log::Level::Info : x4::log::Level::Error, "shoot", "captured",
            "shot=%lu ok=%d bytes=%lu cap_ms=%lu vs_plan_us=%lld rx_lead_us=%lld err=%u", (unsigned long)r.shot, r.ok,
-           (unsigned long)r.bytes, (unsigned long)r.capMs, (long long)(localAt ? r.capLocalUs - localAt : 0),
+           (unsigned long)r.bytes, (unsigned long)r.capMs, (long long)(localAt && r.ok ? r.capLocalUs - localAt : 0),
            (long long)(localAt ? localAt - r.rxLocalUs : 0), r.err);
   }
 }
