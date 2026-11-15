@@ -21,8 +21,7 @@
 | [DECISIONS.md](DECISIONS.md) | ADRs incl. rejected options |
 | [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md) | what is still open, with the default used now |
 | [COMPANION.md](COMPANION.md) | web page now, Flutter later, platform constraints |
-| [ENCLOSURE.md](ENCLOSURE.md) | v1 foam board, v2 acrylic, light and heat |
-| [BODY.md](BODY.md) | v1 foam-board body: 1:1 templates, dimensions with sources, stiffness, gluing, vents, finishing |
+| [ENCLOSURE.md](ENCLOSURE.md) | v1 foam-board body: step-by-step build with pictures, 1:1 templates, 3D page, PDF; v2 acrylic; light and heat |
 | [BRIEF.md](BRIEF.md) | the original kickoff brief, verbatim |
 
 The same docs as a website with a landing page and rendered diagrams: [`site/`](../site/README.md),

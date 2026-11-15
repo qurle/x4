@@ -41,6 +41,7 @@ cd steps && pio run                              # 16 bring-up envs (slow, ~5 mi
 python tools/gen_docs.py --check && python tools/gen_tokens.py --check && python tools/gen_figma_assets.py --check && python tools/gen_assets.py --check
 python tools/ui_sim/run.py                       # UI on the PC vs Figma: look at tools/ui_sim/out/index.html
 cd site && npm ci && npm run build               # website: landing page + docs/
+cd tools/enclosure && npm ci && python3 gen.py && node build.mjs && node render.cjs   # foam-board body: templates, 3D page, pictures, PDF
 ```
 
 - Config options live in `shared/include/x4/config_schema.def`; `docs/CONFIG.md` is generated
