@@ -1,6 +1,6 @@
 # Measurements
 
-Nothing here is measured yet (no boards on hand). Fill the tables with a multimeter (current:
+Mostly empty still: so far only step 15 round 1 and the ping/RSSI rows in Throughput. Fill the tables with a multimeter (current:
 across the open rail switch, [STEPS: measuring current](STEPS.md#measuring-current)), the
 serial log (`tools/x4log.py`) and the web page. Keep the date and
 firmware git hash on every row. Estimates from the brief are in *italics*.
@@ -128,7 +128,8 @@ From `python tools/x4log.py core.log --shots` and the web page.
 | one camera → Core HTTP (5 MP) | kB/s | `evt=done kBps=` |
 | 2 cameras in parallel | kB/s aggregate | |
 | 4 cameras in parallel | kB/s aggregate | |
-| SoftAP RSSI per camera at rig distance | dBm | `/api/status` |
+| camera ping (round trip) | 18 ms | owner, 2026-11-15, main @ 875d088. **Not sure**: which camera, from which host, how many pings (single value or average) |
+| SoftAP RSSI per camera at rig distance | 26 (as reported) | owner, 2026-11-15, main @ 875d088. `WiFi.RSSI()` is negative dBm, so this is most likely −26 dBm (very strong, camera close to the Core). **Not sure**: sign, which camera, distance. `/api/status` |
 | photo save time, empty card vs ~10k files in `/x4` | ms per photo | flat folder: each new file scans the whole folder (ADR-019). `evt=done ms=` |
 
 ## Effects on the camera (STEPS step 14, planned)
