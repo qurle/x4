@@ -1,8 +1,15 @@
 // x4 firmware identity. Shared by the Core and the camera firmware.
 #pragma once
 
-// Semantic version of the firmware. Bump on every release you flash to more than one board.
-#define X4_FW_VERSION "0.1.0"
+// Firmware version = the last merged pull request that changed the firmware (core/, camera/ or
+// shared/), e.g. "#37", "#37+" (later commits), "#37+dirty" (uncommitted changes) or "#?" (no
+// merge history). Worked out at build time by tools/pio_git_rev.py from the git history, so there
+// is nothing to bump by hand (owner, 2026-11-16). Builds without that script (native tests, the
+// UI simulator) get "#?".
+#ifndef X4_FW_PR
+#define X4_FW_PR "#?"
+#endif
+#define X4_FW_VERSION X4_FW_PR
 
 // Injected by tools/pio_git_rev.py (extra_scripts) as -DX4_GIT_HASH=\"abc1234\".
 #ifndef X4_GIT_HASH

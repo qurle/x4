@@ -80,7 +80,7 @@ Cameras: `--upload-port x4cam-cam2.local` or their IP (shown on the web page). O
 
 Core: flash `core-hello`. Expected serial lines (abridged):
 ```
-t=812 lvl=INFO dev=core mod=boot evt=start fw=0.1.0 git=abc1234
+t=812 lvl=INFO dev=core mod=boot evt=start fw=#37 git=abc1234
 t=905 lvl=INFO dev=core mod=power evt=state when=boot bus_out_en=0 usb_otg_en=0 boost_en=0 vbus_mv=50xx … safe=1
 t=930 lvl=INFO dev=core mod=boot evt=chip model=esp32s3 rev=… flash_mb=16 psram_mb=8 … board=…
 t=931 lvl=INFO dev=core mod=boot evt=reset reason=poweron boot_count=1 brownouts_total=0

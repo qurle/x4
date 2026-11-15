@@ -20,8 +20,29 @@ camera: local `camera/boards/m5stack-unitcams3.json` (QIO flash + **OPI PSRAM**,
 `m5stack_unit_cams3`, USB CDC on boot), confirmed `qio_opi` in the build.
 
 Build flags of note: `-std=gnu++17`, `-DLV_CONF_INCLUDE_SIMPLE`, `-DLV_LVGL_H_INCLUDE_SIMPLE`,
-`-DX4_GIT_HASH=…` (from `tools/pio_git_rev.py`), `-DX4_CAM_ID=N` per camera env,
+`-DX4_GIT_HASH=…` and `-DX4_FW_PR=…` (from `tools/pio_git_rev.py`), `-DX4_CAM_ID=N` per camera env,
 `-DX4_APP_HELLO=1` / `-DX4_APP_HELLO_UI=1` / `-DX4_CAM_HELLO=1` for the Stage 0 builds.
+
+### Firmware version
+
+The firmware version is the **last merged pull request that changed the firmware**, i.e. touched
+`core/`, `camera/` or `shared/` (owner, 2026-11-16). PRs that only change docs, steps or tools
+don't move it. It's one number for the whole firmware, so a Core and four cameras built from the
+same checkout all show the same. `tools/pio_git_rev.py` works it out from the git history at build
+time, so there's nothing to bump by hand:
+
+| shown | means |
+|---|---|
+| `#37` | built from exactly what PR #37 left |
+| `#37+` | firmware changed by commits after #37 (a branch, or local commits) |
+| `#37+dirty` | uncommitted firmware changes in the checkout |
+| `#?` | no merge history to read (a ZIP download, a shallow clone), or a native/simulator build |
+
+Both GitHub merge commits ("Merge pull request #N") and squash merges ("… (#N)") count. It shows
+on the splash, in the boot banner (`fw=`), `/info`, camera registration, the web dashboard and the
+Diagnostics screen. A camera whose version differs from the Core's is red on the dashboard and
+marked `!` on the Diagnostics screen. It's also recorded in every photo (`fw` in the JPEG comment).
+The git hash stays next to it for the exact commit.
 
 ## Repository layout
 

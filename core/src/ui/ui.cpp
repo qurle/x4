@@ -1018,9 +1018,12 @@ void updateDiag(const Status& s, uint32_t now) {
   size_t w = 0;
   for (int i = 0; i < 4 && w < sizeof(b); i++) {
     const auto& cv = s.cam[i];
-    w += snprintf(b + w, sizeof(b) - w, "cam%d %s %s %d° rssi %d hb %lums last %s %+.1fms\n", i + 1,
-                  cv.online ? "on " : "off", cv.ip, cv.tempC, cv.rssi, (unsigned long)cv.lastHbAgeMs,
-                  cv.stored ? "stored" : cv.failed ? "failed" : cv.ok ? "captured" : "-", cv.capOffsetUs / 1000.0f);
+    // fw = the camera's firmware version (a PR number); "!" when it differs from the Core's.
+    bool fwOdd = cv.online && strcmp(cv.fw, X4_FW_VERSION) != 0;
+    w += snprintf(b + w, sizeof(b) - w, "cam%d %s %s %s%s %d° rssi %d hb %lums last %s %+.1fms\n", i + 1,
+                  cv.online ? "on " : "off", cv.ip, cv.fw[0] ? cv.fw : "-", fwOdd ? "!" : "", cv.tempC, cv.rssi,
+                  (unsigned long)cv.lastHbAgeMs, cv.stored ? "stored" : cv.failed ? "failed" : cv.ok ? "captured" : "-",
+                  cv.capOffsetUs / 1000.0f);
   }
   if (w < sizeof(b))
     snprintf(b + w, sizeof(b) - w, "last shot #%lu: %d/%d in %lums · skew %.1fms · stations %d",
