@@ -78,14 +78,27 @@ One row per shot from the step 15 page (its table, or the `exp shot` serial line
 "living room, 2 ceiling lamps", "daylight window". Sharp = a waving hand / spinning fan looks
 frozen.
 
-| light | MHz | size | comp | agc | gain | ae | exp | frame ms | brightness (dark / ok / bright) | motion (blurred / soft / sharp) | noise (none / some / heavy) |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| | 20 | VGA | – | – | – | – | – | | | | |
-| | | | | | | | | | | | |
+Round 1 (owner, 2026-11-15, indoor light, summary only: rows not recorded):
+- exposure compensation: little effect, a slight colour temperature shift;
+- manual exposure (0x0133/34) takes effect only with AGC mode (0x0130) = 1;
+- AGC mode 0 (auto) was brighter than AGC mode 1 with the highest exposure tried (value not
+  recorded);
+- gain, AE mode and clock: little effect in that light;
+- 5 MP: frame 207 ms, grab 320 ms; VGA: 40 / 40 ms; 5 MP is much brighter.
 
-**Answer here:** which lever makes motion sharper: clock ___ , size ___ , compensation ___ ,
-manual exposure ___ (Y/N each)? Best setting with a sharp hand: ___ ; at that setting the photo
-is ___ .
+Round 2 rows (the page also gives `luma` 0–255 and fps = 1000 / frame ms):
+
+| light | MHz | size | comp | agc | gain | ae | exp | frame ms | fps | luma | motion (blurred / soft / sharp) | noise (none / some / heavy) | stripes (Y/N) | note |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| | 20 | QVGA | – | – | – | – | – | | | | | | | baseline |
+| | 20 | VGA | – | – | – | – | – | | | | | | | baseline |
+| | | | | | | | | | | | | | | |
+
+**Answer here:** which lever makes motion sharper: clock N , size Y (frame time) , compensation N ,
+manual exposure Y (round 1). Round 2: QVGA fps auto ___ / manual ___ ; exposure value where luma
+stops rising ___ ; shortest usable exposure ___ ; useful gain range ___ ; setting survives the
+switch to 5 MP ___ (Y/N); preview luma ≈ 5 MP luma ___ (Y/N); fan blades bent at 5 MP ___ (Y/N).
+Best setting with a sharp hand: ___ ; at that setting the photo is ___ .
 
 ## Camera capture (from `cam-hello` bench and `evt=captured`)
 

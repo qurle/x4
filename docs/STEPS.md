@@ -937,11 +937,34 @@ replug). Start at **VGA**, check your best setting at **5 MP** at the end.
    120… If nothing changes, also tick *AE mode* and try 1, then 0. Then try *gain* 1…6 to brighten.
 6. If the camera stops answering, unplug and replug it: every setting resets.
 
+**Round 2: fine tuning** (after your first results, 2026-11-15: manual exposure works only with
+*AGC mode* = 1; auto was brighter than your highest manual exposure; compensation, gain, AE mode
+and clock did little; 5 MP frame 207 ms / grab 320 ms vs VGA 40 / 40 ms). The goal: a preview at
+**24+ fps** and a short enough exposure on the 5 MP shot. Every row now also shows **luma**
+(average brightness, 0–255: compare photos by number, not by eye) and **fps** (1000 / frame ms).
+7. **Preview speed:** shoot at **QVGA** (the preview's default size) and VGA, auto and manual.
+   24 fps needs `frame ms` ≤ 41. This is the camera's share only; WiFi and the Core's decoding
+   come later.
+8. **Exposure sweep:** section 4, *exposure*, at VGA: *Sweep*. Where does `luma` stop rising?
+   Past that point the exposure is longer than a frame, and `frame ms` may grow (fps drops).
+   Then sweep lower values (e.g. `1 2 5 10 25`) to find the shortest usable one. Watch for
+   **dark stripes** at short exposures under LED or fluorescent light (mains flicker).
+9. **Gain sweep:** tick *exposure* with your best value, then sweep *gain*, e.g.
+   `0 2 4 6 8 16 32 64 128 255`. Which values change `luma`, and when does noise get ugly?
+10. **Preview vs shot:** tick *AGC mode* = 1, *exposure* and *gain* with your best values, size
+    QVGA (or VGA), section 5. You get three rows: preview size; 5 MP without rewriting (does the
+    setting survive the switch? compare with the third); 5 MP rewritten (same `luma` as the
+    preview? then the exposure number means time, and the preview shows what the photo will look
+    like).
+11. **Rolling shutter:** at 5 MP with your best manual setting, shoot a spinning fan. Sharp but
+    bent blades = the sensor reads its rows out one after another (over up to ~200 ms), which a
+    short exposure can't fix.
+
 **Read:** serial shows what was written and every shot:
 ```
 exp camera xclk_mhz=20 size=vga pid=0x039e
 exp set write_err=0 written={"xclk_mhz":20,"size":"vga","comp":6,"agc":-1,"gain":-1,"ae":-1,"exp":-1}
-exp shot n=3 xclk_mhz=20 size=vga w=640 h=480 size_ok=1 comp=6 agc=-1 gain=-1 ae=-1 exp=-1 frame_ms=… grab_ms=… bytes=…
+exp shot n=3 xclk_mhz=20 size=vga w=640 h=480 size_ok=1 comp=6 agc=-1 gain=-1 ae=-1 exp=-1 frame_ms=… grab_ms=… luma=… bytes=…
 ```
 (`-1` = not written since boot: the camera's own default.) Signs a setting really works: the
 photo gets darker and moving things sharper, and/or `frame_ms` changes. `write_err` other than 0
