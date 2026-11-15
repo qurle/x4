@@ -73,7 +73,7 @@ test). *Not sure* which revision new stock ships with; the boot log tells you.
 | AP full (5th/6th device cannot join) | `ap_max_clients` | `evt=ap … max_conn=` | raise it (max 10) |
 | cameras drop out (`err=401`) | RSSI, interference, brown-out | `rssi` per camera, `offlineEvents`, camera `reset=` | move the Core closer/raise TX power; change `ap_channel` away from busy home WiFi |
 | trigger latency/skew large and random | WiFi power save | camera log `WiFi.setSleep(false)` is in code | do not remove; keep phones off the AP while shooting (broadcast DTIM buffering) |
-| `err=406` protocol mismatch | Core and camera built from different versions | `fw=`/`git=` in register lines | flash everything from the same commit |
+| `err=406` protocol mismatch | Core and camera built from different versions | `fw=`/`git=` in register lines; a red camera version on the dashboard | flash everything from the same commit ([FIRMWARE: version](FIRMWARE.md#firmware-version)) |
 
 ## SD
 

@@ -69,7 +69,7 @@ Baseline from earlier work kept: `/capture` and `/settings` on :80, MJPEG `/stre
 | method + path | purpose |
 |---|---|
 | `GET /` | web debug page |
-| `POST /register` | camera registration. Body: `{"id":2,"proto":1,"fw":"0.1.0","git":"abc","mac":"…","ip":"…","sensor_pid":926,"sensor":"MEGA_CCM","hw_rev":1,"heap":…,"psram":…,"chip_rev":…}` → `{"ok":true,"core_fw":"0.1.0","proto":1,"config":{<camera-scope options>}}`. 400 bad JSON/id, 409 protocol mismatch |
+| `POST /register` | camera registration. Body: `{"id":2,"proto":1,"fw":"#37","git":"abc","mac":"…","ip":"…","sensor_pid":926,"sensor":"MEGA_CCM","hw_rev":1,"heap":…,"psram":…,"chip_rev":…}` → `{"ok":true,"core_fw":"#37","proto":1,"config":{<camera-scope options>}}`. 400 bad JSON/id, 409 protocol mismatch |
 | `GET /api/status` | JSON snapshot: state, faults bitmask (1 no cams, 2 SD missing, 4 SD full, 8 overheat), shots_taken, last_shot {id,total_ms,captured_ms,skew_us,stored,expected}, cams[] {id, online, ip, fw, sensor, temp_c, rssi, state, hb_age_ms, shot_ok/stored/failed, bytes, xfer_bytes/total, cap_offset_us, cap_ms}, flash {enabled, armed, ready, ready_in_ms, pulses, charge_pct}, power {safe, bus_out_en, usb_otg_en, vbus_mv}, system {…}, sd {…}, ui {fps, frame_max_us, preview_on, preview_fps, button_down} |
 | `GET /logs?since=<seq>` | log lines newer than `seq`; header `X-Log-Seq` = newest seq |
 | `GET /config` | options with value, default, min, max, unit, safety, reboot, doc |
@@ -97,7 +97,7 @@ text is a single JSON object:
 
 ```json
 {"format":"x4-shot/2","shot":42,"cam":1,"orientation":"portrait","effect":"dithered",
- "res":5,"quality":10,"flash":true,"cam_delay_ms":0,"temp_c":47,"fw":"0.1.0","git":"abc1234"}
+ "res":5,"quality":10,"flash":true,"cam_delay_ms":0,"temp_c":47,"fw":"#37","git":"abc1234"}
 ```
 
 `orientation` (`horizontal`/`portrait`) and `effect` (`normal`/`dithered`) are what the viewfinder

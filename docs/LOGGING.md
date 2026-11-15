@@ -7,7 +7,7 @@ identical on the Core and the cameras. No `Serial.print` anywhere in x4 code; ES
 ## Format (logfmt)
 
 ```
-t=12345 lvl=INFO dev=core mod=net evt=register cam=2 ip=192.168.4.12 fw=0.1.0
+t=12345 lvl=INFO dev=core mod=net evt=register cam=2 ip=192.168.4.12 fw=#37
 │       │        │        │       │            └ free key=value pairs (no spaces in values)
 │       │        │        │       └ event: stable snake_case name — grep for this
 │       │        │        └ module: boot power flash cfg sd ui input net xfer shoot preview web ota cam http bench therm sys idf

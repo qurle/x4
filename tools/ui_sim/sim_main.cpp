@@ -22,6 +22,7 @@
 #include "lvgl.h"
 #include "ui/ui.h"
 #include "x4/log.h"
+#include "x4/version.h"
 
 #ifdef X4_SIM_SDL
 #include <SDL.h>
@@ -116,7 +117,7 @@ void baseStatus(x4core::Status& s) {
     auto& c = s.cam[i];
     c.registered = c.online = true;
     snprintf(c.ip, sizeof(c.ip), "192.168.4.%d", 11 + i);
-    snprintf(c.fw, sizeof(c.fw), "0.1.0");
+    snprintf(c.fw, sizeof(c.fw), "%s", X4_FW_VERSION);
     c.sensorPid = 0x039e;
     c.tempC = 45;
     c.rssi = -42;
