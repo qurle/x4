@@ -179,7 +179,7 @@ uint32_t Controller::onTransferRetry(uint8_t cam) {
 uint32_t Controller::finishIfSettled(uint32_t nowMs) {
   if (state_ != State::Shooting && state_ != State::Transferring) return kNone;
   if (!s_.allAcked() || !s_.settled()) return kNone;
-  if (nowMs == 0) nowMs = s_.t0Ms + 1;
+  if (nowMs == 0 || (int32_t)(nowMs - s_.t0Ms) < 0) nowMs = s_.t0Ms + 1;  // never before the start
   s_.doneAtMs = nowMs;
   uint32_t eff = kShotStored;
   if (s_.failed() > 0) eff |= kShotPartial;
@@ -197,7 +197,11 @@ uint32_t Controller::finishIfSettled(uint32_t nowMs) {
 
 uint32_t Controller::tick(uint32_t nowMs) {
   if (state_ != State::Shooting) return kNone;
-  if ((uint32_t)(nowMs - s_.t0Ms) < p_.ackTimeoutMs + p_.leadMs + 3 * p_.camDelayMs) return kNone;
+  // Signed: a `now` sampled just before the shot started (the app's loop does that) is a few ms
+  // *before* t0. As an unsigned difference it wrapped to ~49 days and timed every camera out
+  // 7 ms into the shot (owner, 2026-11-16).
+  int32_t elapsed = (int32_t)(nowMs - s_.t0Ms);
+  if (elapsed < (int32_t)(p_.ackTimeoutMs + p_.leadMs + 3 * p_.camDelayMs)) return kNone;
   // ACK timeout: whoever did not answer has failed this shot.
   for (auto& c : s_.cam)
     if (c.expected && !c.acked && !c.failed) c.failed = true;

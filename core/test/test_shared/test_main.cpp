@@ -468,6 +468,22 @@ void test_fsm_ack_timeout_includes_cam_delay() {
   TEST_ASSERT_TRUE(c.tick(p.ackTimeoutMs + p.leadMs + 3001) & shoot::kShotCaptured);
 }
 
+// Owner, 2026-11-16: the app samples `now` at the top of its loop, then handles the shutter
+// request later in the same loop (t0 = millis() then). A tick with that `now`, 1 ms *before* t0,
+// wrapped the unsigned elapsed time to 4294967295 and timed every camera out at once: the shot
+// closed 7 ms after it started and the cameras' photos were ignored.
+void test_fsm_tick_before_shot_start_is_not_a_timeout() {
+  shoot::Controller c;
+  allOnline(c, 1);
+  c.bootDone(0);
+  c.shutter(1000, 1000000, 7);
+  TEST_ASSERT_EQUAL(shoot::kNone, c.tick(999));  // `now` from before the shutter
+  TEST_ASSERT_EQUAL((int)shoot::State::Shooting, (int)c.state());
+  uint32_t e = c.onAck(ack(1, 7, true, 100), 2100);  // the photo arrives 1.1 s later
+  TEST_ASSERT_TRUE(e & shoot::kShotCaptured);
+  TEST_ASSERT_EQUAL(1, c.nextToFetch());  // and gets fetched
+}
+
 void test_fsm_transfer_retries() {
   shoot::Params p;
   p.retries = 1;
@@ -685,6 +701,7 @@ int main(int, char**) {
   RUN_TEST(test_fsm_full_shot);
   RUN_TEST(test_fsm_ack_timeout_and_partial);
   RUN_TEST(test_fsm_ack_timeout_includes_cam_delay);
+  RUN_TEST(test_fsm_tick_before_shot_start_is_not_a_timeout);
   RUN_TEST(test_fsm_transfer_retries);
   RUN_TEST(test_fsm_faults);
   RUN_TEST(test_fsm_ignores_stale_and_duplicate_acks);
