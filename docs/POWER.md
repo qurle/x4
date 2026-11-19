@@ -26,8 +26,9 @@ power-up. Two items need a measurement at bring-up (Port A idle voltage, rail sa
 
 ```
 Anker Nano 5000 (USB-C out, 5 V ⎓ 3 A, no PD negotiation)
-  └─ USB-C breakout #1 (the ONE in use; must have 5.1 kΩ CC pull-downs)
-       └─ power switch (+5 V line only, ≥ 5 A DC)
+  └─ USB-C breakout #1 (the ONE in use)
+       ├─ CC1, CC2 ─ 2 × 5.1 kΩ ─ rig switch ─ GND   (the CC switch: the bank turns itself on/off)
+       └─ VBUS straight to the rail (no switch in the 5 V line)
             ├─ +5 V rail: 2 Wago 221 blocks, each fed from the source (Y)   GND rail: the same
             │    ├── Cam1 Grove red  ─┐                              ├── Cam1 Grove black
             │    ├── Cam2 Grove red   │ star: one branch per load     ├── Cam2 …
@@ -167,11 +168,10 @@ bank supplies the flash pulse itself. Don't expect it to "power the flash".
 
 | risk | why | mitigation | check |
 |---|---|---|---|
-| Inrush at switch-on | 2200 µF + breakout caps + six loads starting at once can trip the bank's over-current protection | Cameras stagger their sensor init and WiFi by `id × cam_stagger_ms` (400 ms). Test as-is first. If the bank trips: move the 2200 µF to after a 5–10 Ω pre-charge resistor bypassed after ~1 s by the switch's second pole, or use 470–1000 µF. An NTC would drop too much voltage at 2–3 A once warm (ASSUMPTION) | bring-up step 4: switch on with all loads 10×, watch for bank shut-off |
-| Switch rating | 3 A DC continuous + inrush | ≥ 5 A DC rated switch, in +5 V only | read the switch marking |
+| Inrush at switch-on | 2200 µF + breakout caps + six loads starting at once can trip the bank's over-current protection | Cameras stagger their sensor init and WiFi by `id × cam_stagger_ms` (400 ms). Test as-is first. If the bank trips: use 470–1000 µF instead of 2200 µF | bring-up step 4: switch on with all loads 10×, watch for bank shut-off |
 | Bank auto-off | many banks cut output under ~50–100 mA | x4 standby is ≈ 3–4 W (≈ 0.7 A), well above that. *Not sure* whether the A1653 has a low-current mode | bring-up step 8 (soak) |
 | Flash dips the rail | 1 A step | capacitor near the loads, short 20 AWG flash branch, brown-out detector on every board, boot logs `reset=brownout` | bring-up step 5 |
-| USB-C breakout without CC resistors | a C-to-C cable gives **no** power without 5.1 kΩ Rd on CC1/CC2 (USB Type-C spec) | check for resistors marked "512" or measure ~5.1 kΩ CC→GND; alternative: bank's USB-A port + A-to-C cable (no CC needed) | bring-up step 1 |
+| CC switch joint breaks | the bank sees no 5.1 kΩ Rd on CC1/CC2 and gives **no** power (USB Type-C spec); with one side broken it works in one plug orientation only | thin flexible wire to the pads, heat-shrink, strain relief ([SOLDERING R5](SOLDERING.md#r5-cc-switch-wires)) | ohms CC1/CC2 → GND, switch on: ≈ 5.1 kΩ each |
 | PD voltage | a PD trigger would ask for 9 V | the breakout has no PD controller, so the bank stays at 5 V (vSafe5V). **Never** use a PD trigger board on this rail | measure 5.0 V at the rail |
 | Wrong polarity / shorts | swapped red/black or a stray strand | beep or ohms +5 V ↔ GND: no steady beep, OL or climbing (never < ~5 Ω) before first power-up; capacitor stripe to GND | bring-up step 1 |
 | Breakout inline capacitors | position/value/voltage unknown | inspect, read markings, record in [HARDWARE.md](HARDWARE.md) | bring-up step 1 |

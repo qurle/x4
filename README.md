@@ -10,9 +10,9 @@ WiFi, fires a flash, and stores all four full 5 MP photos on its microSD within 
 no router, no phone needed.
 
 ```
- [bank]─USB-C─[switch]─┬─ 5 V rail ─┬─ cam1 cam2 cam3 cam4   (WiFi → Core AP)
-                       │            ├─ Core (Port A, also button + flash EN)
-                       └─ GND rail ─┴─ flash, button, 2200 µF
+ [bank]─USB-C─[breakout]─┬─ 5 V rail ─┬─ cam1 cam2 cam3 cam4   (WiFi → Core AP)
+     (switch on CC1/CC2)  │            ├─ Core (Port A, also button + flash EN)
+                          └─ GND rail ─┴─ flash, button, 2200 µF
 ```
 
 ## Status

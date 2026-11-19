@@ -57,7 +57,7 @@ Full primer: [STEPS: multimeter primer](STEPS.md#multimeter-primer). The short v
 
 ## Rail and joints
 
-**Kind: check.** It proves the power gets through the leads, the switch and the Wago blocks without
+**Kind: check.** It proves the power gets through the leads and the Wago blocks without
 losing much on the way. A bad joint loses voltage and gets warm.
 
 **Needs:** the rig powered and running (idle is fine), switch **on**. Firmware: anything.
@@ -68,17 +68,16 @@ are small, and the 20 V range shows too few digits.
 **Probes:** both probes on the **same wire**, one at each end, so the meter shows only what is lost
 along it ([SOLDERING: P5](SOLDERING.md#prove-the-power-path)).
 - **+ side:** red on the breakout's **VBUS pad** (the solder joint of the red lead), black in the
-  freed port of **+5 V block 2** (the button's block). This spans the red lead, the switch and
-  that block's feed. Block 1 has its own feed: to check it too, swap the button's place with
+  freed port of **+5 V block 2** (the button's block). This spans that block's red feed. Block 1 has its own feed: to check it too, swap the button's place with
   cam 1 for the measurement.
 - **− side:** red in the freed port of **GND block 2**, black on the breakout's **GND pad**.
 - **Rail voltage:** red in the freed +5 V port, black in the freed GND port.
-- **Wiggle:** keep the probes on the + side and gently flex each joint, the switch and the bank
-  in its socket. Use MIN/MAX if the meter has it.
+- **Wiggle:** keep the probes on the + side and gently flex each joint, the CC switch wires and
+  the bank in its socket. Use MIN/MAX if the meter has it.
 
 **Targets (ASSUMPTION: from 20 AWG at ~1.5 A, see SOLDERING):** each drop under ~0.05 V with the
-Core only, under ~0.15 V with the full rig. Over ~0.2 V: a bad joint, a loose Wago or a poor
-switch contact; feel for the warm spot. Rail at the blocks 4.75–5.25 V. A negative reading only
+Core only, under ~0.15 V with the full rig. Over ~0.2 V: a bad joint or a loose Wago; feel for
+the warm spot. Rail at the blocks 4.75–5.25 V. A negative reading only
 means the probes are swapped: write down the number without the sign.
 
 | load | + drop: VBUS pad → +5 V block (V) | − drop: GND block → GND pad (V) | rail at blocks (V) | wiggle: dips? | warm spots after 10 min | date |
@@ -95,18 +94,15 @@ means the probes are swapped: write down the number without the sign.
 
 **Meter (current):** A⎓, red lead in the **10 A** jack, black in COM.
 
-**Probes (current), the meter across the open switch**
+**Probes (current), one block at a time**
 ([STEPS: measuring current](STEPS.md#measuring-current)):
-1. Bank **out**, switch **off**. Wait ~10 s.
-2. Red probe clipped (crocodile lead) on the switch's **input** terminal (where the breakout's red
-   lead arrives). Black probe in a free **+5 V** Wago port.
-3. Bank in (press its button if it's asleep). The switch is open, so the whole rig runs through the
-   meter. Wait for the cameras to join, then read the typical value over ~10 s (WiFi makes it jump).
-4. Switch **on** to bypass the meter within its time limit (read the label near the 10 A jack).
-5. Done: bank **out** first, then the probes, red lead back to VΩ.
-
-With the CC switch mod there's no switch in the +5 V line: pull the breakout's red lead out of the
-+5 V block, clip the red probe to its bare end, black probe in the freed port.
+1. Rig switch **off**. Wait ~10 s.
+2. Pull **+5 V block 1's** red feed out of its Wago. Red probe clipped (crocodile lead) to the
+   feed's bare end, black probe in the freed port.
+3. Switch **on**. Wait for the cameras to join, then read the typical value over ~10 s (WiFi
+   makes it jump).
+4. Switch **off**, feed back in. The same for **block 2**. The rig total is the sum.
+5. Done: red lead back to VΩ.
 
 Don't shoot, stream or flash with the meter in line: it costs ~0.1 V at this current (Not sure for
 your meter), and a reset then may be the meter's fault, not the rig's. So the preview and shot rows
@@ -117,8 +113,6 @@ empty until then.
 **On/off ×10 (check):** meter out, switch the rig off and on 10 times, ~5 s apart, all boards
 attached. **Pass:** the bank never shuts off, no board restarts by itself (Core screen back at the
 title, a camera missing from *WiFi devices*). Fail: inrush, [POWER §4](POWER.md#4-known-risks-and-mitigations).
-With the bank button needed after a sleep (no CC switch yet), only count a fail when the bank goes
-off *during* a switch-on, not when it was already asleep.
 
 | condition | cameras on | average mA / W | peak mA | min rail V | notes |
 |---|---|---|---|---|---|
@@ -202,14 +196,12 @@ from *WiFi devices*). Connector warm is fine, **hot = stop**.
 **Kind: record.** Tells you how the bank switches itself off, so you know when it's a fault and
 when it's normal ([SOLDERING: the bank keeps turning off](SOLDERING.md#the-bank-keeps-turning-off)).
 
-**Meter:** V⎓, 20 V range. Probes on the switch's **input** terminal (red) and a free **GND** port
-(black): that point is live whenever the bank is on, whatever the switch is set to.
+**Meter:** V⎓, 20 V range. Probes on the breakout's **VBUS** pad (red) and **GND** pad (black).
 
 | test | how | result |
 |---|---|---|
-| no-load turn-off time | switch off (nothing draws), start a timer, watch the meter fall to 0 V | ___ s / never |
 | turns off when the bank moves in the breakout socket? | rig idle, gently move the bank | |
-| wakes on re-plug without the button? | **yes** (owner, 2026-11-14) | yes |
+| wakes on re-plug without the button? | **yes** (owner, 2026-11-14): that's why the CC switch works | yes |
 | runtime from full, standby | bank charged to full, rig idle, note the time until it shuts off | *≈ 4.2 h at 3.5 W (est.)* |
 | runtime from full, 1 shot / 30 s + preview | full firmware | |
 
@@ -229,7 +221,7 @@ warning at 70 °C, throttle at 80 °C. The cameras' module is rated for 65 °C *
 | Core | | | | | |
 | Cam1..4 | | | | | |
 | Flashlight case | – | – | | | |
-| joints, switch, Wago blocks (touch: cool / warm / hot) | | – | | | |
+| joints, Wago blocks (touch: cool / warm / hot) | | – | | | |
 
 ## Exposure (step 15)
 

@@ -26,7 +26,7 @@ Every step is a card with the same parts:
 ### The one rule
 
 > **A board gets 5 V from USB *or* from the rail, never both.**
-> Before USB goes into a board: rail switch **off** and that board's Grove plug **out**. Before
+> Before USB goes into a board: rig switch **off** and that board's Grove plug **out**. Before
 > the rail goes on: USB **out**. Why: [POWER §2c](POWER.md#2-feeding-the-core-through-port-a-brief-32).
 
 Every Core step also switches the Core's own 5 V output off and holds the flash pin (G2) LOW
@@ -89,8 +89,8 @@ cables: the rig needs **seven** (Core, button, flash, four cameras). Each unit c
 
 **Tools.**
 - A multimeter with an **Ω (resistance)** range and a **10 A current jack** (most have one, marked
-  `10A` or `A`). One **crocodile-clip lead** (cheap) makes current measurement hands-free: one
-  probe has to sit on the switch's live input terminal ([Measuring current](#measuring-current)).
+  `10A` or `A`). One **crocodile-clip lead** (cheap) makes current measurement hands-free: the
+  red probe clips onto a bare wire end ([Measuring current](#measuring-current)).
 - Wago 221 lever connectors for the rail ([WIRING: connectors](WIRING.md#connectors)).
 - Wire cutter/stripper, heat-shrink, a temperature-controlled soldering iron, rosin-core solder
   and a flux pen: the USB-C breakout needs two soldered leads, plus a few wire splices. Full list:
@@ -174,41 +174,36 @@ Probe polarity doesn't matter for these checks.
 
 ### Measuring current
 
-The meter has to sit **in** the +5 V line, so the rig's current runs through it. It goes
-**across the open switch**: one probe on each of the switch's two terminals.
+The meter has to sit **in** the +5 V line, so the current runs through it. The rig switch isn't
+in that line (it's the [CC switch](WIRING.md#the-rig-switch-cc-switch)), so the meter goes in
+place of a block's red **feed**. Each +5 V block has its own feed from the breakout, so you
+measure the blocks one at a time and add them up: they share nothing else on +5 V.
 
-1. **Bank unplugged**, rail switch **off**. Wait ~10 s so the capacitor drains into the boards.
+1. Rig switch **off** (the bank turns its output off). Wait ~10 s so the capacitor drains.
 2. Dial to **A⎓**, red lead in the **10 A** jack, black in COM.
-3. **Red probe on the switch's input terminal** (the one the breakout's red lead goes to): clip
-   it on with a crocodile-clip lead. **Black probe** clipped on the switch's **output** terminal
-   with a second clip lead (order only changes the sign). Both blocks' feeds come off that
-   terminal, so the whole rig runs through the meter. No clip lead? Hold the probes on the
-   terminals, firmly, with nothing else within reach of the tips.
-4. Plug the bank in (or press its button if it's in and asleep). The switch is open, so the
-   current runs through the meter: the rig powers up and the meter shows its current. Read the
+3. Open the lever on **+5 V block 1's feed** and pull it out. Clip the **red probe** to the
+   feed's bare end with a crocodile-clip lead; **black probe** into the freed port (order only
+   changes the sign). No clip lead? Hold the probes firmly, with nothing else within reach of the
+   tips.
+4. Switch **on**. Block 1's loads now run through the meter; block 2 runs as usual. Read the
    typical value over ~10 s (WiFi makes it jump).
-5. Between readings: switch **on**. That bypasses the meter (it reads ~0) and lifts its time
-   limit, without a power cut. Switch **off** again for the next reading.
-6. Done: **unplug the bank first**, then take both probes out, red lead back to **VΩ**.
+5. Switch **off**, probes out, feed back in, lever closed, tug test.
+6. The same for **block 2**. The rig's current is block 1 + block 2.
+7. Done: red lead back to **VΩ**.
 
-Why the bank comes out first: with the red lead in the 10 A jack, the two probe tips are joined
-through the meter. While one touches a live terminal, the other tip is live too, and touching
-GND with it shorts the bank. That's why the clip lead matters: a hand-held probe can slip.
+Why the switch goes off before the probes move: with the red lead in the 10 A jack, the two
+probe tips are joined through the meter. While one touches a live wire, the other tip is live
+too, and touching GND with it shorts the bank. That's why the clip lead matters: a hand-held
+probe can slip.
 
-**With the CC switch mod** ([WIRING](WIRING.md#b-cc-switch-recommended-one-switch-does-everything))
-there's no switch in the 5 V line, and each Wago block has its own feed: switch off (the bank cuts
-power), pull block 1's red feed out of its Wago, clip the red probe to the feed's bare end, black
-probe in the freed port, switch on, read, switch off, feed back. Repeat for block 2 and add the
-two readings.
-
-Current of **one board**: bank unplugged, open the lever on that board's red wire and take it out,
-clip the red probe to the wire's bare end, black probe into the freed rail port, then bank in.
+Current of **one board**: switch off, open the lever on that board's red wire and take it out,
+clip the red probe to the wire's bare end, black probe into the freed rail port, then switch on.
 
 Know the limits:
 - **Time limit on the 10 A jack.** Many meters allow high currents only for a short time
   (the label near the jack often says something like "10 A max 10 s / 15 min"; ASSUMPTION,
-  read yours). The full rig's ~1–1.5 A is under most limits, but take the reading and bypass
-  (step 5 above).
+  read yours). Each block's share of the ~1–1.5 A is under most limits, but take the reading and
+  switch off (step 5 above).
 - **The meter costs voltage.** It and its leads add resistance (often around 0.1 Ω; Not sure for
   yours), so at 1.5 A the rail gets ~0.15 V less. Don't fire the flash or run sag tests with the
   meter in line; a reset then may be the meter's fault, not the rig's.
@@ -222,8 +217,8 @@ Know the limits:
 
 ## Workshop 0: learn to solder
 
-The rig needs only a few solder joints: two leads on the USB-C breakout (unavoidable: it has
-bare pads), maybe two switch lugs, and a few wire splices
+The rig needs only a few solder joints: the leads on the USB-C breakout (unavoidable: it has
+bare pads), the CC switch wires, and a few wire splices
 ([SOLDERING: what gets soldered](SOLDERING.md#what-gets-soldered)). None are on the M5 boards.
 Practice first, on things you can afford to ruin: scrap wire and one of the **spare** breakouts
 (you have five and the rig uses one).
@@ -430,8 +425,8 @@ how fast photos can be stored.
 
 ## Workshop B: the power rail
 
-The rail is power bank → USB-C breakout → switch → Wago blocks, with the 2200 µF capacitor
-across it. Build it in three parts, each checked before the next: **B1** leads on the
+The rail is power bank → USB-C breakout → Wago blocks, with the 2200 µF capacitor across it.
+The rig switch sits on the breakout's CC pins ([WIRING: the rig switch](WIRING.md#the-rig-switch-cc-switch)). Build it in three parts, each checked before the next: **B1** leads on the
 breakout, **B2** proof that the bank's power gets through and stays on, **B3** the rail itself.
 **No M5 boards attached** during the whole workshop.
 
@@ -441,11 +436,14 @@ Bank unplugged.
 
 1. Write down the breakout's pad markings, then do the [P2 check](SOLDERING.md#prove-the-power-path)
    on the **bare** breakout: bank in, probes on the VBUS and GND pads, both plug orientations.
-   Note which orientation gives 5 V, and whether the bank switches itself off within a minute
-   with nothing connected. Bank out again.
-2. Solder a red 20 AWG lead to **VBUS** and a black to **GND**
-   ([recipe R2](SOLDERING.md#r2-wire-to-a-breakout-pad-vbus-gnd)). Leave CC, D+ and D− alone.
-3. **Fix the breakout down** (screw, zip tie or hot glue onto the foam board or a scrap of
+   Note which orientation gives 5 V. Bank out again.
+2. Solder **two** red 20 AWG leads to **VBUS** and two black to **GND** (the Ys,
+   [recipe R2](SOLDERING.md#r2-wire-to-a-breakout-pad-vbus-gnd)). Leave D+ and D− alone.
+3. **The CC switch:** take the on-board CC resistors off and wire the two 5.1 kΩ to the switch
+   ([WIRING: the rig switch](WIRING.md#the-rig-switch-cc-switch),
+   [recipe R5](SOLDERING.md#r5-cc-switch-wires)). Check: CC1 / CC2 → GND read OL with the switch
+   off, ≈ 5.1 kΩ on.
+4. **Fix the breakout down** (screw, zip tie or hot glue onto the foam board or a scrap of
    wood), with the leads tied down next to it. The bank's built-in plug otherwise levers the small
    socket every time the bank moves.
 
@@ -470,10 +468,8 @@ Bank unplugged.
 2. Two 5-port Wago 221 blocks per net, **each fed straight from the source, no jumper**: block 1
    takes feed, capacitor, flashlight, Core, cam 1; block 2 takes feed, cam 2–4, button
    ([WIRING: connectors](WIRING.md#connectors)).
-3. Breakout red lead → **switch** → a **Y** of two red 20 AWG wires, one to each +5 V block. The
-   switch goes in +5 V only (solder lugs: [recipe R4](SOLDERING.md#r4-switch-lugs)). With the CC
-   switch mod the Y is soldered at the breakout's VBUS pad instead. Breakout GND pad → a Y of two
-   black wires, one to each GND block.
+3. The breakout's two red leads (the Y from the VBUS pad), one to each +5 V block. Its two black
+   leads, one to each GND block. No switch in this line.
 4. The capacitor goes **across** the rail: + leg to +5 V, **stripe (−) to GND**. Never in series.
 5. Every wire in with the lever closed, then a **tug test**. Thin Grove ends folded double or
    pigtailed ([WIRING: connectors](WIRING.md#connectors)).
@@ -483,15 +479,13 @@ Bank unplugged.
 | check | how | expected | if not |
 |---|---|---|---|
 | short | beep or Ω 200 Ω, +5 V block ↔ GND block, bank unplugged, capacitor empty | **not shorted**: silent / OL, or a chirp / climbing once the capacitor is in ([beep or ohms](#connected-or-shorted-beep-or-ohms)) | a steady beep / stays under ~5 Ω: find the short before anything else |
-| CC resistors | Ω, breakout **unplugged**, CC1 → GND and CC2 → GND | ≈ 5.1 kΩ each | none: use the bank's USB-A port + an A-to-C cable. CC2 still off 5.1 kΩ: the plug may work in one orientation only ([HARDWARE](HARDWARE.md#recorded-on-bring-up-fill-in)) |
-| rail, no load | bank in, switch on, DC V across the blocks | **4.75–5.25 V** | 0 V: switch, CC, or the bank is asleep (press its button). > 5.3 V: stop |
-| switch | switch off, DC V | ≈ 0 V | wired across GND instead of in +5 V |
-| switch input | switch off, DC V switch input terminal ↔ GND | ≈ the no-load value | it's live whenever the bank is in and awake: treat it like the rail |
+| CC switch | Ω, bank **unplugged**, CC1 → GND and CC2 → GND | switch off: **OL**; on: **≈ 5.1 kΩ** each | ≈ 5.1 kΩ with the switch off: an on-board resistor is still connected. OL with it on: a broken joint at the resistors or the switch |
+| rail, no load | bank in, switch on, DC V across the blocks | **4.75–5.25 V** within a moment | 0 V: the CC wiring (ohms check above). > 5.3 V: stop |
+| switch off | bank in, switch off, DC V across the blocks | ≈ 0 V within ~1 s | stays at 5 V: an on-board CC resistor is still connected |
 
 Then run the [printable pre-power checklist](WIRING.md#printable-pre-power-checklist).
 
-**Save:** breakout pads, working orientation, the bank's no-load turn-off time, CC values,
-capacitor and switch ratings in [HARDWARE](HARDWARE.md#recorded-on-bring-up-fill-in).
+**Save:** breakout pads, CC values (switch on), capacitor rating in [HARDWARE](HARDWARE.md#recorded-on-bring-up-fill-in).
 
 ---
 
@@ -506,18 +500,18 @@ same with the config option `ui_flip` (default 1; [CONFIG](CONFIG.md)).
 
 ### The USB swap (Core)
 
-1. Rail switch **off**.
+1. Rig switch **off**.
 2. Unplug the **Port A plug** from the Core.
 3. USB-C in. Flash.
 4. **USB-C out.**
-5. Port A plug back in. Rail switch **on**.
+5. Port A plug back in. Rig switch **on**.
 
 From here, while the Core runs on the rail there is **no serial log**: USB is unplugged.
 **The screen is your log.** That's why every step firmware prints its state on screen.
 
 **Rig:** the Port A cable's red/black go into the rail blocks (+5 V and GND). Yellow and white
-stay taped. Meter ready for current: probes across the switch, as in
-[Measuring current](#measuring-current).
+stay taped. The Core goes into **block 1**, so its current is block 1's feed
+([Measuring current](#measuring-current)).
 
 **Flash:** USB swap with **`s05-rail`**. You can watch it on USB first (it runs there too), but
 the test is on the rail.
@@ -525,9 +519,9 @@ the test is on the rail.
 **Measure:**
 - Before switching on: +5 V ↔ GND **not shorted** once more ([beep or ohms](#connected-or-shorted-beep-or-ohms)): you just added a branch. In ohms, write down the value it settles at.
 - After switching on: DC V at the blocks ≈ the no-load value from Workshop B.
-- Current: switch **off** with the meter in place, so the Core runs through the meter.
-  About 0.15–0.3 A (ASSUMPTION; write yours down). Then bank out, probes out, red lead back to
-  VΩ. The 10× on/off test below is done **without** the meter.
+- Current: the meter in place of block 1's feed, switch on. About 0.15–0.3 A (ASSUMPTION; write
+  yours down). Then switch off, feed back, red lead back to VΩ. The 10× on/off test below is
+  done **without** the meter.
 - **Drop test** ([P5](SOLDERING.md#prove-the-power-path)), switch **on**, meter back on V⎓ (not in
   the current jack): both probes on the same net. Red on the breakout's VBUS pad, black on a +5 V
   block: under ~0.05 V. Then red on a GND block, black on the breakout's GND pad: same.
@@ -723,7 +717,7 @@ Four leads, one per camera, each its own branch (star, never daisy-chained).
 
 ### The USB swap (camera)
 
-1. Rail switch **off**.
+1. Rig switch **off**.
 2. Unplug the camera's harness plug.
 3. Plug in the Grove-to-USB-C adapter. Flash.
 4. Adapter out, harness plug back in. Rail on.
@@ -763,13 +757,13 @@ at the same instant is what the full firmware adds ([PROTOCOL](PROTOCOL.md)).
 - Switch the rig off and on 10 times with all four attached: no bank shut-off, and no board
   restarting by itself (inrush, [POWER §4](POWER.md#4-known-risks-and-mitigations)).
 
-**Measure:** rail current at idle with the meter across the open switch
-([Measuring current](#measuring-current)), about 1–1.5 A (ASSUMPTION). Read it and bypass
-(switch on) within your meter's time limit. Don't shoot or stream with the meter in line.
+**Measure:** rail current at idle, block 1 + block 2
+([Measuring current](#measuring-current)), about 1–1.5 A in total (ASSUMPTION). Read each and
+switch off within your meter's time limit. Don't shoot or stream with the meter in line.
 
 **Drop test** again at this load ([P5](SOLDERING.md#prove-the-power-path)), switch on, meter on V⎓:
 breakout VBUS pad → +5 V block, and GND block → breakout GND pad, under ~0.15 V each. After
-10 minutes, touch the joints, the switch and the Wago blocks: warm is fine, **hot = stop** and
+10 minutes, touch the joints and the Wago blocks: warm is fine, **hot = stop** and
 redo that one.
 
 **Save:** [MEASUREMENTS: rig total](MEASUREMENTS.md#rig-total) and
@@ -1022,14 +1016,14 @@ Stuck: Core → hold RST ~3 s (green LED). Camera → G0 jumper to GND while plu
 | Workshop B1 | bare breakout VBUS ↔ GND pads, bank in, both orientations | 4.75–5.25 V (note which) |
 | Workshop B2 | leads' far ends, bank in, wiggle everything | steady 5 V, never drops |
 | Workshop B | beep / Ω: +5 V ↔ GND, unpowered, capacitor empty | not shorted: silent or a chirp (OL or climbing) |
-| Workshop B | CC1, CC2 → GND, breakout unplugged | ≈ 5.1 kΩ each |
+| Workshop B | CC1, CC2 → GND, bank unplugged | switch off: OL; on: ≈ 5.1 kΩ each |
 | Workshop B | rail, no load | 4.75–5.25 V |
 | every time you add a branch | beep / Ω: +5 V ↔ GND | not shorted; in Ω, compare with your last value |
 | Workshop C | button white ↔ GND, rail on | ≈ 3.3 V released, ≈ 0 V pressed |
 | Workshop D | flash yellow ↔ GND, rail on, Core unplugged | ≈ 0 V |
 | Workshop E | beep / Ω: each red ↔ +5 V, each black ↔ GND | solid beep (≈ R₀) |
-| Workshop B | switch input terminal ↔ GND, switch off | ≈ no-load value (live whenever the bank is on) |
-| step 5 on | A⎓ in the 10 A jack, red probe clipped on the switch input, black clipped on the switch output, switch **off**; bank out while you place them | Core ≈ 0.15–0.3 A, full rig ≈ 1–1.5 A ([MEASUREMENTS](MEASUREMENTS.md)) |
+| Workshop B | rail, bank in, switch off | ≈ 0 V |
+| step 5 on | A⎓ in the 10 A jack, meter in place of a block's red feed, placed with the switch **off** | Core ≈ 0.15–0.3 A, full rig ≈ 1–1.5 A (both blocks) ([MEASUREMENTS](MEASUREMENTS.md)) |
 | step 5 | drop: breakout pad → Wago block, same net, each side, switch on, V⎓ | < ~0.05 V |
 | step 11 | the same drop at full rig load | < ~0.15 V |
 | step 7 on | the *dip* line on screen; else V⎓ across the blocks with MIN/MAX | ≥ 4.6 V |
