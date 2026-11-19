@@ -56,13 +56,8 @@ Is "USB and rail at the same time" ever OK? **No, not for x4.** The CoreS3-SE sc
 M5Unified's comments show USB VBUS and the bus node are joined through two load switches when
 both enables are 0, so two 5 V sources would fight. Keep the rule.
 
-After the first USB flash, update over WiFi (Stage 5, ArduinoOTA): join your laptop to the
-`x4cam` AP, then
-```bash
-pio run -e core -t upload --upload-port 192.168.4.1
-```
-Cameras: `--upload-port x4cam-cam2.local` or their IP (shown on the web page). OTA needs the
-`X4_OTA_PASS` from secrets.h (PlatformIO asks, or set `upload_flags = --auth=...`).
+After the first USB flash, the full firmware updates over WiFi: `python tools/ota.py` with the
+laptop on `x4cam` ([UPDATING](UPDATING.md)).
 
 ## Test ladder
 

@@ -5,6 +5,7 @@
 | [STEPS.md](STEPS.md) | **start here when the boards arrive**: a play-through from tools and first flash (GUI + CLI) to the full rig: 13 small steps with one tiny firmware each, workshops for the rail and leads, meter checks, what to read in the logs |
 | [SOLDERING.md](SOLDERING.md) | every solder joint in the rig, safety, kit, recipes, how to judge a joint, and proving the power path (wiggle test, drop test, "the bank keeps turning off") |
 | [DEVELOP.md](DEVELOP.md) | build, test and run things on your computer (GUI + CLI): firmware builds, host tests, **UI simulator** (compare with Figma, live window), generated files, docs site |
+| [UPDATING.md](UPDATING.md) | updating the full firmware over WiFi (OTA): `tools/ota.py`, by hand, when it fails |
 | [BRINGUP.md](BRINGUP.md) | flashing without breaking the power rules; full-firmware tests (flash stress, WiFi, skew, soak) |
 | [WIRING.md](WIRING.md) | diagram, pin table, colours, connectors, spare ports, printable pre-power checklist |
 | [POWER.md](POWER.md) | power architecture, why Port A back-feeding is OK, risks, firmware safety rules |
