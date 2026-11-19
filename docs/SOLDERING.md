@@ -1,8 +1,8 @@
 # Soldering: the rig's joints, and proving they carry power
 
 With the Wago 221 lever rail you need only a handful of solder joints, and none of them are on
-the M5 boards: **two leads on the USB-C breakout** (the one you can't avoid), maybe two switch
-lugs, and a few wire-to-wire splices. This page shows how to make each kind, how to tell a good
+the M5 boards: **the leads on the USB-C breakout** (the one you can't avoid), **the CC switch**
+wires, and a few wire-to-wire splices. This page shows how to make each kind, how to tell a good
 joint from a bad one, and how to prove the power path works **before** anything valuable is
 connected to it.
 
@@ -15,12 +15,11 @@ first: practice on scrap wire and on one of the spare breakouts (you have five a
 |---|---|---|---|
 | breakout #1 **VBUS** pad → red lead | 20 AWG red | **yes**: the breakout has bare pads | [Workshop B1](STEPS.md#b1-breakout-leads) |
 | breakout #1 **GND** pad → black lead | 20 AWG black | **yes** | Workshop B1 |
-| power switch lugs | 20 AWG red | only if your switch has solder lugs (not screw terminals) | [Workshop B3](STEPS.md#b3-the-rail) |
-| **Y-feed**: two 20 AWG leads on the breakout's VBUS pad and two on its GND pad (or on the switch's output lug), one per Wago block | 20 AWG | **yes**: it replaces the jumper between blocks and saves one port per net ([WIRING: connectors](WIRING.md#connectors)) | [Workshop B3](STEPS.md#b3-the-rail) |
+| **Y-feed**: two 20 AWG leads on the breakout's VBUS pad and two on its GND pad, one per Wago block | 20 AWG | **yes**: it replaces the jumper between blocks and saves one port per net ([WIRING: connectors](WIRING.md#connectors)) | [Workshop B3](STEPS.md#b3-the-rail) |
 | button white ↔ Port A white | Grove ↔ Grove | splice, or a small lever connector | [Workshop C](STEPS.md#workshop-c-button-lead) |
 | flash yellow ↔ Port A yellow | Grove ↔ Grove | splice, or a small lever connector | [Workshop D](STEPS.md#workshop-d-flash-branch) |
 | flash red/black → its own 20 AWG branch | Grove → 20 AWG | splice, or a 2-port 221 | Workshop D |
-| optional: **CC switch mod** (one switch turns the bank on and off) | two 5.1 kΩ + thin wire | optional | [WIRING: switching the rig on and off](WIRING.md#b-cc-switch-recommended-one-switch-does-everything) |
+| **CC switch**: on-board CC resistors off, two 5.1 kΩ in-line from CC1 / CC2 to the rig switch, switch to GND | thin wire, two 5.1 kΩ | **yes** (built, owner 2026-11-19): it's the rig's on/off | [Workshop B1](STEPS.md#b1-breakout-leads), [recipe R5](#r5-cc-switch-wires), [WIRING: the rig switch](WIRING.md#the-rig-switch-cc-switch) |
 | Grove red/black ends into the rail (Port A, button, 4 cameras) | Grove → Wago 221 | **optional**: fold the bare end double, or solder a short 20 AWG pigtail | [Workshops A](STEPS.md#workshop-a-the-port-a-cable), C, E |
 
 Why the Grove ends need care: the 221 takes stranded wire, but Grove wire is probably thinner
@@ -88,8 +87,8 @@ clamp terminal: the solder creeps under pressure and the contact loosens
 
 1. Find the pads. On USB-C breakouts they're usually marked **VBUS** (or V, 5V) and **GND** (or
    G), next to **CC1, CC2, D+, D−** (*Not sure* about yours: write the markings in
-   [HARDWARE](HARDWARE.md#recorded-on-bring-up-fill-in)). Only VBUS and GND get wires. Leave CC
-   alone: the CC resistors are already on the board and they're what makes the bank switch on.
+   [HARDWARE](HARDWARE.md#recorded-on-bring-up-fill-in)). VBUS and GND get the 20 AWG leads; the
+   CC pads get the thin CC switch wires ([R5](#r5-cc-switch-wires)). D+ and D− stay free.
 2. Hold the breakout down, connector side away from you. Keep the iron off the plastic USB-C
    socket.
 3. Strip 3–4 mm of the 20 AWG wire and tin it (R1). Add a little solder to the pad too.
@@ -118,6 +117,24 @@ Hook the tinned wire through the lug and squeeze it closed with pliers so it hol
 Solder, then shrink a piece of tube over the lug. Switch lugs sit in plastic, so be quick:
 3 s, then wait before the next lug.
 
+### R5. CC switch wires
+
+The CC switch carries a fraction of a milliamp, so thin wire is fine. The weak point is the
+resistors' thin solid legs: they break where they're bent or flexed.
+1. **Desolder the two on-board CC resistors** (marked **512**, near the socket). Afterwards CC1 →
+   GND and CC2 → GND read **OL**.
+2. **Thin flexible wire to each CC pad** (tin wire and pad, 1–2 s). Don't solder resistor legs
+   straight onto the board: a stiff leg levers the pad.
+3. **Resistor in-line:** legs cut to 5–8 mm, bent with pliers a little away from the body (not
+   right at it). Wrap the tinned wire round the leg, solder, heat-shrink over the resistor and
+   both joints.
+4. **Join** the two resistors' free ends with the wire to the switch, one heat-shrunk joint. The
+   switch's other lug to GND ([R4](#r4-switch-lugs)).
+5. **Strain relief:** hot glue or tape the thin wires to the breakout's base 1–2 cm from the
+   pads, so flexing lands on the insulation, not the joints.
+6. Check: [WIRING: the rig switch](WIRING.md#the-rig-switch-cc-switch) (OL off, ≈ 5.1 kΩ on),
+   then flex each joint while you watch the reading.
+
 ## Is the joint good?
 
 Check every joint before you shrink it.
@@ -144,11 +161,11 @@ This is how you know the power actually gets through, and that it **stays** ther
 | stage | setup | how | pass |
 |---|---|---|---|
 | **P1** bank | bank charged | press its button, look at its indicator | it shows charge. How the A1653 shows its output is on: *Not sure* |
-| **P2** bare breakout | bank → breakout #1, **no wires soldered yet** | DC V, probes held on the VBUS and GND pads | 4.75–5.25 V. Try **both plug orientations** and note which give 5 V. Wait 60 s and note whether it drops to 0 V by itself (that's the bank's no-load shut-off, not your fault) |
+| **P2** bare breakout | bank → breakout #1, **no wires soldered yet** | DC V, probes held on the VBUS and GND pads | 4.75–5.25 V. Try **both plug orientations** and note which give 5 V |
 | **P3** leads | the two leads soldered (R2), bank unplugged | beep or Ω ([how](STEPS.md#connected-or-shorted-beep-or-ohms)): pad ↔ far end of each lead; VBUS ↔ GND | solid beep (≈ 0 Ω) / silent (OL) |
 | **P4** leads, powered | bank in; leads' far ends apart and taped. Optional: the 47 Ω load across the ends | DC V at the far ends of the leads | the same voltage as P2 |
 | **P4b** wiggle test | as P4. Use the meter's MIN/MAX mode if it has one | watch the reading while you flex each joint, each wire, and gently move **the bank in the socket** | the reading never drops. It drops when you move a wire → that joint. It drops when you move the bank → see below |
-| **P5** drop under load | rail built, Core on it ([step 5](STEPS.md#5-core-on-the-rail)); later the full rig ([step 11](STEPS.md#11-four-cameras)). Switch **on**, meter on V⎓ (not in the current jack) | **both probes on the same net**: red on the breakout VBUS pad, black on a +5 V block. That spans the lead, the switch and the block's feed. Then GND: red on a GND block, black on the breakout GND pad | under ~0.05 V each at Core load, under ~0.15 V each with the full rig. More than ~0.2 V: a bad joint, a loose Wago or a poor switch contact. Feel for the warm spot |
+| **P5** drop under load | rail built, Core on it ([step 5](STEPS.md#5-core-on-the-rail)); later the full rig ([step 11](STEPS.md#11-four-cameras)). Switch **on**, meter on V⎓ (not in the current jack) | **both probes on the same net**: red on the breakout VBUS pad, black on a +5 V block. That spans the lead and the block's feed. Then GND: red on a GND block, black on the breakout GND pad | under ~0.05 V each at Core load, under ~0.15 V each with the full rig. More than ~0.2 V: a bad joint, a loose Wago or a poor switch contact. Feel for the warm spot |
 
 Why P5 works: both probes sit on one wire, so the meter shows only the voltage lost along it.
 20 AWG loses about 33 mΩ per metre, so 30 cm at 1.5 A is about 15 mV. A bad joint of 0.1 Ω
@@ -164,15 +181,16 @@ When exactly it turns off tells you why.
 
 | it turns off… | most likely | test | fix |
 |---|---|---|---|
-| **the moment the bank or its plug moves** | the USB-C plug loses contact in the breakout's socket. The bank sees a disconnect and switches its output off: a Type-C source removes VBUS once the sink detaches, and only switches it on again after it has seen the device reconnected for ≥ 100 ms (secondary sources, see below). The A1653's **built-in plug** hangs the whole bank off a small breakout socket, which levers it | P4b: move only the bank | fix the breakout to something solid (screw, zip tie or hot glue on the foam board) and support the bank's body so it doesn't hang off the plug. Or use a short C-to-C cable, which works because the breakout has CC resistors. If it doesn't come back by itself, press the bank's button (*Not sure* the A1653 needs that) |
+| **the moment the bank or its plug moves** | the USB-C plug loses contact in the breakout's socket. The bank sees a disconnect and switches its output off: a Type-C source removes VBUS once the sink detaches, and only switches it on again after it has seen the device reconnected for ≥ 100 ms (secondary sources, see below). The A1653's **built-in plug** hangs the whole bank off a small breakout socket, which levers it | P4b: move only the bank | fix the breakout to something solid (screw, zip tie or hot glue on the foam board) and support the bank's body so it doesn't hang off the plug: the body's sleeve does both ([ENCLOSURE](ENCLOSURE.md)). If it doesn't come back by itself, switch off and on again |
 | the moment you **touch a wire** to the rail or a pad | a short (probe or wire slipping between VBUS and GND), or **inrush**: the empty 2200 µF capacitor pulls a big current spike and trips the bank's over-current protection | beep or ohms VBUS ↔ GND, bank out: silent / a chirp, or OL / climbing = no short. Then try once **without the capacitor** | solder the joints instead of holding wires. If the capacitor trips it: [POWER §4](POWER.md#4-known-risks-and-mitigations) (pre-charge resistor or a smaller capacitor) |
-| after **seconds or minutes with nothing (or almost nothing) connected** | the bank's low-current auto-off. Anker says its banks need a device to draw at least about **30–90 mA** to keep going; that's a general Anker article, so it's *Not sure* for the A1653 | P2: time it with no load; then repeat with the 47 Ω load | normal, not a fault. The Core alone draws ~150–300 mA (ASSUMPTION), well above that. Record the time in [MEASUREMENTS](MEASUREMENTS.md#bank-behaviour) |
-| **never comes on** in one plug orientation | one CC resistor missing or wrong (you measured CC2 ≈ 9.2 kΩ, but with the bank connected, which isn't a valid ohms reading) | re-measure CC1 / CC2 → GND **unplugged** | use the orientation that works and mark it. Or use the bank's other port with a cable (*Not sure* the A1653 has one) |
+| after **seconds or minutes with nothing (or almost nothing) connected** | the bank's low-current auto-off. Anker says its banks need a device to draw at least about **30–90 mA** to keep going (a general Anker article, *Not sure* for the A1653) | – | normal, not a fault: the Core alone draws ~150–300 mA (ASSUMPTION), and the rig switch wakes the bank whenever you switch on |
+| **never comes on** in one plug orientation | one CC wire or resistor of the CC switch broken or off value | ohms, bank unplugged, switch on: CC1 / CC2 → GND ≈ 5.1 kΩ each | redo that joint ([R5](#r5-cc-switch-wires)) |
+| **never comes on** when you switch on | the CC switch: a broken joint, or the switch wired wrong | ohms, bank unplugged: CC1 / CC2 → GND OL with the switch off, ≈ 5.1 kΩ on | redo that joint ([R5](#r5-cc-switch-wires)) |
 | at **rig switch-on**, with all boards | inrush of the capacitor plus six loads starting | step 11's on/off ×10 test | [POWER §4](POWER.md#4-known-risks-and-mitigations) |
 
 ## Write it down
 
-- Breakout pad markings, which orientations give 5 V, and the bank's no-load turn-off time:
+- Breakout pad markings and which orientations give 5 V:
   [HARDWARE: recorded on bring-up](HARDWARE.md#recorded-on-bring-up-fill-in).
 - P5 drops: [MEASUREMENTS: rail and joints](MEASUREMENTS.md#rail-and-joints).
 

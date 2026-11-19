@@ -49,9 +49,9 @@ Three independent methods; use at least two.
 - Beep or ohms before power (rail-to-rail silent / OL or climbing, never a steady beep / < ~5 Ω), polarity per branch
   ([how](STEPS.md#connected-or-shorted-beep-or-ohms)).
 - DC volts at the rail with no load, with all loads, and at the Core's Port A pins.
-- Rail current: A⎓, red lead in the **10 A** jack, red probe clipped on the switch's input
-  terminal, black probe clipped on its output terminal (across the switch), switch **off**: the whole rig runs through the
-  meter; switch on to bypass it. Bank unplugged while placing or removing the probes. Steps and limits
+- Rail current: A⎓, red lead in the **10 A** jack, one Wago block at a time: the meter in place
+  of that block's red feed (red probe clipped to the feed's bare end, black in the freed port),
+  then add the blocks up. Switch off while placing or removing the probes. Steps and limits
   (time limit of the 10 A jack, the meter's own voltage drop):
   [STEPS: measuring current](STEPS.md#measuring-current).
 - Current per device: the meter in that board's red branch wire only (wire out of the rail,

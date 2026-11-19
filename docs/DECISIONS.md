@@ -101,7 +101,22 @@ hand (a slip powers the rig off or shorts the rail).
 **Update 2026-11-14 (owner): IN node dropped.** No extra block. Current is measured across the
 open switch with the red probe on the switch's input terminal, ideally on a crocodile-clip lead
 (holding it by hand is allowed, with care, for the slip risk above); black probe in a free +5 V
-rail port.
+rail port. **Superseded 2026-11-19 by ADR-021** (no switch in the 5 V line any more).
+
+## ADR-021 The rig switch is a CC switch
+**Context.** With the switch in the 5 V line the breakout's CC resistors stayed connected, so the
+bank saw "plugged in" all the time. While the switch was off it went to sleep (low-current
+auto-off), and switching on wasn't a new plug-in: the bank button had to be pressed too
+(owner, 2026-11-14). A re-plug wakes the A1653 without the button (owner's test, same day).
+**Decision (built, owner 2026-11-19).** The switch connects the CC resistors to GND: the
+breakout's on-board ones desoldered, two 5.1 kΩ in-line from CC1 / CC2, joined, to the switch.
+VBUS goes straight to the rail (the Y feeds). Switch on = plug-in, the bank turns 5 V on; off =
+unplug, it turns 5 V off. **Consequences.** One switch, no bank button, ≈ 0 standby drain. The
+switch carries a fraction of a milliamp, so its rating no longer matters. No switch in the 5 V
+line to measure across: current is measured one Wago block at a time, the meter in place of
+that block's feed (this replaces the probe placement in ADR-020). Turn-on waits ≥ ~100 ms for
+the bank. **Rejected:** a keep-alive resistor before the switch (≈ 0.5 W all the time, empties
+a full bank in about a day); the bank button after every switch-on.
 
 ## ADR-019 Flat counter-named photos, settings inside the JPEG
 **Context.** Shots were folders (`/x4/shots/S000042/cam1.jpg` … + `shot.json`). The owner doesn't

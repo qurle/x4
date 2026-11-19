@@ -26,24 +26,24 @@ numbers into [MEASUREMENTS.md](MEASUREMENTS.md) as you go.
    ```bash
    cd camera && pio run
    ```
-4. A multimeter with a 10 A current jack and a crocodile-clip lead. Current is measured across
-   the open switch: red probe clipped on the switch's input terminal, black probe clipped on its
-   output terminal ([STEPS: measuring current](STEPS.md#measuring-current)).
+4. A multimeter with a 10 A current jack and a crocodile-clip lead. Current is measured one
+   Wago block at a time, the meter in place of that block's red feed
+   ([STEPS: measuring current](STEPS.md#measuring-current)).
 
 ## Flashing without breaking the power rules
 
 **Rule: only one 5 V source per board, ever.**
 
 Core (CoreS3-SE):
-1. Rail switch **OFF**. **Unplug the split Grove cable from Port A** (it carries the rail's 5 V).
+1. Rig switch **OFF**. **Unplug the split Grove cable from Port A** (it carries the rail's 5 V).
 2. Plug USB-C from the computer into the Core.
 3. Upload: `pio run -e core-hello -t upload` (or `-e core`). If the port does not appear, enter
    download mode: hold the **RST** key ~3 s until the green LED lights, release (M5 docs).
 4. Watch the log: `pio device monitor -e core-hello`.
-5. **Unplug USB-C before** reconnecting Port A and switching the rail on.
+5. **Unplug USB-C before** reconnecting Port A and switching the rig on.
 
 Camera (Unit CamS3-5MP):
-1. Rail switch **OFF**. Unplug the camera's Grove lead from the rail harness.
+1. Rig switch **OFF**. Unplug the camera's Grove lead from the rail harness.
 2. Plug M5's **Grove-to-USB-C adapter** into the camera's Grove port, USB-C into the computer.
    (The Grove pins are the ESP32-S3 USB D+/D−; the adapter supplies 5 V. That is why the camera
    can never be on the rail and USB at once.)
@@ -72,9 +72,9 @@ Cameras: `--upload-port x4cam-cam2.local` or their IP (shown on the web page). O
 |---|---|---|
 | beep or ohms +5V rail ↔ GND rail ([how](STEPS.md#connected-or-shorted-beep-or-ohms)) | silent or a chirp (**OL** or climbing), never a steady beep / < ~5 Ω | find the short before anything else ([TROUBLESHOOTING](TROUBLESHOOTING.md#power)) |
 | polarity: each red to +5V, black to GND, cap stripe to GND | ≈ 0 Ω where expected | re-wire |
-| USB-C breakout CC1/CC2 to GND | ≈ 5.1 kΩ each (or resistors marked "512") | none: use bank USB-A + A-to-C cable, or add 5.1 kΩ |
+| CC switch, bank unplugged: CC1/CC2 to GND | switch off: OL; on: ≈ 5.1 kΩ each | [WIRING: the rig switch](WIRING.md#the-rig-switch-cc-switch) |
 | breakout inline capacitor: value, voltage, side | recorded in HARDWARE.md | – |
-| bank on, switch on, nothing attached: rail voltage | **4.75–5.25 V** | 0 V: CC resistors / switch / bank asleep (press its button); > 5.3 V: stop, wrong source |
+| bank on, switch on, nothing attached: rail voltage | **4.75–5.25 V** | 0 V: the CC switch wiring (row above); > 5.3 V: stop, wrong source |
 
 ### Step 2 — Each board alone on USB (rail off, Grove power lead unplugged)
 
@@ -130,12 +130,12 @@ Record both in HARDWARE.md.
 ### Step 4 — One load at a time from the rail
 
 USB unplugged everywhere. Switch off between steps. For each current reading: switch off, meter
-(A⎓, 10 A jack) across the switch, read, then switch on to bypass it
+(A⎓, 10 A jack) in place of a block's red feed, switch on, read, switch off, feed back
 ([STEPS: measuring current](STEPS.md#measuring-current)).
 
 | add | expected (rough, update with your numbers) | if it fails |
 |---|---|---|
-| Core (Port A, split cable) | boots from the rail alone; ≈ 0.15–0.3 A; `vbus_mv` ≈ rail voltage | no boot: Grove contact, polarity; bank asleep (press its button) |
+| Core (Port A, split cable) | boots from the rail alone; ≈ 0.15–0.3 A; `vbus_mv` ≈ rail voltage | no boot: Grove contact, polarity |
 | + Mini Button (white → G1) | diagnostics "button DOWN" when pressed | stays "up": wiring; "DOWN" stuck: wrong polarity or wrong unit |
 | + cam1 | +0.15–0.3 A; cam joins `x4cam`, registers; footer/diagnostics show 1 camera, viewfinder shows its preview | [TROUBLESHOOTING WiFi](TROUBLESHOOTING.md#wifi) |
 | + cam2, cam3, cam4 | ≈ 1–1.5 A total at idle; diagnostics list four cameras online | brown-out resets: [Power](TROUBLESHOOTING.md#power) |

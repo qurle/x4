@@ -13,17 +13,17 @@ reasoned but not confirmed. **Not sure** = unknown. Research date 2026-10-31.
 | 3 | M5Stack **Unit FlashLight** (SKU U152) | 1 | not bought yet | AW3641EDNR flash driver, 1 white LED, internal Flash/Torch slide switch |
 | 4 | M5Stack **Mini Button Unit** (no LED) | 1 | on hand | ASSUMPTION: electrically the "Unit Button" (U027) design, see below |
 | 5 | **Anker Nano Power Bank 5000 mAh** (A1653, 22.5 W name, built-in USB-C plug) | 1 | on hand | USB-C out 5V⎓3A / 9V⎓2.22A / 10V⎓2.25A, total 18 W max; input 5V⎓3A / 9V⎓2A |
-| 6 | power switch | 1 | on hand | must be ≥ 5 A DC; in +5 V only |
+| 6 | rig switch | 1 | on hand | the **CC switch**: connects the breakout's CC resistors to GND, carries a fraction of a milliamp (built, owner 2026-11-19; [WIRING](WIRING.md#the-rig-switch-cc-switch)) |
 | 7 | 2200 µF electrolytic capacitor | ≥1 | on hand | **rated 15 V** (owner, 2026-10-31): OK, ≥ 10 V needed; low-ESR expected |
-| 8 | USB-C breakout with inline capacitors | 5 (1 used) | on hand | only one used (bank input); **CC resistors present** (owner, 2026-10-31) → C-to-C from the bank works; inline capacitor value/side still unknown → bring-up step 1 |
+| 8 | USB-C breakout with inline capacitors | 5 (1 used) | on hand | only one used (bank input); its on-board CC resistors are **replaced** by the CC switch's two 5.1 kΩ (owner, 2026-11-19); inline capacitor value/side still unknown → bring-up step 1 |
 | 9 | Wago **221** lever connectors | several | on hand (owner, 2026-11-13) | used for the rail now: two 5-port blocks per net, each fed from the source by a Y, no jumper ([WIRING: connectors](WIRING.md#connectors)). Sizes on hand: ___. 2273-208 push-ins (solid wire only) are no longer used |
 | 10 | 20 AWG stranded wire | bunch | on hand | 0.52 mm², ≈ 33 mΩ/m |
 | 11 | Dupont cables | various | on hand | fit the M5-Bus header (2.54 mm) |
 | 12 | Grove cables (in box) | per unit | come with the units | HY2.0-4P |
 | 13 | **Smartbuy microSDHC 16 GB Class 10** | 1 | on hand | goes in the **Core**; 16 GB = the CoreS3 documented maximum (OK), FAT32 |
 
-Suggested extras: a **crocodile-clip lead** (for hands-free current measurement: one probe
-sits on the switch's live input terminal), a multimeter with continuity (beep), an Ω range and a 10 A current jack.
+Suggested extras: a **crocodile-clip lead** (for hands-free current measurement: the red probe
+clips onto a block's bare feed wire), a multimeter with continuity (beep), an Ω range and a 10 A current jack.
 
 ## CoreS3-SE
 
@@ -156,23 +156,22 @@ pressed. If you see ~5 V released, do not connect it to G1.
 
 Anker A1653 (VERIFIED: Anker spec page): USB-C output 5V⎓3A / 9V⎓2.22A / 10V⎓2.25A, 18 W total.
 The x4 breakout has no PD controller, so the bank stays at **5 V** (USB Type-C sink with Rd only
-gets vSafe5V). A C-to-C connection needs 5.1 kΩ Rd on CC1 and CC2 at the sink (the breakout).
+gets vSafe5V). A C-to-C connection needs 5.1 kΩ Rd on CC1 and CC2 at the sink (the breakout); x4 switches
+those to turn the bank on and off ([WIRING: the rig switch](WIRING.md#the-rig-switch-cc-switch)).
 Low-current auto-off threshold: **Not sure** (not documented by Anker); measure at bring-up step 8.
 
 ## Recorded on bring-up (fill in)
 
 | item | value | how |
 |---|---|---|
-| USB-C breakout CC resistors | **present** (owner). Measured with the bank connected: CC1 ≈ 5 kΩ, CC2 ≈ 9.2 kΩ → **re-measure unplugged** (ohms are only valid on an unpowered circuit). If CC2 stays off 5.1 kΩ: power works in one plug orientation only (flip the plug if the rail reads 0 V) or use the bank's USB-A port | multimeter 20k range, GND ↔ CC1 / CC2, breakout unplugged |
+| CC switch | **built** (owner, 2026-11-19): on-board resistors desoldered, two 5.1 kΩ in-line to the switch. Switch on: CC1 ___ kΩ, CC2 ___ kΩ; off: OL / OL | multimeter 20k range, GND ↔ CC1 / CC2, bank unplugged |
 | breakout inline capacitor | value: ___ V rating: ___ input/output side: ___ | read marking |
 | breakout #1 pad markings | ___ (e.g. VBUS GND CC1 CC2 D+ D−) | read the silkscreen ([SOLDERING](SOLDERING.md#r2-wire-to-a-breakout-pad-vbus-gnd)) |
 | plug orientations that give 5 V | both / only one (mark it) | Workshop B1, P2 ([SOLDERING](SOLDERING.md#prove-the-power-path)) |
-| bank turns itself off with no load after | ___ s / never | Workshop B1, P2 |
 | bank button turns the output off? | **no** (owner, 2026-11-14) | press it while the rig runs |
-| re-plugging wakes a sleeping bank (no button)? | **yes** (owner, 2026-11-14): the CC switch will work | [WIRING: switching on and off](WIRING.md#switching-the-rig-on-and-off) |
+| re-plugging wakes a sleeping bank (no button)? | **yes** (owner, 2026-11-14): why the CC switch works | [WIRING: the rig switch](WIRING.md#the-rig-switch-cc-switch) |
 | bank turns off when moved in the socket? | yes / no, before and after fixing the breakout down | Workshop B2, P4b |
 | 2200 µF voltage rating | **15 V** (owner) | read the can |
-| power switch rating | ___ A DC | read the marking |
 | CamS3 hardware revision (0x0200) | cam1 ___ cam2 ___ cam3 ___ cam4 ___ | boot log `evt=hw_rev` |
 | CamS3 MACs | cam1 ___ cam2 ___ cam3 ___ cam4 ___ | boot log `evt=chip` |
 | Core Port A G2 idle voltage (firmware running, nothing attached) | ___ V | bring-up step 3 |
