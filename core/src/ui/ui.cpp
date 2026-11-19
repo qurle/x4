@@ -272,14 +272,12 @@ struct {
 } g;
 
 // ---------------------------------------------------------------- splash (not in Figma)
+// Just the name (owner, 2026-11-19: no caption). The firmware version is on Diagnostics.
 void buildSplash() {
   g.splash = screenBase(kBg);
   lv_obj_t* t = label(g.splash, fontDisplay(), kOnPhoto, X4_PROJECT_NAME);
-  lv_obj_align(t, LV_ALIGN_CENTER, 0, -12);
-  lv_obj_t* v = label(g.splash, fontFooter(), kFgMuted, "x4 " X4_FW_VERSION);
-  lv_obj_align(v, LV_ALIGN_CENTER, 0, 34);
+  lv_obj_center(t);
   reveal(t, 0);
-  reveal(v, 4);
 }
 
 // ---------------------------------------------------------------- touch helpers
