@@ -19,7 +19,8 @@ sources on one board. The bring-up firmware in `steps/` has no OTA: those still 
 ## Every time
 
 1. Rig on, running from the bank. Nothing plugged into USB.
-2. Laptop joins the **`x4cam`** WiFi (password `X4_AP_PASS`, default `change-me-ap`).
+2. **Mac:** stay on your home WiFi, the script switches for you (below). **Other computers:**
+   join the **`x4cam`** WiFi first (password `X4_AP_PASS`, default `change-me-ap`).
 3. From the repo root:
 
 ```bash
@@ -45,11 +46,36 @@ python tools/ota.py core
 python tools/ota.py --dry-run
 ```
 
-4. The Core reboots last, so the WiFi drops for a few seconds: rejoin `x4cam` if the laptop
-   doesn't by itself.
+4. The Core reboots last, so its WiFi drops for a few seconds. On a Mac the script rejoins your
+   home WiFi right after; elsewhere rejoin `x4cam` if you still need it.
 5. Check: Diagnostics or the web page (http://192.168.4.1) shows every camera online with the
    same firmware number as the Core. A camera's number in red means it differs
    ([FIRMWARE: firmware version](FIRMWARE.md#firmware-version)).
+
+### On a Mac: WiFi switching
+
+The script does what you'd do by hand, with `networksetup` (built into macOS):
+1. **Builds first**, while you still have internet (a first build downloads packages).
+2. If the Core isn't reachable, **joins `x4cam`** with `X4_AP_SSID` / `X4_AP_PASS` from
+   `core/include/secrets.h` (or the example file).
+3. Updates, then **rejoins your home WiFi**. Also after a failure or Ctrl-C.
+
+Which network to go back to: macOS 15+ often hides the current network's name from scripts
+(location privacy), so tell it once:
+
+```bash
+echo 'export X4_HOME_WIFI="Your Home WiFi"' >> ~/.zshrc
+```
+
+Without it the script reads the name if macOS lets it, else asks; Enter means stay on `x4cam`.
+If rejoining fails because macOS wants the password, also set `X4_HOME_WIFI_PASS` the same way
+(**Not sure** whether macOS takes it from the Keychain by itself: try without first). Options:
+`--home "Name"` for one run, `--stay` to stay on `x4cam`, `--no-wifi` to leave WiFi alone. If you
+were already on `x4cam`, the script doesn't switch at all.
+
+Alternative with no switching: internet over a cable (USB-C Ethernet or iPhone USB tethering),
+WiFi left on `x4cam`, and the cable above Wi-Fi in *System Settings → Network → … → Set Service
+Order*. Then run with `--no-wifi`.
 
 **Why cameras first, Core last:** when a change touches the Core↔camera protocol, a camera on the
 old protocol is refused at registration (409, [PROTOCOL](PROTOCOL.md)). Updating everything in one
@@ -77,7 +103,8 @@ IP address. That's expected.
 
 | symptom | likely | fix |
 |---|---|---|
-| `Can't reach the Core` | laptop not on `x4cam`, or the rig is off | join the WiFi; switch on |
+| `Can't reach the Core` / `Couldn't reach the Core on x4cam` | rig off or still booting; laptop not on `x4cam` (not a Mac); wrong `X4_AP_PASS` | switch on and wait ~10 s; check `secrets.h` matches what the Core was built with |
+| `couldn't rejoin <home>` | macOS wants the home password, or the name is wrong | set `X4_HOME_WIFI_PASS`, check `X4_HOME_WIFI`; pick it from the WiFi menu for now |
 | `Authentication Failed` | password differs from the board's `X4_OTA_PASS` | same `secrets.h` values for Core and cameras; the board keeps the password it was built with |
 | hangs at "Waiting for device…" | laptop firewall blocks the board's connection back | allow Python/PlatformIO on private networks |
 | camera `offline, skipped` | it isn't registered with the Core | look at Diagnostics; power-cycle the rig |
