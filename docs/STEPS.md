@@ -58,7 +58,8 @@ Tick these in your copy as you go.
 - [ ] [12. UI smoke test](#12-ui-smoke-test)
 - [ ] [13. The full firmware](#13-the-full-firmware)
 - [ ] [14. Effects on the camera](#14-effects-on-the-camera-planned-no-firmware-yet) (planned)
-- [ ] [15. Freeze motion: exposure test](#15-freeze-motion-exposure-test) (experiment)
+- [ ] [15. Freeze motion: exposure test](#15-freeze-motion-exposure-test) (experiment, round 1 done)
+- [ ] [Level 2: features over the air](#level-2-features-over-the-air) (planned: 16–20)
 - [ ] [Workshop F: into the box](#workshop-f-into-the-box)
 
 | # | firmware (env) | proves | power |
@@ -78,6 +79,7 @@ Tick these in your copy as you go.
 | 13 | `core/` `core` + `camera/` `cam1..4` | the real thing | USB or rail |
 | 14 | `s14-cam-effect` (planned) | a camera can bake crop + dither into its photo, and how fast | camera on USB |
 | 15 | `s15-cam-exposure` | how far exposure and gain can be set by hand, to freeze motion indoors | camera on USB |
+| 16–20 | `core` + `cam1..4`, over OTA | one new feature each ([Level 2](#level-2-features-over-the-air)) | rail |
 
 ---
 
@@ -845,13 +847,15 @@ worked in steps 1–12, it's in the parts only the full firmware has: registrati
 the shooting state machine, the UI ([DEBUGGING](DEBUGGING.md)).
 
 **Lighter flashing from now on:** after the first USB flash, the full firmware updates over WiFi
-(OTA): no swap, no cables. Laptop on the `x4cam` WiFi, then
-`pio run -e core -t upload --upload-port 192.168.4.1` (asks for `X4_OTA_PASS` from `secrets.h`)
-([BRINGUP](BRINGUP.md#flashing-without-breaking-the-power-rules)).
+(OTA): no swap, no cables. Laptop on the `x4cam` WiFi, then `python tools/ota.py`
+([UPDATING](UPDATING.md)). Every step after 15 is flashed this way.
 
 ---
 
 ## 14. Effects on the camera (planned, no firmware yet)
+
+> **Moved to step 18** (owner, 2026-11-19): built into the full firmware and tested over OTA, not
+> as a separate `s14` env. The plan below still holds.
 
 **Question:** can each camera bake the portrait crop and the dither into its own photo, so the
 card holds finished pictures and no companion is needed? Today the photos stay original and the
@@ -974,6 +978,48 @@ means the camera refused the write.
   different camera module ([OPEN_QUESTIONS Q21](OPEN_QUESTIONS.md)).
 
 **Save:** every row in [MEASUREMENTS: exposure](MEASUREMENTS.md#exposure-step-15).
+
+**Round 2 skipped** (owner, 2026-11-19). Round 1 showed manual exposure works with AGC mode = 1.
+The rest is tuned in the full firmware instead ([step 17](#17-short-exposure)), over OTA, by
+changing options from the web page.
+
+---
+
+## Level 2: features over the air
+
+From here every step is the **full firmware** with one new feature, flashed with
+`python tools/ota.py` ([UPDATING](UPDATING.md)): no USB, the rig stays wired and boxed. Each step
+gets its own pass checks when its firmware lands; until then this is the plan.
+
+### 16. MJPEG preview
+
+The viewfinder today asks the camera for one JPEG per frame (`prev_fps` up to 15; owner sees ~4 at
+the default 5). The camera already serves a continuous MJPEG stream (`:81/stream`,
+[PROTOCOL](PROTOCOL.md)); the Core will read that instead. **Target (owner):** 24+ fps.
+**Measure:** the preview fps on Diagnostics, and the Core's UI fps while it runs.
+
+### 17. Short exposure
+
+Manual exposure and gain as config options, so a shot can use a short exposure while the preview
+stays bright (owner's target: **24+ fps preview, short exposure on the shot**). What round 1
+found: manual exposure works with AGC mode 0x0130 = 1. Still **Not sure**: units and range,
+whether the setting survives the switch to 5 MP. **Never read camera registers while it streams**
+([RESEARCH §2](RESEARCH.md#2-unit-cams3-5mp)).
+
+### 18. Effects on the camera
+
+Crop and dither baked into each photo on the camera itself (the plan in [step 14](#14-effects-on-the-camera-planned-no-firmware-yet)).
+
+### 19. Media preview
+
+Browse the shots on the Core's screen: decode a photo from the SD at 1/8 scale (5 MP → about
+324×243, the screen's size). How fast: **Not sure** until measured.
+
+### 20. Video
+
+The Figma "Video" footer state and the record timer exist in the UI, but nothing behind them
+(`Status.videoMode` is always false). Open questions before any code: which cameras record, where
+the video goes (the Core's card or the cameras' own unused microSD slots), length and frame rate.
 
 ---
 

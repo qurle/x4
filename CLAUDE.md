@@ -41,6 +41,7 @@ cd steps && pio run                              # 16 bring-up envs (slow, ~5 mi
 python tools/gen_docs.py --check && python tools/gen_tokens.py --check && python tools/gen_figma_assets.py --check && python tools/gen_assets.py --check
 python tools/ui_sim/run.py                       # UI on the PC vs Figma: look at tools/ui_sim/out/index.html
 cd site && npm ci && npm run build               # website: landing page + docs/
+python tools/ota.py                              # owner's rig: OTA update, cameras then Core (docs/UPDATING.md)
 cd tools/enclosure && npm ci && python3 gen.py && node build.mjs && node render.cjs   # foam-board body: templates, 3D page, pictures, PDF
 ```
 
@@ -96,8 +97,10 @@ renders are in the repo. `/nodes` can be rate-limited the same way (seen 2026-11
 4. Motion blur indoors (owner, 2026-11-13; OPEN_QUESTIONS Q21). Step 15 round 1 (owner,
    2026-11-15): manual exposure works with AGC mode 0x0130 = 1; compensation, gain, AE mode and
    clock did little; 5 MP frame 207 ms vs VGA 40 ms. Owner's target: **24+ fps preview and a short
-   exposure on the shot**. Round 2 (`s15-cam-exposure`: luma, fps, sweeps, preview-vs-5 MP) is
-   waiting for the owner's results. Next after that: manual exposure/gain config options, and the
-   Core's preview on the camera's MJPEG stream (today one HTTP GET per frame, `prev_fps` max 15).
+   exposure on the shot**. Round 2 skipped (owner, 2026-11-19): no more
+   `steps/` envs; new features go into the full firmware and are tested over OTA
+   (`tools/ota.py`, docs/UPDATING.md), planned as STEPS "Level 2" 16–20: MJPEG preview (today one
+   HTTP GET per frame, `prev_fps` max 15, default 5), short exposure as config options, effects on
+   the camera (was step 14), media preview, video.
    **Never read camera registers while it streams** (it falls back to 320×240 or hangs its bus,
    per github.com/hbentel/M5Stack-Unit-CamS3-5MP, see RESEARCH §2).

@@ -12,6 +12,7 @@ export const GROUPS = [
       ['STEPS.md', 'Play-through', "From a box of parts to the full rig"],
       ['SOLDERING.md', 'Soldering', "Joints that hold, power that stays on"],
       ['BRINGUP.md', 'Bring-up', "Flashing rules and full-firmware tests"],
+      ['UPDATING.md', 'Updating', "New firmware over WiFi"],
       ['WIRING.md', 'Wiring', "Diagram, pins, connectors"],
       ['POWER.md', 'Power', "Why it won't burn, and the risks"],
       ['HARDWARE.md', 'Hardware', "Parts, pins, what's verified"],
